@@ -1,25 +1,27 @@
 import { CloudWatchLogsClient, CreateLogStreamCommand, PutLogEventsCommand } from "@aws-sdk/client-cloudwatch-logs";
+import { LOG_STREAM_WINDOW } from "@/utils/constants";
 
 class CloudWatchLogger {
-    private static instance: CloudWatchLogger;
-    private cloudwatchlogs: CloudWatchLogsClient;
+    private static instances: { [name: string]: CloudWatchLogger } = {};
+    private cloudwatchLogs: CloudWatchLogsClient;
     private readonly LOG_GROUP_NAME;
-    private constructor() {
-        this.cloudwatchlogs = new CloudWatchLogsClient({ region: "us-east-1" });
+    private constructor(private name = "default") {
+        this.cloudwatchLogs = new CloudWatchLogsClient({ region: "us-east-1" });
         this.LOG_GROUP_NAME = process.env.LOG_GROUP_NAME ?? "noGroupName-error-check-env-variables";
     }
 
-    public static getInstance(): CloudWatchLogger {
-        if (!CloudWatchLogger.instance) {
-            CloudWatchLogger.instance = new CloudWatchLogger();
+    public static getInstance(name: string): CloudWatchLogger {
+        if (!CloudWatchLogger.instances[name]) {
+            CloudWatchLogger.instances[name] = new CloudWatchLogger(name);
         }
-        return CloudWatchLogger.instance;
+        return CloudWatchLogger.instances[name];
     }
+
 
     public async log(message: string) {
         const logStreamName = this.getLogStreamName();
         const logEvent = {
-            message: message,
+            message: this.name + " - " + message,
             timestamp: new Date().getTime(),
         };
         const params = {
@@ -30,10 +32,11 @@ class CloudWatchLogger {
         await this.putLog(params);
     }
 
-    public async error(message: string) {
+    public async error(error: any, message: string) {
         const logStreamName = this.getLogStreamName();
+        const errorMessage = `${this.name} - ERROR: ${message} - ${error.name}: ${error.message}\n${error.stack}`;
         const logEvent = {
-            message: "ERROR:" + message,
+            message: errorMessage,
             timestamp: new Date().getTime(),
         };
         const params = {
@@ -53,7 +56,7 @@ class CloudWatchLogger {
             logStreamName: logStreamName
         });
         try {
-            await this.cloudwatchlogs.send(paramsCreateStream);
+            await this.cloudwatchLogs.send(paramsCreateStream);
         } catch (err: any) {
             if (err.name !== 'ResourceAlreadyExistsException') {
                 console.log("Error creating log stream:", err);
@@ -66,7 +69,7 @@ class CloudWatchLogger {
             logEvents: logEvents
         });
         try {
-            const data = await this.cloudwatchlogs.send(paramsPutLog);
+            const data = await this.cloudwatchLogs.send(paramsPutLog);
             console.log("Logged to CloudWatch:", data);
         } catch (err) {
             console.log("Error logging to CloudWatch:", err);
@@ -76,11 +79,11 @@ class CloudWatchLogger {
     private getLogStreamName(): string {
         const now = new Date();
         const minutes = now.getMinutes();
-        const roundedMinutes = Math.floor(minutes / 5) * 5;
+        const roundedMinutes = Math.floor(minutes / LOG_STREAM_WINDOW) * LOG_STREAM_WINDOW;
         const roundedTimeString = roundedMinutes.toString().padStart(2, '0');
         const logStreamName = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}-${now.getHours().toString().padStart(2, '0')}-${roundedTimeString}`;
         return logStreamName;
     }
 }
 
-export default CloudWatchLogger.getInstance();
+export default CloudWatchLogger.getInstance;
