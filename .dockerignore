@@ -1,0 +1,14 @@
+.git
+.results
+scripts
+*Dockerfile*
+.env
+node_modules
+*.DS_Store
+.next
+.gitignore
+README.md
+.dockerignore
+LICENSE
+.docker
+.gitlab

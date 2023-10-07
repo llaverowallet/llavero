@@ -1,0 +1,32 @@
+{
+  "name": "cloudwallet",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "yarn workspace web build",
+    "deploy": "yarn workspace web deploy",
+    "telemetry-disable": "yarn workspace web telemetry-disable",
+    "start": "yarn workspace web start",
+    "start-sst": "yarn workspace web start-sst",
+    "dev": "yarn workspace web dev",
+    "cdk-deploy": "npm run deploy -w libs/cdk-deploy",
+    "cdk-synth": "npm run synth -w libs/cdk-deploy",
+    "cdk-build": "npm run build -w libs/cdk-deploy",
+    "cdk-bootstrap": "npm run bootstrap -w libs/cdk-deploy"
+  },
+  "author": "Mariano Julio Vicario",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "typescript": "^5.1.6"
+  },
+  "devDependencies": {
+    "@types/node": "^20.4.4",
+    "eslint": "latest"
+  }
+}
