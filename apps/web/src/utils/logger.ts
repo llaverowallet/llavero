@@ -3,6 +3,7 @@ import { LOG_STREAM_WINDOW } from "@/utils/constants";
 
 class CloudWatchLogger {
     private static instances: { [name: string]: CloudWatchLogger } = {};
+    private static lastLogStreamName: string = "";
     private cloudwatchLogs: CloudWatchLogsClient;
     private readonly LOG_GROUP_NAME;
     private constructor(private name = "default") {
@@ -51,16 +52,18 @@ class CloudWatchLogger {
         const logStreamName = params.logStreamName;
         const logGroupName = params.logGroupName;
         const logEvents = params.logEvents;
-        const paramsCreateStream = new CreateLogStreamCommand({
-            logGroupName: logGroupName,
-            logStreamName: logStreamName
-        });
-        try {
-            await this.cloudwatchLogs.send(paramsCreateStream);
-        } catch (err: any) {
-            if (err.name !== 'ResourceAlreadyExistsException') {
-                console.log("Error creating log stream:", err);
-                return;
+        if (CloudWatchLogger.lastLogStreamName !== logStreamName) {
+            const paramsCreateStream = new CreateLogStreamCommand({
+                logGroupName: logGroupName,
+                logStreamName: logStreamName
+            });
+            try {
+                await this.cloudwatchLogs.send(paramsCreateStream);
+            } catch (err: any) {
+                if (err.name !== 'ResourceAlreadyExistsException') {
+                    console.log("Error creating log stream:", err);
+                    return;
+                }
             }
         }
         const paramsPutLog = new PutLogEventsCommand({
@@ -71,6 +74,7 @@ class CloudWatchLogger {
         try {
             const data = await this.cloudwatchLogs.send(paramsPutLog);
             console.log("Logged to CloudWatch:", data);
+            CloudWatchLogger.lastLogStreamName = logStreamName;
         } catch (err) {
             console.log("Error logging to CloudWatch:", err);
         }

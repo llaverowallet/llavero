@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "sst bind next dev",
+    "dev-next": "next dev",
+    "dev-sst": "sst dev",
     "build": "sst bind next build",
     "start": "next start",
     "start-sst": "sst start",
