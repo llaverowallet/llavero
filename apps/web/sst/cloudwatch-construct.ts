@@ -18,7 +18,7 @@ export default function createLogGroup(stack: Stack, id: string, props: ILogGrou
 }
 
 function createName(stack: Stack, name:string){
-    return stack.stage != "prod" ? "log"+stack.stage + name : "log-" + name;
+    return stack.stage != "prod" ? stack.stage + "-" + name : name;
 } 
 
 export interface ILogGroupProps {
@@ -35,6 +35,7 @@ export class LogGroupSST extends Construct implements SSTConstruct {
         this.id = id + "sst";
         this.logGroup = new logs.LogGroup(scope, id, {
             logGroupName: props.name,
+            retention: logs.RetentionDays.FIVE_DAYS, // TODO config
           });
         this.name = props.name;
 
