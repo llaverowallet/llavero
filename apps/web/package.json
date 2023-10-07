@@ -11,6 +11,7 @@
     "deploy": "yarn sst deploy --stage prod"
   },
   "dependencies": {
+    "@aws-sdk/client-cloudwatch-logs": "^3.427.0",
     "@aws-sdk/client-kms": "^3.421.0",
     "@dennisdang/ethers-aws-kms-signer": "^1.0.3",
     "@emotion/cache": "latest",
@@ -23,7 +24,6 @@
     "@tabler/icons-react": "^2.1.1",
     "@types/js-yaml": "^4.0.6",
     "aws-cdk-lib": "^2.99.1",
-    "aws-sdk": "^2.1472.0",
     "ethers": "^6.7.1",
     "js-yaml": "^4.1.0",
     "next": "latest",
