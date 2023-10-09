@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "sst bind next dev",
+    "dev-next": "next dev",
+    "dev-sst": "sst dev",
     "build": "sst bind next build",
     "start": "next start",
     "start-sst": "sst start",
@@ -12,6 +14,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-cloudwatch-logs": "^3.427.0",
+    "@aws-sdk/client-dynamodb": "^3.427.0",
     "@aws-sdk/client-kms": "^3.421.0",
     "@dennisdang/ethers-aws-kms-signer": "^1.0.3",
     "@emotion/cache": "latest",
@@ -22,8 +25,7 @@
     "@mui/lab": "^5.0.0-alpha.117",
     "@mui/material": "latest",
     "@tabler/icons-react": "^2.1.1",
-    "@types/js-yaml": "^4.0.6",
-    "aws-cdk-lib": "^2.99.1",
+    "dynamodb-onetable": "^2.7.1",
     "ethers": "^6.7.1",
     "js-yaml": "^4.1.0",
     "next": "latest",

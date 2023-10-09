@@ -15,6 +15,8 @@
     "start": "yarn workspace web start",
     "start-sst": "yarn workspace web start-sst",
     "dev": "yarn workspace web dev",
+    "dev-sst": "yarn workspace web dev-sst",
+    "dev-next": "yarn workspace web dev-next",
     "cdk-deploy": "npm run deploy -w libs/cdk-deploy",
     "cdk-synth": "npm run synth -w libs/cdk-deploy",
     "cdk-build": "npm run build -w libs/cdk-deploy",
