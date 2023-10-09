@@ -2,13 +2,14 @@ import { KMSClient, ListAliasesCommand } from '@aws-sdk/client-kms';
 
 export async function GET(request: Request) {
     try{
-        const client = new KMSClient({ region: 'us-east-1' });
+        return Response.json({ ok: true});
+        // const client = new KMSClient({ region: 'us-east-1' });
 
-        const command = new ListAliasesCommand({});
-        const response = await client.send(command);
+        // const command = new ListAliasesCommand({});
+        // const response = await client.send(command);
 
-        const aliases = response.Aliases?.filter(alias => alias.AliasName?.startsWith('alias/ALIASMY_KEY_1'));
-        return Response.json({ aliases });
+        // const aliases = response.Aliases?.filter(alias => alias.AliasName?.startsWith('alias/ALIASMY_KEY_1'));
+        // return Response.json({ aliases });
     } 
     catch(error) 
     {
