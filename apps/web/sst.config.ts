@@ -5,7 +5,7 @@ import createKeys from "./sst/key-builder";
 import createLogGroup from "./sst/cloudwatch-construct";
 import { LOG_GROUP_NAME } from "@/utils/constants";
 import "./repositories/user-table-init";
-import * as iam from "aws-cdk-lib/aws-iam";
+import { PolicyStatement, Effect } from "aws-cdk-lib/aws-iam";
 
 
 export default {
@@ -50,15 +50,19 @@ export default {
          })]); 
        */
 
-      const la = new Script(stack, "AfterDeploy", {
+      const script = new Script(stack, "AfterDeploy", {
         onCreate: "repositories/user-table-init.main",
         params: {
           tableName: userTable.tableName
         },
       });
-      la.bind([userTable]);
-      la.attachPermissions([
-        [userTable, "dynamodb:UpdateTable"],
+      script.bind([userTable]);
+      script.attachPermissions([
+        new PolicyStatement({
+          actions: ["dynamodb:UpdateTable"],
+          effect: Effect.ALLOW,
+          resources: [userTable.tableArn],
+        }),
       ]);
 
       stack.addOutputs({
