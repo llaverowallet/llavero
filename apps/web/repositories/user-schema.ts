@@ -6,7 +6,6 @@
             "sort": "sk"
         }
     },
-    "name": "Current",
     "models": {
         "Networks": {
             "created": {

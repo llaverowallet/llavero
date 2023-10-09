@@ -16,76 +16,56 @@ export default {
     };
   },
   stacks(app,) {
-    let userTable: any;
+    let userTable: Table;
+    let logGroup: any;
     app.stack(function CloudWallet({ stack }) {
 
       const keys = createKeys(stack);
-      const logGroup = createLogGroup(stack, LOG_GROUP_NAME + "ID", { name: LOG_GROUP_NAME });
+      logGroup = createLogGroup(stack, LOG_GROUP_NAME + "ID", { name: LOG_GROUP_NAME });
       const PARAM1 = new Config.Parameter(stack, 'KEY_1', {
         value: keys[0].keyArn,
       });
 
       userTable = new Table(stack, "UserData", {
-
         fields: {
-          username: "string",
+         pk: "string",
+         sk: "string",
         },
-        primaryIndex: { partitionKey: "username", sortKey: "" },
+        primaryIndex: { partitionKey: "pk", sortKey: "sk" },
       });
+
+
 
       const site = new NextjsSite(stack, "CloudWallet", {
         bind: [PARAM1, logGroup, userTable, ...keys],
         environment: {
           DATA_TEST: "hola",
           "LOG_GROUP_NAME": logGroup.name,
+          "USER_TABLE_NAME": userTable.tableName,
         }
       });
 
-      /*  
-      site.attachPermissions([
-         new iam.PolicyStatement({
-           actions: ["kms:ListAliases"],
-           effect: iam.Effect.ALLOW,
-           resources: ["*"],
-         })]); 
-       */
+      stack.addOutputs({
+        SiteUrl: site.url,
+      });
+    });
 
+    app.stack(function UserTableInit({ stack }) {
       const script = new Script(stack, "AfterDeploy", {
         onCreate: "repositories/user-table-init.main",
         params: {
           tableName: userTable.tableName
         },
       });
-      script.bind([userTable]);
+      script.bind([userTable, logGroup]);
       script.attachPermissions([
         new PolicyStatement({
-          actions: ["dynamodb:UpdateTable"],
+          actions: ["dynamodb:*"],
           effect: Effect.ALLOW,
           resources: [userTable.tableArn],
         }),
       ]);
-
-      stack.addOutputs({
-        SiteUrl: site.url,
-      });
-
     });
-    // {
-    //   actions: ["dynamodb:UpdateTable"],
-    //   resources: [userTable.tableArn],
-    // }
-    // app.stack(function UserTableCreate({ stack }) { 
-    //   const la = new Script(stack, "AfterDeploy", {  
-    //     onCreate: "repositories/user-table-init.main",
-    //     params: {
-    //       tableName: userTable.tableName
-    //     },
-    //   }); 
-    //   la.bind([userTable]);
-    //   la.attachPermissions([
-    //     [userTable, "dynamodb:UpdateTable"],
-    //   ]);
-    // });
   },
 } satisfies SSTConfig;
 

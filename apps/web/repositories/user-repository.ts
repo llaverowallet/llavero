@@ -16,21 +16,25 @@ export class UserRepository {
     private readonly keysModel;
     private readonly networkModel;
 
-    constructor(tableName = "UserData") {
-       try {
-         const client = new DynamoDBClient({});
-         this.userTable = new Table({ client, name: tableName, schema: UserSchema });
-         this.userModel = this.userTable.getModel('User');
-         this.keysModel = this.userTable.getModel('Keys');
-         this.networkModel = this.userTable.getModel('Networks');
-       } catch (error) {
-        logger.error(error, "Error in UserRepository constructor");
-        throw error;
-       }
+    constructor(tableName?: string) {
+        try {
+            tableName = tableName || process.env.USER_TABLE_NAME;
+            if (!tableName) {
+                throw new Error("Table name not provided. Not on the constructor, not in the environment USER_TABLE_NAME");
+            }
+            const client = new DynamoDBClient({});
+            this.userTable = new Table({ client, name: tableName, schema: UserSchema });
+            this.userModel = this.userTable.getModel('User');
+            this.keysModel = this.userTable.getModel('Keys');
+            this.networkModel = this.userTable.getModel('Networks');
+        } catch (error) {
+            logger.error(error, "Error in UserRepository constructor");
+            throw error;
+        }
     }
 
     async getUser(username: string) {
-        const user =  await this.userModel.get({ username });
+        const user = await this.userModel.get({ username });
         return user;
     }
 
@@ -42,15 +46,18 @@ export class UserRepository {
     static async updateTable(tableName = "UserData") {
         try {
             const client = new DynamoDBClient({});
-        const userTable = new Table({ client, name: tableName, schema: UserSchema });
-        console.log("Updating table");
-        logger.log("Updating table");
-
-        await userTable.updateTable();
-        console.log("Table updated");
-        logger.log("Table updated");
+            
+            const userTable = new Table({ client, name: tableName });
+            console.log("Updating table");
+            const schema = userTable.getCurrentSchema();
+            console.log("Current schema", schema);
+            await userTable.saveSchema(UserSchema);
+            await userTable.setSchema(UserSchema);
+            
+            console.log("Table updated");
         } catch (error) {
-            logger.error(error, "Error in UserRepository updateTable");
+            //logger.error(error, "Error in UserRepository updateTable");
+            console.error(error, "Error in UserRepository updateTable");
             throw error;
         }
     }
