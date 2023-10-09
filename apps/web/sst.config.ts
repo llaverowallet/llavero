@@ -2,7 +2,7 @@ import { SSTConfig } from "sst";
 import { Config, Script, Table } from "sst/constructs";
 import { NextjsSite } from "sst/constructs";
 import createKeys from "./sst/key-builder";
-import createLogGroup from "./sst/cloudwatch-construct";
+import createLogGroup, { LogGroupSST } from "./sst/cloudwatch-construct";
 import { LOG_GROUP_NAME } from "@/utils/constants";
 import "./repositories/user-table-init";
 import { PolicyStatement, Effect } from "aws-cdk-lib/aws-iam";
@@ -17,7 +17,7 @@ export default {
   },
   stacks(app,) {
     let userTable: Table;
-    let logGroup: any;
+    let logGroup: LogGroupSST;
     app.stack(function CloudWallet({ stack }) {
 
       const keys = createKeys(stack);
@@ -34,8 +34,6 @@ export default {
         primaryIndex: { partitionKey: "pk", sortKey: "sk" },
       });
 
-
-
       const site = new NextjsSite(stack, "CloudWallet", {
         bind: [PARAM1, logGroup, userTable, ...keys],
         environment: {
@@ -51,6 +49,7 @@ export default {
     });
 
     app.stack(function UserTableInit({ stack }) {
+      //TODO: delete this stack after a correct deploy. npx sst remove $STACK_NAME, and after it deploy again, to delete the resources in AWS
       const script = new Script(stack, "AfterDeploy", {
         onCreate: "repositories/user-table-init.main",
         params: {
