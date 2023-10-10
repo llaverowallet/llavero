@@ -4,8 +4,9 @@ import { NextjsSite } from "sst/constructs";
 import createKeys from "./sst/key-builder";
 import createLogGroup, { LogGroupSST } from "./sst/cloudwatch-construct";
 import { LOG_GROUP_NAME } from "@/utils/constants";
-import "./repositories/user-table-init";
+//import "./repositories/user-table-init";
 import { PolicyStatement, Effect } from "aws-cdk-lib/aws-iam";
+import { KMS } from "./sst/kms-construct";
 
 
 export default {
@@ -18,9 +19,10 @@ export default {
   stacks(app,) {
     let userTable: Table;
     let logGroup: LogGroupSST;
+    let keys: Array<KMS>;
     app.stack(function CloudWallet({ stack }) {
 
-      const keys = createKeys(stack);
+      keys = createKeys(stack);
       logGroup = createLogGroup(stack, LOG_GROUP_NAME + "ID", { name: LOG_GROUP_NAME });
       const PARAM1 = new Config.Parameter(stack, 'KEY_1', {
         value: keys[0].keyArn,
@@ -53,7 +55,8 @@ export default {
       const script = new Script(stack, "AfterDeploy", {
         onCreate: "repositories/user-table-init.main",
         params: {
-          tableName: userTable.tableName
+          tableName: userTable.tableName,
+          keys: keys.map(k => ({ keyArn: k.keyArn })),
         },
       });
       script.bind([userTable, logGroup]);

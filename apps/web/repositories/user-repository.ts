@@ -8,6 +8,7 @@ export type Keys = Entity<typeof UserSchema.models.Keys>;
 export type UserKeys = { user: User, keys: Keys[] };
 export type UserNetworks = { user: User, networks: Network[] };
 import createLogger from "@/utils/logger";
+import { assert } from 'console';
 const logger = createLogger("user-repository");
 
 export class UserRepository {
@@ -42,6 +43,29 @@ export class UserRepository {
         const newUser = await this.userModel.create(user);
         return newUser;
     }
+
+    async getKeys(username?: string, user?: User) {
+        assert(username || user);
+        const selectedUser = user || await this.getUser(username ?? ""); 
+        assert(selectedUser);
+        const keys = await this.keysModel.find({ userId: selectedUser?.userId });
+        return keys;
+    }
+
+    async createKeys(keys: Keys[], username?: string, user?: User) {
+        assert(username && user);
+        const selectedUser = user || await this.getUser(username ?? "");
+        assert(selectedUser);
+        let promises: any[] = [];
+        keys.forEach((key, idx) => {
+            console.log("Creating key idx: ", idx);
+            promises.push(this.keysModel.create({ keyArn: key.keyArn, username: username, name: "key"+idx, userId: selectedUser?.userId }));
+            console.log("Creating key: ", key.keyArn);
+        });
+        await Promise.all(promises);
+        console.log("Keys created");
+    }
+
 
     static async updateTable(tableName = "UserData") {
         try {

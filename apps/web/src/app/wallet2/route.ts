@@ -1,19 +1,19 @@
-import { KMSClient, ListAliasesCommand } from '@aws-sdk/client-kms';
+import { use } from "react";
+import { UserRepository } from "../../../repositories/user-repository";
+import createLogger from "@/utils/logger";
+const logger = createLogger("wallet2");
 
 export async function GET(request: Request) {
     try{
-        return Response.json({ ok: true});
-        // const client = new KMSClient({ region: 'us-east-1' });
-
-        // const command = new ListAliasesCommand({});
-        // const response = await client.send(command);
-
-        // const aliases = response.Aliases?.filter(alias => alias.AliasName?.startsWith('alias/ALIASMY_KEY_1'));
-        // return Response.json({ aliases });
+        
+        const userRepo = new UserRepository();
+        const user = await userRepo.getUser("ranu");
+        const keys = await userRepo.getKeys("",user);
+        return Response.json({ ok: true, user, keys });
     } 
     catch(error) 
     {
-        console.error("Wallet2 Error :", error);
+        logger.error(error, "Error in GET Wallet");
         return Response.json({ msj: "wallet2", error });
     }
 }
