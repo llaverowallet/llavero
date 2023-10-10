@@ -1,4 +1,3 @@
-import { use } from "react";
 import { UserRepository } from "../../../repositories/user-repository";
 import createLogger from "@/utils/logger";
 const logger = createLogger("wallet2");

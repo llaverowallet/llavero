@@ -44,9 +44,9 @@ export class UserRepository {
         return newUser;
     }
 
-    async getKeys(username?: string, user?: User) {
+    async getKeys(username = "", user?: User) {
         assert(username || user);
-        const selectedUser = user || await this.getUser(username ?? ""); 
+        const selectedUser = user || await this.getUser(username); 
         assert(selectedUser);
         const keys = await this.keysModel.find({ userId: selectedUser?.userId });
         return keys;
