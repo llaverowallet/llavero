@@ -6,8 +6,9 @@ import { JsonRpcProvider } from "ethers";
 import * as  kmsClient from "@aws-sdk/client-kms";
 import { AwsKmsSigner } from "@dennisdang/ethers-aws-kms-signer";
 import { getKeyId } from "@/utils/crypto";
+import { WalletInfo } from "../../wallet-models";
 
-export default async function getWallet(name: string) {
+export default async function getWallet(name: string) : Promise<WalletInfo> {
     try {
         assert(name);
         const userRepo = new UserRepository();
@@ -20,7 +21,7 @@ export default async function getWallet(name: string) {
         const signer = new AwsKmsSigner(getKeyId(keyDb?.keyArn as string), keyClient, provider);
         const addr = await signer.getAddress();
         const balance = await provider.getBalance(addr);
-        return { address: addr, balance, name: keyDb?.name, description: keyDb?.description };
+        return { address: addr, balance, name: keyDb?.name ?? "", description: keyDb?.description };
     }
     catch (error) {
         logger.error(error, "Error in get Wallet");

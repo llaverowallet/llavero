@@ -5,8 +5,9 @@ import { JsonRpcProvider } from "ethers";
 import { AwsKmsSigner } from "@dennisdang/ethers-aws-kms-signer";
 import * as  kmsClient from "@aws-sdk/client-kms";
 import { getKeyId } from "@/utils/crypto";
+import { WalletInfo } from "../../wallet-models";
 
-export default async function listWallets() {
+export default async function listWallets() : Promise<WalletInfo[]> {
     try {
         const userRepo = new UserRepository();
         const user = await userRepo.getUser("ranu"); //TODO user hardcoded

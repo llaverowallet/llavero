@@ -10,7 +10,11 @@ import DashboardCard from "../shared/DashboardCard";
 import Vault from "@/app/(DashboardLayout)/ui-components/icons/vault";
 import { IconKey } from "@tabler/icons-react";
 import { Typography } from "@mui/material";
+import { useEffect } from "react";
+import { WalletInfo } from "@/app/wallet/wallet-models";
 
+
+/** 
 const accounts = [
   {
     id: 1,
@@ -18,38 +22,20 @@ const accounts = [
     color: "success.main",
     address : "0x1234567890123456789012345678901234567890",
     balance: "0.00",
-  },
-  {
-    id: 2,
-    name: "Wallet 2",
-    color: "secondary.main",
-    address: "0x1234567890123456789012345678901234567890",
-    balance: "0.00",
-  },
-  {
-    id: 3,
-    name: "Wallet 2",
-    color: "primary.main",
-    address: "0x1234567890123456789012345678901234567890",
-    balance: "0.00",
-  },
-  {
-    id: 4,
-    name: "Wallet 2",
-    color: "warning.main",
-    address: "0x1234567890123456789012345678901234567890",
-    balance: "0.00",
-  },
-  {
-    id:5,
-    name: "Wallet 2",
-    color: "error.main",
-    address: "0x1234567890123456789012345678901234567890",
-    balance: "0.00",
-  },
+  }
 ];
+*/
 
 const Accounts = () => {
+  const [accounts, setAccounts] = React.useState<WalletInfo[]>([]);
+  useEffect(() => {
+    (async () => {
+      const response = await fetch("/wallet/list");
+      const accounts = await response.json();
+      setAccounts(accounts);
+    })();
+  });
+  
   return (
     <DashboardCard title="Accounts">
       <Timeline
@@ -58,7 +44,7 @@ const Accounts = () => {
         }}
       >
         {accounts.map((account) => (
-          <TimelineItem key={account.id}>
+          <TimelineItem key={account.name}>
             <Typography >
             {account.name}
             </Typography>
@@ -70,13 +56,13 @@ const Accounts = () => {
                 flex: "0",
               }}
             >
-              {account.balance}
+              {account.balance.toString()}
             </TimelineOppositeContent>
             <TimelineSeparator>
               <TimelineDot
                 variant="outlined"
                 sx={{
-                  borderColor: account.color,
+                  borderColor: "success.main",
                 }}
               />
               <TimelineConnector />
