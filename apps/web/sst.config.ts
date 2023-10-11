@@ -53,7 +53,7 @@ export default {
     app.stack(function UserTableInit({ stack }) {
       //TODO: delete this stack after a correct deploy. npx sst remove $STACK_NAME, and after it deploy again, to delete the resources in AWS
       const script = new Script(stack, "AfterDeploy", {
-        onCreate: "repositories/user-table-init.main",
+        onCreate: "src/repositories/user-table-init.main",
         params: {
           tableName: userTable.tableName,
           keys: keys.map(k => ({ keyArn: k.keyArn })),

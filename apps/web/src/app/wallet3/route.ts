@@ -2,7 +2,7 @@ import * as  kmsClient from "@aws-sdk/client-kms";
 import { AwsKmsSigner } from "@dennisdang/ethers-aws-kms-signer";
 import { JsonRpcProvider, ethers } from "ethers";
 import { Config } from "sst/node/config";
-import { UserRepository } from "../../../repositories/user-repository";
+import { UserRepository } from "../../repositories/user-repository";
 
 import createLogger from "@/utils/logger";
 const logger = createLogger("wallet");
