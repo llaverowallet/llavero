@@ -33,7 +33,7 @@ class CloudWatchLogger {
         await this.putLog(params);
     }
 
-    public async error(error: any, message: string) {
+    public async error(error: any, message: string = "") {
         const logStreamName = this.getLogStreamName();
         const errorMessage = `${this.name} - ERROR: ${message} - ${error.name}: ${error.message}\n${error.stack}`;
         const logEvent = {
@@ -45,6 +45,7 @@ class CloudWatchLogger {
             logStreamName: logStreamName,
             logEvents: [logEvent],
         };
+        console.log(errorMessage);
         await this.putLog(params);
     }
 

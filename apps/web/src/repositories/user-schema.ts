@@ -1,4 +1,4 @@
- const UserSchema = {
+const UserSchema = {
     "format": "onetable:1.1.0",
     "indexes": {
         "primary": {
@@ -6,6 +6,7 @@
             "sort": "sk"
         }
     },
+    "name": "Current",
     "models": {
         "Networks": {
             "created": {
@@ -100,7 +101,7 @@
             },
             "sk": {
                 "type": String,
-                "value": "Keys#${keyArn}",
+                "value": "Keys#${name}",
                 "required": true
             },
             "name": {
@@ -139,7 +140,8 @@
         "typeField": "_type"
     },
     "queries": {},
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "changed": false
 }
 
 export default UserSchema;

@@ -14,7 +14,7 @@ export interface ICloudWalletInitParams {
 export async function main(event: { params: ICloudWalletInitParams } ) {
     await UserRepository.updateTable(event.params.tableName);
     const userRepo = new UserRepository(event.params.tableName);
-    let user = await userRepo.getUser("ranu");
+    let user = await userRepo.getUser("ranu"); //TODO user hardcoded
     let newUser;
     if (!user) { //TODO: get user info from the installation process
         console.log("Creating new user");
