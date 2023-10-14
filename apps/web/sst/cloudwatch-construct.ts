@@ -3,6 +3,7 @@ import { Construct } from "constructs";
 import { SSTConstruct } from "sst/constructs/Construct.js";
 import { FunctionBindingProps } from "sst/constructs/util/functionBinding.js";
 import { Stack } from 'sst/constructs';
+import { RemovalPolicy } from "aws-cdk-lib";
 
 let logGroup:LogGroupSST | undefined = undefined;
 
@@ -36,9 +37,9 @@ export class LogGroupSST extends Construct implements SSTConstruct {
         this.logGroup = new logs.LogGroup(scope, id, {
             logGroupName: props.name,
             retention: logs.RetentionDays.FIVE_DAYS, // TODO config
+            removalPolicy: RemovalPolicy.DESTROY, 
           });
         this.name = props.name;
-
     }
 
     public get logGroupArn(): string {
