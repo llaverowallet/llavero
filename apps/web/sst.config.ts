@@ -1,20 +1,21 @@
-import { SSTConfig } from "sst";
-import { Cognito, Config, Script, Table, NextjsSite } from "sst/constructs";
-import createKeys from "./sst/key-builder";
-import createLogGroup, { LogGroupSST } from "./sst/cloudwatch-construct";
 import { LOG_GROUP_NAME } from "@/utils/constants";
+import { SSTConfig } from "sst";
+import { Cognito, NextjsSite, Script, Table } from "sst/constructs";
+import createLogGroup, { LogGroupSST } from "./sst/cloudwatch-construct";
+import createKeys from "./sst/key-builder";
 //import "./repositories/user-table-init";
-import { PolicyStatement, Effect } from "aws-cdk-lib/aws-iam";
-import { KMS } from "./sst/kms-construct";
-import { AccountRecovery, OAuthScope } from "aws-cdk-lib/aws-cognito";
-import { RemovalPolicy } from "aws-cdk-lib";
 import { check } from "@/utils/general";
+import { Duration, RemovalPolicy } from "aws-cdk-lib";
+import { AccountRecovery, Mfa, OAuthScope } from "aws-cdk-lib/aws-cognito";
+import { Effect, PolicyStatement } from "aws-cdk-lib/aws-iam";
+import { KMS } from "./sst/kms-construct";
 
 
-const config = {
+const installationConfig = {
    username: check<string>(process.env.USERNAME),
-    password: check<string>(process.env.PASSWORD)
-}
+   password: check<string>(process.env.PASSWORD),
+   phoneNumber: check<string>(process.env.PHONE_NUMBER),
+};
 
 export default {
   config(_input) {
@@ -54,6 +55,18 @@ export default {
             signInAliases: { email: true, phone: true },
             accountRecovery: AccountRecovery.PHONE_AND_EMAIL,
             removalPolicy: RemovalPolicy.DESTROY,
+            mfa: Mfa.REQUIRED,
+            mfaSecondFactor: { sms: true, otp: true },
+            standardAttributes: { email: { required: true, mutable: true }, phoneNumber: { required: true, mutable: true } },
+            passwordPolicy: {
+              minLength: 8,
+              requireDigits: true,
+              requireLowercase: true,
+              requireSymbols: true,
+              requireUppercase: true,
+              tempPasswordValidity: Duration.days(3),
+            },
+      
           },
           userPoolClient: {
             generateSecret: true,
@@ -61,7 +74,7 @@ export default {
               userPassword: true,
             },
             oAuth: {
-              callbackUrls: ["http://localhost:3000/api/auth/callback/cognito"],
+              callbackUrls: ["http://localhost:3000/api/auth/callback/cognito"], //TODO ponerlo en parameters y levantarlo  al inicio de next
               scopes:  [OAuthScope.EMAIL, OAuthScope.OPENID, OAuthScope.PHONE]//["openid", "profile", "email", "phone", "aws.cognito.signin.user.admin"],
             }
           },
@@ -77,7 +90,6 @@ export default {
       const site = new NextjsSite(stack, "Llavero", {
         bind: [logGroup, userTable, auth, ...keys],
         environment: {
-          DATA_TEST: "hola",
           "LOG_GROUP_NAME": logGroup.name,
           "USER_TABLE_NAME": userTable.tableName,
           "USER_POOL_ID": auth.userPoolId,
