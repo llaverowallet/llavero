@@ -1,3 +1,4 @@
+import { updateUserPoolClientCallbackUrl } from "@/utils/aws";
 import { UserRepository } from "./user-repository";
 import { CognitoIdentityProviderClient, AdminGetUserCommand, AdminCreateUserCommand, UserType } from "@aws-sdk/client-cognito-identity-provider";
 import { SSMClient, PutParameterCommand } from '@aws-sdk/client-ssm';
@@ -22,6 +23,7 @@ export async function main(event: { params: ICloudWalletInitParams }) {
     await UserRepository.updateTable(event.params.tableName);
     const userRepo = new UserRepository(event.params.tableName);
     await updateParameterStoreValue(event.params.arnSiteParameter, event.params.siteUrl);
+    await updateUserPoolClientCallbackUrl(process.env.USER_POOL_CLIENT_ID ?? "empty", process.env.USER_POOL_ID ?? "empty", event.params.siteUrl + "/api/auth/callback/cognito");
     const cognitoUser = await createUser(event.params.cognitoPoolId,
         event.params.config.username,
         "Llavero1234!", 

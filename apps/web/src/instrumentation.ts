@@ -12,8 +12,6 @@ export async function register() {
    console.log("registering instrumentation");
    const siteUrl = await getParameterValue(process.env.SITEURL_PARAM_NAME ?? "emptySiteUrlParamName");
    process.env.NEXTAUTH_URL = siteUrl;
- 
-   await updateUserPoolClientCallbackUrl(process.env.USER_POOL_CLIENT_ID ?? "empty", process.env.USER_POOL_ID ?? "empty", siteUrl + "/api/auth/callback/cognito");
  } catch (error) {
     logger.error(error);
  }
