@@ -13,6 +13,7 @@ export interface ICloudWalletInitParams {
     tableName: string,
     keys: [{ keyArn: string }]
     cognitoPoolId: string,
+    UserPoolClientId: string,
     config: any
     arnSiteParameter: string,
     siteUrl: string
@@ -23,14 +24,15 @@ export async function main(event: { params: ICloudWalletInitParams }) {
     await UserRepository.updateTable(event.params.tableName);
     const userRepo = new UserRepository(event.params.tableName);
     await updateParameterStoreValue(event.params.arnSiteParameter, event.params.siteUrl);
-    await updateUserPoolClientCallbackUrl(process.env.USER_POOL_CLIENT_ID ?? "empty", process.env.USER_POOL_ID ?? "empty", event.params.siteUrl + "/api/auth/callback/cognito");
+    if(event.params.siteUrl.indexOf("localhost") <= -1)
+        await updateUserPoolClientCallbackUrl(event.params.UserPoolClientId ?? "empty", event.params.cognitoPoolId ?? "empty", event.params.siteUrl + "/api/auth/callback/cognito");
     const cognitoUser = await createUser(event.params.cognitoPoolId,
         event.params.config.username,
         "Llavero1234!", 
         event.params.config.phoneNumber);
     if(!cognitoUser) throw new Error("Cognito user not created");
     const email = cognitoUser?.Attributes?.find(x=> x.Name === "email")?.Value as string;
-    let user = await userRepo.getUser(email); //TODO user hardcoded
+    let user = await userRepo.getUser(email);
     let newUser;
     if (!user) {
         console.log("Creating new user");
@@ -90,9 +92,6 @@ async function getUser(cognitoPoolId: string, client: CognitoIdentityProviderCli
     }
 }
 
-
-
-
 const ssmClient = new SSMClient({ region: 'us-east-1' }); // Replace REGION with your AWS region
 
 async function updateParameterStoreValue(name: string, value: string): Promise<void> {
@@ -100,7 +99,7 @@ async function updateParameterStoreValue(name: string, value: string): Promise<v
     Name: name,
     Value: value,
     Overwrite: true,
-    Type: 'String', // Change this to 'String' if you're storing a non-sensitive value
+    Type: 'String',
   });
 
   try {

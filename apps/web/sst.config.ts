@@ -12,6 +12,8 @@ import crypto from "crypto";
 import { getParameterPath } from "sst/constructs/util/functionBinding.js";
 
 
+const localhostUrl = "http://localhost:3000";
+
 const installationConfig = {
   username: check<string>(process.env.EMAIL),
   phoneNumber: check<string>(process.env.PHONE_NUMBER),
@@ -37,7 +39,7 @@ export default {
       logGroup = createLogGroup(stack, LOG_GROUP_NAME + "ID", { name: LOG_GROUP_NAME });
 
       userTable = new Table(stack, "UserData", {
-        cdk :{
+        cdk: {
           table: {
             removalPolicy: RemovalPolicy.DESTROY, //TODO think this could be SNAPSHOT
           }
@@ -75,7 +77,7 @@ export default {
               userPassword: true,
             },
             oAuth: {
-              callbackUrls: ["http://localhost:3000/api/auth/callback/cognito"], //TODO ponerlo en parameters y levantarlo  al inicio de next
+              callbackUrls: [localhostUrl +"/api/auth/callback/cognito"],
               scopes: [OAuthScope.EMAIL, OAuthScope.OPENID]//["openid", "profile", "email", "phone", "aws.cognito.signin.user.admin"],
             }
           },
@@ -106,41 +108,43 @@ export default {
         },
       });
 
-    const arnParameter = `arn:aws:ssm:${app.region}:${app.account}:parameter${getParameterPath(SITE_URL, "value")}`;
-    site.attachPermissions([
-      new PolicyStatement({
-        actions: ["ssm:GetParameter"],
-        effect: Effect.ALLOW,
-        resources: [arnParameter],
-      }),
-      new PolicyStatement({
-        actions: ["cognito-idp:UpdateUserPoolClient"],
-        effect: Effect.ALLOW,
-        resources: [auth.userPoolArn],
-      }),
-    ]);
+      //TODO horrible workaround. this is beacuse I can't set enviroment variables of NextjsSite directly and because I cant get the site url before
+      const arnParameter = `arn:aws:ssm:${app.region}:${app.account}:parameter${getParameterPath(SITE_URL, "value")}`;
+      site.attachPermissions([
+        new PolicyStatement({
+          actions: ["ssm:GetParameter"],
+          effect: Effect.ALLOW,
+          resources: [arnParameter],
+        }),
+        new PolicyStatement({
+          actions: ["cognito-idp:UpdateUserPoolClient"],
+          effect: Effect.ALLOW,
+          resources: [auth.userPoolArn],
+        }),
+      ]);
 
-    stack.addOutputs({
-      SiteUrl: site.url,
-      UserPoolId: auth.userPoolId,
-      UserPoolClientId: auth.userPoolClientId,
-      CognitoPoolId: auth.cognitoIdentityPoolId ?? "empty",
-      cognitoUserPoolArn: auth.userPoolArn,
-    });
+      stack.addOutputs({
+        SiteUrl: site.url,
+        UserPoolId: auth.userPoolId,
+        UserPoolClientId: auth.userPoolClientId,
+        CognitoPoolId: auth.cognitoIdentityPoolId ?? "empty",
+        cognitoUserPoolArn: auth.userPoolArn,
+      });
     });
 
     app.stack(function UserTableInit({ stack }) {
       const arnParameter = `arn:aws:ssm:${app.region}:${app.account}:parameter${getParameterPath(SITE_URL, "value")}`;
-      
+
       const script = new Script(stack, "AfterDeploy", {
         onCreate: "src/repositories/user-table-init.main",
         params: {
           tableName: userTable.tableName,
           keys: keys.map(k => ({ keyArn: k.keyArn })),
           cognitoPoolId: auth.userPoolId,
+          UserPoolClientId: auth.userPoolClientId,
           config: installationConfig,
           arnSiteParameter: getParameterPath(SITE_URL, "value"),
-          siteUrl: site.url ?? "http://localhost:3000"
+          siteUrl: site.url ?? localhostUrl
         },
       });
       script.bind([userTable, logGroup, auth, SITE_URL]);
