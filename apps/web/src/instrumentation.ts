@@ -14,5 +14,6 @@ export async function register() {
    process.env.NEXTAUTH_URL = siteUrl;
  } catch (error) {
     logger.error(error);
+    throw new AggregateError([new Error("Error in instrumentation"), error]);
  }
 }
