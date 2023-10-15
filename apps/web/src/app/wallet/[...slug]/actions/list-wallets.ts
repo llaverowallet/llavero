@@ -7,10 +7,12 @@ import * as  kmsClient from "@aws-sdk/client-kms";
 import { getKeyId } from "@/utils/crypto";
 import { WalletInfo } from "../../wallet-models";
 
-export default async function listWallets() : Promise<WalletInfo[]> {
+
+export default async function listWallets(username: string) : Promise<WalletInfo[]> {
     try {
         const userRepo = new UserRepository();
-        const user = await userRepo.getUser("ranu"); //TODO user hardcoded
+        const user = await userRepo.getUser(username);
+        if(!user) return []; 
         const keys = await userRepo.getKeys("", user);
         const provider = new JsonRpcProvider("https://sepolia.infura.io/v3/8a30a48106eb413bb29d9ff89d0b99a6"); //TODO get from an endpoint
         const keysPromise = keys.map(async key => { 

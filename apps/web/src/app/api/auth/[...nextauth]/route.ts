@@ -1,23 +1,17 @@
-import NextAuth, { AuthOptions } from "next-auth"
-import CognitoProvider from "next-auth/providers/cognito";
+import NextAuth, { AuthOptions } from "next-auth";
+import { Config } from "sst/node/config";
+import { AUTH_OPTIONS } from "@/utils/auth";
+import { getParameterValue } from "@/utils/aws";
 
-const issuer = "https://cognito-idp.us-east-1.amazonaws.com/"+process.env.USER_POOL_ID;
-const clientId = process.env.USER_POOL_CLIENT_ID ?? "emptyCognitoClientId";
+
+
+// const siteUrl = getParameterValue(process.env.SITEURL_PARAM_NAME ?? "emptySiteUrlParamName");
+// process.env.NEXTAUTH_URL = siteUrl;
+// console.log("NEXTAUTH_URL", Config.LLAVERO_URL);
+// process.env.NEXTAUTH_URL = Config.LLAVERO_URL;
+
 console.log("USER_POOL_ID ---->>>>>>>", process.env.USER_POOL_ID);
 console.log("NEXTAUTH_URL ---->>>>>>>", process.env.NEXTAUTH_URL);
-const authOptions: AuthOptions = {
-  // Configure one or more authentication providers
-  debug: true,
-  providers: [
-    CognitoProvider({
-        issuer: issuer,
-        clientId: clientId,
-        clientSecret: process.env.POOL_SECRET ?? "emptyCognitoClientSecret",
-        
-    }),
-    // ...add more providers here
-  ],
-}
 
-const handler = NextAuth(authOptions)
+const handler = NextAuth(AUTH_OPTIONS);
 export { handler as GET, handler as POST }

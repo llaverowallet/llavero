@@ -1,7 +1,6 @@
-import { check } from "@/utils/general";
 import { UserRepository } from "./user-repository";
 import { CognitoIdentityProviderClient, AdminGetUserCommand, AdminCreateUserCommand, UserType } from "@aws-sdk/client-cognito-identity-provider";
-import { config } from "process";
+import { SSMClient, PutParameterCommand } from '@aws-sdk/client-ssm';
 
 
 function delay(ms: number): Promise<void> {
@@ -14,33 +13,38 @@ export interface ICloudWalletInitParams {
     keys: [{ keyArn: string }]
     cognitoPoolId: string,
     config: any
+    arnSiteParameter: string,
+    siteUrl: string
 }
 
 
 export async function main(event: { params: ICloudWalletInitParams }) {
     await UserRepository.updateTable(event.params.tableName);
     const userRepo = new UserRepository(event.params.tableName);
-    const cognitoUsername = await createUser(event.params.cognitoPoolId,
+    await updateParameterStoreValue(event.params.arnSiteParameter, event.params.siteUrl);
+    const cognitoUser = await createUser(event.params.cognitoPoolId,
         event.params.config.username,
-        event.params.config.password,
-        event.params.config.phone);
-    console.log("Cognito user created: ", cognitoUsername);
-    let user = await userRepo.getUser("ranu"); //TODO user hardcoded
+        "Llavero1234!", 
+        event.params.config.phoneNumber);
+    if(!cognitoUser) throw new Error("Cognito user not created");
+    const email = cognitoUser?.Attributes?.find(x=> x.Name === "email")?.Value as string;
+    let user = await userRepo.getUser(email); //TODO user hardcoded
     let newUser;
     if (!user) {
         console.log("Creating new user");
-        newUser = await userRepo.createUser({ username: "ranu", mail: "pepe@ranu.com", name: "Ranu" });
+        newUser = await userRepo.createUser({ username: email, mail: email, name: email });
         console.log("New user created: ", newUser.username);
     }
     user = user || newUser;
     if (!user) throw new Error("User not found");
+    console.log("User: ", user); //todo remove
+    console.log("Creating keys", event.params.keys); //todo remove
     await userRepo.createKeys(event.params.keys, user.username);
 }
 
 async function createUser(cognitoPoolId: string, username: string, password: string, phone: string): Promise<UserType | undefined> {
     const client = new CognitoIdentityProviderClient({ region: "us-east-1" });
     const cognitoUsername = await getUser(cognitoPoolId, client, username);
-    console.log("User response: ", cognitoUsername);
     if (cognitoUsername) return cognitoUsername;
     const command = new AdminCreateUserCommand({
         UserPoolId: cognitoPoolId,
@@ -82,4 +86,26 @@ async function getUser(cognitoPoolId: string, client: CognitoIdentityProviderCli
     } catch (error) {
         return null;
     }
+}
+
+
+
+
+const ssmClient = new SSMClient({ region: 'us-east-1' }); // Replace REGION with your AWS region
+
+async function updateParameterStoreValue(name: string, value: string): Promise<void> {
+    const command = new PutParameterCommand({
+    Name: name,
+    Value: value,
+    Overwrite: true,
+    Type: 'String', // Change this to 'String' if you're storing a non-sensitive value
+  });
+
+  try {
+    await ssmClient.send(command);
+    console.log(`Successfully updated parameter ${name}`);
+  } catch (error) {
+    console.error(`Error updating parameter ${name}: ${error}`);
+    throw error;
+  }
 }
