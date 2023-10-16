@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Application.scss';
 import { AwsCredentialsForm } from './CredentialsForm/aws-credentials-from';
+import { AwsInstall } from './AwsInstall/aws-install';
 
 const Application: React.FC = () => {
   const [darkTheme, setDarkTheme] = useState(true);
@@ -69,10 +70,7 @@ const Application: React.FC = () => {
       {showCredentialsForm ? (
         <AwsCredentialsForm onSubmit={handleCredentialsSubmit} />
       ) : (
-        <div>
-          <p>Access Key ID: {accessKeyId}</p>
-          <p>Secret Access Key: {secretAccessKey}</p>
-        </div>
+        <AwsInstall accessKeyId={accessKeyId} secretAccessKey={secretAccessKey} />
       )}
     </div>
         </div>
