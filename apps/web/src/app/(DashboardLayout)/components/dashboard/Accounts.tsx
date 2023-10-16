@@ -7,7 +7,6 @@ import TimelineContent from "@mui/lab/TimelineContent";
 import TimelineOppositeContent from "@mui/lab/TimelineOppositeContent";
 import TimelineDot from "@mui/lab/TimelineDot";
 import DashboardCard from "../shared/DashboardCard";
-import Vault from "@/app/(DashboardLayout)/ui-components/icons/vault";
 import { IconKey } from "@tabler/icons-react";
 import { Typography } from "@mui/material";
 import { useEffect } from "react";
@@ -34,7 +33,7 @@ const Accounts = () => {
       const accounts = await response.json();
       setAccounts(accounts);
     })();
-  });
+  }, []);
   
   return (
     <DashboardCard title="Accounts">

@@ -92,3 +92,49 @@ class CloudWatchLogger {
 }
 
 export default CloudWatchLogger.getInstance;
+
+
+
+/////AUTH ERROR
+function hasErrorProperty(
+    x: unknown
+  ): x is { error: Error; [key: string]: unknown } {
+    return !!(x as any)?.error
+}
+function formatError(o: unknown): unknown {
+    if (o instanceof Error) {
+      return { message: o.message, stack: o.stack, name: o.name }
+    }
+    if (hasErrorProperty(o)) {
+      o.error = formatError(o.error) as Error
+      o.message = o.message ?? o.error.message
+    }
+    return o
+  }
+
+const aLogger = CloudWatchLogger.getInstance("Auth");
+
+export const authLogger = {
+    error(code:any , metadata:any) {
+      metadata = formatError(metadata) as Error
+      console.error(
+        `[next-auth][error][${code}]`,
+        `\nhttps://next-auth.js.org/errors#${code.toLowerCase()}`,
+        metadata.message,
+        metadata
+      )
+      aLogger.error(metadata, metadata.message);
+    },
+    warn(code:any ) {
+      console.warn(
+        `[next-auth][warn][${code}]`,
+        `\nhttps://next-auth.js.org/warnings#${code.toLowerCase()}`
+      )
+      aLogger.log(`[next-auth][warn][${code}]` +
+      `\nhttps://next-auth.js.org/warnings#${code.toLowerCase()}`);
+    },
+    debug(code:any, metadata:any) {
+      console.log(`[next-auth][debug][${code}]`, metadata)
+      aLogger.log(`[next-auth][debug][${code}]` + JSON.stringify(metadata));
+    },
+  }

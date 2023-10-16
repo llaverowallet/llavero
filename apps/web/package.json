@@ -13,7 +13,9 @@
     "deploy": "yarn sst deploy --stage prod"
   },
   "dependencies": {
+    "@aws-cdk/aws-cognito": "^1.204.0",
     "@aws-sdk/client-cloudwatch-logs": "^3.427.0",
+    "@aws-sdk/client-cognito-identity-provider": "^3.428.0",
     "@aws-sdk/client-dynamodb": "^3.427.0",
     "@aws-sdk/client-kms": "^3.421.0",
     "@dennisdang/ethers-aws-kms-signer": "^1.0.3",
@@ -32,8 +34,7 @@
     "next-auth": "^4.23.2",
     "react": "latest",
     "react-dom": "latest",
-    "react-helmet-async": "^1.3.0",
-    "sst": "^2.28.0"
+    "react-helmet-async": "^1.3.0"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.6",
@@ -46,7 +47,7 @@
     "eslint": "latest",
     "eslint-config-next": "latest",
     "postcss": "latest",
-    "sst": "^2.28.0",
+    "sst": "^2.29.2",
     "tailwindcss": "latest",
     "typescript": "latest"
   }

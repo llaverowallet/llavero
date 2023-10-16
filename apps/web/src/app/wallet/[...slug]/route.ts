@@ -3,16 +3,22 @@ import listWallets from './actions/list-wallets';
 import createLogger from "@/utils/logger";
 import getWallet from './actions/get-wallet';
 import { assert } from 'console';
+import { AUTH_OPTIONS } from '@/utils/auth';
+import { getServerSession } from 'next-auth';
 const logger = createLogger("Wallet endpoint");
 
 type firstLevelActions = "list" | "create"; //| "delete"
 type secondLevelActions = "update" | "get" | "delete";
 export async function GET(req: NextRequest) {
     try {
+        const session = await getServerSession(AUTH_OPTIONS);
         const { action, id } = getAction(req);
         switch (action) {
             case "list":
-                return Response.json(await listWallets());
+                console.log("session: ", session);
+                if(session?.user && session?.user?.email) 
+                    return Response.json(await listWallets(session?.user?.email));
+                else return Response.json([]);
             case "get":
                 console.log("entro");
                 assert(id !== undefined, "id is undefined");

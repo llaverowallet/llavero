@@ -66,7 +66,7 @@ export class UserRepository {
         let promises: any[] = [];
         keys.forEach((key, idx) => {
             console.log("Creating key idx: ", idx);
-            promises.push(this.keysModel.create({ keyArn: key.keyArn, username: username, name: "key" + idx, userId: selectedUser?.userId }));
+            promises.push(this.keysModel.upsert({ keyArn: key.keyArn, username: username, name: "key" + idx, userId: selectedUser?.userId }));
             console.log("Creating key: ", key.keyArn);
         });
         await Promise.all(promises);
