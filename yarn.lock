@@ -4649,7 +4649,7 @@ archiver-utils@^3.0.4:
     normalize-path "^3.0.0"
     readable-stream "^3.6.0"
 
-archiver@^5.3.1, archiver@^5.3.2:
+archiver@^5.3.2:
   version "5.3.2"
   resolved "https://registry.yarnpkg.com/archiver/-/archiver-5.3.2.tgz#99991d5957e53bd0303a392979276ac4ddccf3b0"
   integrity sha512-+25nxyyznAXF7Nef3y0EbBeqmGZgeN/BxHX29Rs39djAfaFalmQ89SE6CWyDCHzGL0yt/ycBtNOmGTW0FyGWNw==
@@ -9210,22 +9210,22 @@ sprintf-js@~1.0.2:
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==
 
-sst-aws-cdk@2.91.0:
-  version "2.91.0"
-  resolved "https://registry.yarnpkg.com/sst-aws-cdk/-/sst-aws-cdk-2.91.0.tgz#6d7b0615977a79b039a66fac81d2743eea9ba4ec"
-  integrity sha512-vQFs52ANjfEmVqwqcmfCwZVjWsFwQVwbdfLD8stJm/Cl7sZE+DngXX5LfGgF8M1o0F/qbj6d0N00vpVk1q6tSQ==
+sst-aws-cdk@2.95.1:
+  version "2.95.1"
+  resolved "https://registry.yarnpkg.com/sst-aws-cdk/-/sst-aws-cdk-2.95.1.tgz#5ec437b5403c3e53e213715f1662171de95094e8"
+  integrity sha512-C9ZITc6GLscxLbIhtjzralohDF6VGwmYKmZ+zFp7gfYgX5zCbJkBvI8q9jUbEDAGm6YK92xvQz2CJDUhTqsdSg==
   dependencies:
-    archiver "^5.3.1"
+    archiver "^5.3.2"
     chalk "^4"
     promptly "^3.2.0"
     yaml "1.10.2"
   optionalDependencies:
     fsevents "2.3.2"
 
-sst@^2.28.0:
-  version "2.28.0"
-  resolved "https://registry.yarnpkg.com/sst/-/sst-2.28.0.tgz#e6c102120cd70c79af5b68f6d003a2a02eea8583"
-  integrity sha512-w8Ui3m4wgPhJqBMr3S5Dcu0SobhwJ+H8Wd0mey/HRP4V/XmfO6RTAwUJB+P5/mWlowwuw+fdA32IddEfE3/yTw==
+sst@^2.29.2:
+  version "2.29.2"
+  resolved "https://registry.yarnpkg.com/sst/-/sst-2.29.2.tgz#556a57330671f7f4ddd871b777e0267746c02421"
+  integrity sha512-Dx3ZXVSe++CiyComcD5InGija6cBqi8asr4hsGxEbmUos1tJbdHFQLoDs0cjdpY2syP2JInQ8/whCgAjRrtiEA==
   dependencies:
     "@aws-cdk/aws-apigatewayv2-alpha" "^2.95.1-alpha.0"
     "@aws-cdk/aws-apigatewayv2-authorizers-alpha" "^2.95.1-alpha.0"
@@ -9289,7 +9289,7 @@ sst@^2.28.0:
     ora "^6.1.2"
     react "18.2.0"
     remeda "^1.3.0"
-    sst-aws-cdk "2.91.0"
+    sst-aws-cdk "2.95.1"
     tree-kill "^1.2.2"
     undici "^5.12.0"
     uuid "^9.0.0"
@@ -9799,9 +9799,9 @@ unbox-primitive@^1.0.2:
     which-boxed-primitive "^1.0.2"
 
 undici@^5.12.0:
-  version "5.25.4"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-5.25.4.tgz#7d8ef81d94f84cd384986271e5e5599b6dff4296"
-  integrity sha512-450yJxT29qKMf3aoudzFpIciqpx6Pji3hEWaXqXmanbXF58LTAGCKxcJjxMXWu3iG+Mudgo3ZUfDB6YDFd/dAw==
+  version "5.26.3"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-5.26.3.tgz#ab3527b3d5bb25b12f898dfd22165d472dd71b79"
+  integrity sha512-H7n2zmKEWgOllKkIUkLvFmsJQj062lSm3uA4EYApG8gLuiOM0/go9bIoC3HVaSnfg4xunowDE2i9p8drkXuvDw==
   dependencies:
     "@fastify/busboy" "^2.0.0"
 
