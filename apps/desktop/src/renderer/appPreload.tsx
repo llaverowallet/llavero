@@ -1,5 +1,7 @@
-console.log('Preload execution started');
+import * as cdk from 'aws-cdk-lib';
 
+
+console.log('Preload execution started');
 // Get versions
 window.addEventListener('DOMContentLoaded', () => {
   const app = document.getElementById('app');
@@ -30,3 +32,5 @@ window.addEventListener('DOMContentLoaded', () => {
   // Set versions to app data
   app.setAttribute('data-versions', JSON.stringify(versions));
 });
+
+

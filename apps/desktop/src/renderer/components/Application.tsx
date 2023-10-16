@@ -1,11 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import './Application.scss';
-import { icons } from './Icons';
+import { AwsCredentialsForm } from './CredentialsForm/aws-credentials-from';
 
 const Application: React.FC = () => {
-  const [counter, setCounter] = useState(0);
   const [darkTheme, setDarkTheme] = useState(true);
-  const [versions, setVersions] = useState<Record<string, string>>({});
+  const [showCredentialsForm, setShowCredentialsForm] = useState(true);
+  const [accessKeyId, setAccessKeyId] = useState('');
+  const [secretAccessKey, setSecretAccessKey] = useState('');
+
+  function handleCredentialsSubmit(accessKeyId: string, secretAccessKey: string) {
+    setAccessKeyId(accessKeyId);
+    setSecretAccessKey(secretAccessKey);
+    setShowCredentialsForm(false);
+    //onCredentialsSubmit(accessKeyId, secretAccessKey);
+  }
 
   /**
    * On component mount
@@ -21,9 +29,8 @@ const Application: React.FC = () => {
     }
 
     // Apply verisons
-    const app = document.getElementById('app');
-    const versions = JSON.parse(app.getAttribute('data-versions'));
-    setVersions(versions);
+    //const app = document.getElementById('app');
+
   }, []);
 
   /**
@@ -57,39 +64,27 @@ const Application: React.FC = () => {
             Install information
           </div>
         </div>
-        <div className='versions'>
-          <div className='item'>
-            <div>
-              <img className='item-icon' src={icons.electron} /> Electron
-            </div>
-            <span>{versions?.electron}</span>
-          </div>
-          <div className='item'>
-            <div>
-              <img className='item-icon' src={icons.erwt} /> ERWT
-            </div>
-            <span>{versions?.erwt}</span>
-          </div>
-          <div className='item'>
-            <div>
-              <img className='item-icon' src={icons.chrome} /> Chrome
-            </div>
-            <span>{versions?.chrome}</span>
-          </div>
-          <div className='item'>
-            <div>
-              <img className='item-icon' src={icons.license} /> License
-            </div>
-            <span>{versions?.license}</span>
-          </div>
+        <div className="application">
+        <div>
+      {showCredentialsForm ? (
+        <AwsCredentialsForm onSubmit={handleCredentialsSubmit} />
+      ) : (
+        <div>
+          <p>Access Key ID: {accessKeyId}</p>
+          <p>Secret Access Key: {secretAccessKey}</p>
+        </div>
+      )}
+    </div>
         </div>
       </div>
 
       <div className='footer'>
         <div className='center'>
-          <button onClick={toggleTheme}>
+          {/* <button onClick={toggleTheme}>
             {darkTheme ? 'Light Theme' : 'Dark Theme'}
-          </button>
+          </button> */}
+
+          Llavero © 2023
         </div>
       </div>
     </div>
@@ -97,3 +92,4 @@ const Application: React.FC = () => {
 };
 
 export default Application;
+
