@@ -8,7 +8,6 @@ function delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-
 export interface ICloudWalletInitParams {
     tableName: string,
     keys: [{ keyArn: string }]
@@ -19,17 +18,17 @@ export interface ICloudWalletInitParams {
     siteUrl: string
 }
 
-
 export async function main(event: { params: ICloudWalletInitParams }) {
     await UserRepository.updateTable(event.params.tableName);
     const userRepo = new UserRepository(event.params.tableName);
-    await updateParameterStoreValue(event.params.arnSiteParameter, event.params.siteUrl);
+    await updateParameterStoreValue(event.params.arnSiteParameter, event.params.siteUrl, event.params.config.region);
     if(event.params.siteUrl.indexOf("localhost") <= -1)
         await updateUserPoolClientCallbackUrl(event.params.UserPoolClientId ?? "empty", event.params.cognitoPoolId ?? "empty", event.params.siteUrl + "/api/auth/callback/cognito");
     const cognitoUser = await createUser(event.params.cognitoPoolId,
         event.params.config.username,
         "Llavero1234!", 
-        event.params.config.phoneNumber);
+        event.params.config.phoneNumber,
+        event.params.config.region);
     if(!cognitoUser) throw new Error("Cognito user not created");
     const email = cognitoUser?.Attributes?.find(x=> x.Name === "email")?.Value as string;
     let user = await userRepo.getUser(email);
@@ -46,8 +45,8 @@ export async function main(event: { params: ICloudWalletInitParams }) {
     await userRepo.createKeys(event.params.keys, user.username);
 }
 
-async function createUser(cognitoPoolId: string, username: string, password: string, phone: string): Promise<UserType | undefined> {
-    const client = new CognitoIdentityProviderClient({ region: "us-east-1" });
+async function createUser(cognitoPoolId: string, username: string, password: string, phone: string, region: string): Promise<UserType | undefined> {
+    const client = new CognitoIdentityProviderClient({ region: region });
     const cognitoUsername = await getUser(cognitoPoolId, client, username);
     if (cognitoUsername) return cognitoUsername;
     const command = new AdminCreateUserCommand({
@@ -59,11 +58,11 @@ async function createUser(cognitoPoolId: string, username: string, password: str
                 Name: "email",
                 Value: username
             },
-            {
-                Name: "phone_number",
-                Value: phone
-                ,
-            },
+            // {
+            //     Name: "phone_number",
+            //     Value: phone
+            //     ,
+            // },
             // {
             //     Name: "email_verified",
             //     Value: "true"
@@ -92,9 +91,10 @@ async function getUser(cognitoPoolId: string, client: CognitoIdentityProviderCli
     }
 }
 
-const ssmClient = new SSMClient({ region: 'us-east-1' }); // Replace REGION with your AWS region
 
-async function updateParameterStoreValue(name: string, value: string): Promise<void> {
+
+async function updateParameterStoreValue(name: string, value: string, region:string): Promise<void> {
+    const ssmClient = new SSMClient({ region: region }); // Replace REGION with your AWS region
     const command = new PutParameterCommand({
     Name: name,
     Value: value,

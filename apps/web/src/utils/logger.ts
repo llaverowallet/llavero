@@ -7,7 +7,7 @@ class CloudWatchLogger {
     private cloudwatchLogs: CloudWatchLogsClient;
     private readonly LOG_GROUP_NAME;
     private constructor(private name = "default") {
-        this.cloudwatchLogs = new CloudWatchLogsClient({ region: "us-east-1" });
+        this.cloudwatchLogs = new CloudWatchLogsClient({ region: process.env.REGION });
         this.LOG_GROUP_NAME = process.env.LOG_GROUP_NAME ?? "noGroupName-error-check-env-variables";
     }
 

@@ -3,7 +3,7 @@ import CognitoProvider from "next-auth/providers/cognito";
 import { authLogger } from "./logger";
 
 
-const issuer = "https://cognito-idp.us-east-1.amazonaws.com/"+process.env.USER_POOL_ID;
+const issuer = "https://cognito-idp."+process.env.REGION+".amazonaws.com/"+process.env.USER_POOL_ID;
 const clientId = process.env.USER_POOL_CLIENT_ID ?? "emptyCognitoClientId";
 export const AUTH_OPTIONS: AuthOptions = {
     debug: true,

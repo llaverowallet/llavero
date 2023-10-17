@@ -24,7 +24,7 @@ export default {
   config(_input) {
     return {
       name: "web",
-      region: "us-east-1",
+      region: installationConfig.region,
     };
   },
   stacks(app,) { 
@@ -112,7 +112,8 @@ export function llaveroStack({ stack, app }: StackContext) {
       "COGNITO_POOL_ID": auth.cognitoIdentityPoolId ?? "empty",
       "POOL_SECRET": auth.cdk.userPoolClient.userPoolClientSecret.toString() ?? "empty",
       "NEXTAUTH_SECRET": randomString(16), //TODO config input, should be saved or query
-      "SITEURL_PARAM_NAME": getParameterPath(SITE_URL, "value") //TODO horrible workaround. I should be able to set the variable on the env directly
+      "SITEURL_PARAM_NAME": getParameterPath(SITE_URL, "value"), //TODO horrible workaround. I should be able to set the variable on the env directly
+      "REGION": installationConfig.region,
     },
   });
 
@@ -140,11 +141,11 @@ export function llaveroStack({ stack, app }: StackContext) {
   });
 };
 
-function initLlavero({ stack, app }: StackContext) {
+export function initLlavero({ stack, app }: StackContext) {
   const arnParameter = `arn:aws:ssm:${app.region}:${app.account}:parameter${getParameterPath(SITE_URL, "value")}`;
-
+  const basePath = process.env.BasePath ?? "";
   const script = new Script(stack, "AfterDeploy", {
-    onCreate: "src/repositories/user-table-init.main",
+    onCreate: basePath + "src/repositories/user-table-init.main",
     params: {
       tableName: userTable.tableName,
       keys: keys.map(k => ({ keyArn: k.keyArn })),
