@@ -41,12 +41,12 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "autoprefixer": "latest",
-    "aws-cdk-lib": "2.95.1",
-    "constructs": "10.2.69",
     "eslint": "latest",
     "eslint-config-next": "latest",
     "postcss": "latest",
-    "sst": "2.24.11",
+    "sst": "2.29.2",
+    "aws-cdk-lib": "2.95.1",
+    "constructs": "10.2.69",
     "tailwindcss": "latest",
     "typescript": "latest"
   }
