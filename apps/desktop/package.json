@@ -75,6 +75,7 @@
     "@aws-sdk/client-cloudformation": "^3.428.0",
     "@aws-sdk/client-ec2": "^3.428.0",
     "@aws-sdk/client-sts": "^3.428.0",
+    "sst": "2.29.2",
     "aws-cdk-lib": "2.95.1",
     "constructs": "10.2.69",
     "aws-sdk": "^2.1473.0",
