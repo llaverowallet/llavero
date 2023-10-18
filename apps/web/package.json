@@ -13,7 +13,6 @@
     "deploy": "yarn sst deploy --stage prod"
   },
   "dependencies": {
-    "@aws-cdk/aws-cognito": "^1.204.0",
     "@aws-sdk/client-cloudwatch-logs": "^3.427.0",
     "@aws-sdk/client-cognito-identity-provider": "^3.428.0",
     "@aws-sdk/client-dynamodb": "^3.427.0",
@@ -30,7 +29,7 @@
     "dynamodb-onetable": "^2.7.1",
     "ethers": "^6.7.1",
     "js-yaml": "^4.1.0",
-    "next": "latest",
+    "next": "13.4.19",
     "next-auth": "^4.23.2",
     "react": "latest",
     "react-dom": "latest",
@@ -42,12 +41,12 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "autoprefixer": "latest",
-    "aws-cdk-lib": "2.95.1",
-    "constructs": "10.2.69",
     "eslint": "latest",
     "eslint-config-next": "latest",
     "postcss": "latest",
-    "sst": "^2.29.2",
+    "sst": "2.29.2",
+    "aws-cdk-lib": "2.95.1",
+    "constructs": "10.2.69",
     "tailwindcss": "latest",
     "typescript": "latest"
   }

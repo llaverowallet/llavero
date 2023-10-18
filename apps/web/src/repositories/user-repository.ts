@@ -9,7 +9,6 @@ export type UserKeys = { user: User, keys: KmsKey[] };
 export type UserNetworks = { user: User, networks: Network[] };
 import createLogger from "@/utils/logger";
 import { assert } from 'console';
-
 const logger = createLogger("user-repository");
 
 export class UserRepository {
@@ -63,7 +62,7 @@ export class UserRepository {
         assert(username && user);
         const selectedUser = user || await this.getUser(username ?? "");
         assert(selectedUser);
-        let promises: any[] = [];
+        let promises = new Array<Promise<KmsKey>>();
         keys.forEach((key, idx) => {
             console.log("Creating key idx: ", idx);
             promises.push(this.keysModel.upsert({ keyArn: key.keyArn, username: username, name: "key" + idx, userId: selectedUser?.userId }));
