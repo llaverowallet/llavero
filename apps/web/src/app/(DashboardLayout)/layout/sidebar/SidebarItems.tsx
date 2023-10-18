@@ -2,7 +2,6 @@ import React from "react";
 import Menuitems from "./MenuItems";
 import { usePathname } from "next/navigation";
 import { Box, List } from "@mui/material";
-import NavItem from "./NavItem";
 
 const SidebarItems = ({ toggleMobileSidebar }: any) => {
   const pathname = usePathname();
@@ -20,14 +19,13 @@ const SidebarItems = ({ toggleMobileSidebar }: any) => {
           //   /* eslint no-else-return: "off" */
           // } else {
             return (
-              <NavItem
-                item={item}
-                key={item.id}
-                pathDirect={pathDirect}
-                onClick={toggleMobileSidebar}
-              />
+              <span key={item.id}>
+                {item}
+                {item.id}
+                {pathDirect}
+                {toggleMobileSidebar}
+                </span>
             );
-          
         })}
       </List>
     </Box>

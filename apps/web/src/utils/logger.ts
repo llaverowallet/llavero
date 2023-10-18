@@ -3,7 +3,7 @@ import { LOG_STREAM_WINDOW } from "@/utils/constants";
 
 class CloudWatchLogger {
     private static instances: { [name: string]: CloudWatchLogger } = {};
-    private static lastLogStreamName: string = "";
+    private static lastLogStreamName = "";
     private cloudwatchLogs: CloudWatchLogsClient;
     private readonly LOG_GROUP_NAME;
     private constructor(private name = "default") {
@@ -17,7 +17,6 @@ class CloudWatchLogger {
         }
         return CloudWatchLogger.instances[name];
     }
-
 
     public async log(message: string) {
         const logStreamName = this.getLogStreamName();
@@ -33,7 +32,7 @@ class CloudWatchLogger {
         await this.putLog(params);
     }
 
-    public async error(error: any, message: string = "") {
+    public async error(error: any, message = "") {
         const logStreamName = this.getLogStreamName();
         const errorMessage = `${this.name} - ERROR: ${message} - ${error.name}: ${error.message}\n${error.stack}`;
         const logEvent = {

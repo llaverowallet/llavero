@@ -1,6 +1,4 @@
-import * as cdk from 'aws-cdk-lib';
 import * as sdk from 'aws-sdk';
-import * as cxapi from 'aws-cdk-lib/cx-api';
 import { contextBridge } from 'electron';
 import { STSClient, GetCallerIdentityCommand } from '@aws-sdk/client-sts';
 import { EC2Client, DescribeRegionsCommand } from '@aws-sdk/client-ec2';
@@ -8,6 +6,7 @@ import { DescribeStackEventsCommand, CloudFormationClient, DescribeStacksCommand
 import { Bootstrapper } from 'aws-cdk/lib/api/bootstrap';
 import { SdkProvider } from 'aws-cdk/lib/api/aws-auth';
 import path from 'path';
+import { executeCommand } from './runCommand';
 
 const nodeModulesPath = path.join(process.cwd(), 'node_modules');
 console.log(nodeModulesPath);
@@ -37,8 +36,7 @@ const setCredentials = async (accessKeyId: string, secretAccessKey: string) => {
   }
   process.env['AWS_ACCESS_KEY_ID'] = accessKeyId;
   process.env['AWS_SECRET_ACCESS_KEY'] = secretAccessKey;
-
-
+  sdk.config.update({ accessKeyId, secretAccessKey });
   const stsClient = new STSClient({});
 
   // Call the getCallerIdentity method
@@ -127,13 +125,10 @@ contextBridge.exposeInMainWorld('getStackInfo', (stackName: string) => getStackI
 
 //bootstrapCdk
 async function bootstrapCdk(account: string, region: string) {
-
   try {
     console.log(`Running bootstrapCdk for aws://${account}/${region}`);
     console.log('process.env.AWS_PROFILE: ', process.env.AWS_PROFILE);
-    const sdkProvider = await SdkProvider.withAwsCliCompatibleDefaults({
-      profile: process.env.AWS_PROFILE,
-    });
+    const sdkProvider = await SdkProvider.withAwsCliCompatibleDefaults({});
     const template = nodeModulesPath + '/aws-cdk/lib/api/bootstrap/bootstrap-template.yaml';
     console.log('template: ', template);
     const bootstrapper = new Bootstrapper({ 'source': 'custom', templateFile: template });
@@ -143,8 +138,28 @@ async function bootstrapCdk(account: string, region: string) {
   } catch (error) {
     console.log('bootstrapCdk error: ', error);
   }
+  return false;
 }
 contextBridge.exposeInMainWorld('bootstrapCdk', (account: string, region: string) => bootstrapCdk(account, region));
+
+//installWallet
+async function installWallet(email: string, region: string) {
+  try {
+    const envVars = { REGION: region, EMAIL: email, AWS_ACCESS_KEY_ID: process.env['AWS_ACCESS_KEY_ID'], 
+      AWS_SECRET_ACCESS_KEY: process.env['AWS_SECRET_ACCESS_KEY'] };
+    const assetsWalletPath = path.join(process.cwd(), '.wallet');
+    console.log('assetsWalletPath: ', assetsWalletPath);
+    await executeCommand("pwd", [], assetsWalletPath, (data: unknown) => { console.log("pwd: " + data) });
+    console.log('ls: ', assetsWalletPath);
+    await executeCommand("ls", [], assetsWalletPath, (data: unknown) => { console.log("ls: "+ data) });
+    console.log('yarn: ', assetsWalletPath);
+    await executeCommand("yarn", [], assetsWalletPath, (data: unknown) => { console.log(data) }, envVars);
+    await executeCommand("yarn", ["deploy"], assetsWalletPath, (data: unknown) => { console.log(data) }, envVars);
+  } catch (error) {
+    console.log('installWallet error: ', error);
+  }
+}
+contextBridge.exposeInMainWorld('installWallet', (email: string, region: string) => installWallet(email, region));
 
 
 

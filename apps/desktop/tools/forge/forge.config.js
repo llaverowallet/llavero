@@ -1,18 +1,34 @@
 // Forge Configuration
 const path = require('path');
 const rootDir = process.cwd();
+const fsExtra = require('fs-extra');
 
 module.exports = {
+  hooks: {
+    generateAssets: (forgeConfig, platform, arch) => {
+      fsExtra.copySync("../web", ".wallet", { filter: filterFunc }, (err) => {
+        if (err) {
+          console.error('An error occurred while copying the folder.');
+          console.error(err);
+        } else {
+          console.log('Folder copied successfully.');
+        }
+      });
+      fsExtra.removeSync(".wallet/next.config.js", (err) => console.log(err));
+      fsExtra.renameSync(".wallet/next.config-deploy.js", ".wallet/next.config.js");
+    }
+  },
   // Packager Config
   packagerConfig: {
     // Create asar archive for main, renderer process files
     asar: true,
     // Set executable name
-    executableName: 'ERWT Boilerplate',
+    executableName: 'llavero-setup',
     // Set application copyright
-    appCopyright: 'Copyright (C) 2021 Codesbiome, Guasam',
+    appCopyright: 'Copyright (C) 2023 Mariano Vicario',
     // Set application icon
     icon: path.resolve('assets/images/appIcon.ico'),
+    name: 'llavero',
   },
   // Forge Makers
   makers: [
@@ -42,6 +58,13 @@ module.exports = {
       name: '@electron-forge/maker-rpm',
       config: {},
     },
+    { //mac
+      name: '@electron-forge/maker-dmg',
+      config: {
+        background: './assets/dmg-background.png',
+        format: 'ULFO'
+      }
+    }
   ],
   // Forge Plugins
   plugins: [
@@ -85,4 +108,20 @@ module.exports = {
       },
     },
   ],
+};
+
+
+
+
+
+
+const filterFunc = (src) => {
+  // Paths to omit
+  const omitPaths = ['node_modules', '/.next'];
+  for (const omitPath of omitPaths) {
+    if (src.includes(omitPath)) {
+      return false;
+    }
+  }
+  return true;
 };

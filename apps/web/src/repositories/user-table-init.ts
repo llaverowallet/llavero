@@ -3,11 +3,6 @@ import { UserRepository } from "./user-repository";
 import { CognitoIdentityProviderClient, AdminGetUserCommand, AdminCreateUserCommand, UserType } from "@aws-sdk/client-cognito-identity-provider";
 import { SSMClient, PutParameterCommand } from '@aws-sdk/client-ssm';
 
-
-function delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 export interface ICloudWalletInitParams {
     tableName: string,
     keys: [{ keyArn: string }]
@@ -40,8 +35,6 @@ export async function main(event: { params: ICloudWalletInitParams }) {
     }
     user = user || newUser;
     if (!user) throw new Error("User not found");
-    console.log("User: ", user); //todo remove
-    console.log("Creating keys", event.params.keys); //todo remove
     await userRepo.createKeys(event.params.keys, user.username);
 }
 

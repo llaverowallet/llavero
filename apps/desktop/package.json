@@ -72,16 +72,19 @@
     "webpack": "^5.76.3"
   },
   "dependencies": {
+    "@aws-cdk/cloudformation-diff": "^2.101.1",
     "@aws-sdk/client-cloudformation": "^3.428.0",
     "@aws-sdk/client-ec2": "^3.428.0",
     "@aws-sdk/client-sts": "^3.428.0",
-    "sst": "2.29.2",
+    "aws-cdk": "^2.101.1",
     "aws-cdk-lib": "2.95.1",
-    "constructs": "10.2.69",
     "aws-sdk": "^2.1473.0",
     "cdk-assets": "2.95.1",
+    "constructs": "10.2.69",
     "electron-root-path": "^1.1.0",
     "electron-squirrel-startup": "^1.0.0",
+    "fs-extra": "^11.1.1",
+    "promptly": "^3.2.0",
     "proxy-agent": "^6.3.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
