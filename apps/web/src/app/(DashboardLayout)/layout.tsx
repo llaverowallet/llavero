@@ -2,6 +2,8 @@
 import { styled, Container, Box } from "@mui/material";
 import React, { useState } from "react";
 import Header from "@/app/(DashboardLayout)/layout/header/Header";
+import { SessionProvider } from "next-auth/react";
+import type { Session } from "next-auth"
 
 const MainWrapper = styled("div")(() => ({
   display: "flex",
@@ -18,21 +20,17 @@ const PageWrapper = styled("div")(() => ({
   backgroundColor: "transparent",
 }));
 
-interface Props {
-  children: React.ReactNode;
-}
-
-
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode,
 }) {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   return (
     <MainWrapper className="mainwrapper">
+      <SessionProvider>
       {/* ------------------------------------------- */}
       {/* Sidebar */}
       {/* ------------------------------------------- */}
@@ -72,6 +70,7 @@ export default function RootLayout({
           {/* <Footer /> */}
         </Container>
       </PageWrapper>
+      </SessionProvider>
     </MainWrapper>
   );
 }

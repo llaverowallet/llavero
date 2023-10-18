@@ -7,6 +7,7 @@ import Profile from './Profile';
 import Search from './Search';
 import { IconMenu2 } from '@tabler/icons-react';
 import Network from './Networks';
+import { useSession } from 'next-auth/react';
 
 interface ItemType {
   toggleMobileSidebar:  (event: React.MouseEvent<HTMLElement>) => void;
@@ -14,8 +15,7 @@ interface ItemType {
 
 const Header = ({toggleMobileSidebar}: ItemType) => {
 
-  // const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
-  // const lgDown = useMediaQuery((theme) => theme.breakpoints.down('lg'));
+  const { data: session } = useSession();
 
   
   const AppBarStyled = styled(AppBar)(({ theme }) => ({
@@ -48,12 +48,15 @@ const Header = ({toggleMobileSidebar}: ItemType) => {
         >
           <IconMenu2 width="20" height="20" />
         </IconButton>
-          <h1>CloudWallet</h1>
-          <Network />
+          <h1>Llavero</h1>
+          
         <Box flexGrow={1} />
+        { session &&
         <Stack spacing={1} direction="row" alignItems="center">
+          <Network />
           <Profile />
         </Stack>
+      }
       </ToolbarStyled>
     </AppBarStyled>
   );
