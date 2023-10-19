@@ -6,13 +6,15 @@ import { JsonRpcProvider } from "ethers";
 import * as  kmsClient from "@aws-sdk/client-kms";
 import { AwsKmsSigner } from "@dennisdang/ethers-aws-kms-signer";
 import { getKeyId } from "@/utils/crypto";
-import { WalletInfo } from "../../wallet-models";
+import { WalletInfo } from "@/models/interfaces";
 
-export default async function getWallet(name: string) : Promise<WalletInfo> {
+export default async function getWallet(name:string, username: string) : Promise<WalletInfo> {
     try {
         assert(name);
         const userRepo = new UserRepository();
-        const user = await userRepo.getUser("ranu"); //TODO user hardcoded
+        const user = await userRepo.getUser(username); 
+        if(!user) throw new Error("User not found");
+        
         const keyDb = await userRepo.getKey(name, "", user);
         const provider = new JsonRpcProvider("https://sepolia.infura.io/v3/8a30a48106eb413bb29d9ff89d0b99a6"); //TODO get from an endpoint
         const keyClient = new kmsClient.KMSClient();

@@ -5,7 +5,7 @@ import { JsonRpcProvider } from "ethers";
 import { AwsKmsSigner } from "@dennisdang/ethers-aws-kms-signer";
 import * as  kmsClient from "@aws-sdk/client-kms";
 import { getKeyId } from "@/utils/crypto";
-import { WalletInfo } from "../../wallet-models";
+import { WalletInfo } from "@/models/interfaces";
 
 
 export default async function listWallets(username: string) : Promise<WalletInfo[]> {
@@ -24,9 +24,9 @@ export default async function listWallets(username: string) : Promise<WalletInfo
             console.log("balance: ", balance);
             return { address: addr, balance, name: key.name, description: key.description };
         });
-        const ethLikKeys = await Promise.all(keysPromise);
-        console.log("ethLikKeys: ", ethLikKeys);
-        return ethLikKeys;
+        const ethKeys = await Promise.all(keysPromise);
+        console.log("ethKeys: ", ethKeys);
+        return ethKeys;
     }
     catch (error) {
         logger.error(error, "Error in list Wallet");

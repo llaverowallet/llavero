@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import listWallets from './actions/list-wallets';
+import listWallets from '../actions/list-wallets';
 import createLogger from "@/utils/logger";
-import getWallet from './actions/get-wallet';
+import getWallet from '../actions/get-wallet';
 import { assert } from 'console';
 import { AUTH_OPTIONS } from '@/utils/auth';
-import { getServerSession } from 'next-auth';
+import { getServerSession,  } from 'next-auth';
 const logger = createLogger("Wallet endpoint");
+
 
 type firstLevelActions = "list" | "create"; //| "delete"
 type secondLevelActions = "update" | "get" | "delete";
@@ -22,8 +23,8 @@ export async function GET(req: NextRequest) {
             case "get":
                 console.log("entro");
                 assert(id !== undefined, "id is undefined");
-                const wallet = await getWallet(id as string);
-                console.log("wallet: ", wallet);
+                if(!session?.user?.email) return NextResponse.json({ message: 'Not authorized' }, { status: 401 });                
+                const wallet = await getWallet(id as string, session?.user?.email);
                 return Response.json(wallet);
             default:
                 console.log("default action: ", action);
@@ -33,6 +34,10 @@ export async function GET(req: NextRequest) {
         logger.error(error);
         return Response.error();
     }
+}
+
+export async function POST(req: NextRequest) {  
+    return Response.error();
 }
 
 

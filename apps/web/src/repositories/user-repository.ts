@@ -8,7 +8,6 @@ export type KmsKey = Entity<typeof UserSchema.models.Keys>;
 export type UserKeys = { user: User, keys: KmsKey[] };
 export type UserNetworks = { user: User, networks: Network[] };
 import createLogger from "@/utils/logger";
-import { assert } from 'console';
 const logger = createLogger("user-repository");
 
 export class UserRepository {
@@ -40,36 +39,55 @@ export class UserRepository {
     }
 
     async createUser(user: User) {
-        const newUser = await this.userModel.create(user);
-        return newUser;
+        try {
+            const newUser = await this.userModel.create(user);
+            return newUser;
+        } catch (error) {
+            logger.error(error, "Error in UserRepository createUser");
+            throw error;
+        }
     }
 
     async getKeys(username = "", user?: User) {
-        assert(username || user);
-        const selectedUser = user || await this.getUser(username);
-        assert(selectedUser);
-        const keys = await this.keysModel.find({ userId: selectedUser?.userId });
-        return keys;
+        try {
+            if (!username && !user) throw new Error("Either username or user must be provided");
+            const selectedUser = user || await this.getUser(username);
+            const keys = await this.keysModel.find({ userId: selectedUser?.userId });
+            return keys;
+        } catch (error) {
+            logger.error(error, "Error in UserRepository getKeys");
+            throw error;
+        }
     }
 
     async getKey(name: string, username = "", user?: User): Promise<KmsKey | undefined> {
-        const keys = await this.getKeys(username, user);
-        const selectedKey = keys.find(k => k.name === name);
-        return selectedKey;
+        try {
+            const keys = await this.getKeys(username, user);
+            const selectedKey = keys.find(k => k.name === name);
+            return selectedKey;
+        } catch (error) {
+            logger.error(error, "Error in UserRepository getKey");
+            throw error;
+        }
     }
 
     async createKeys(keys: KmsKey[], username?: string, user?: User) {
-        assert(username && user);
-        const selectedUser = user || await this.getUser(username ?? "");
-        assert(selectedUser);
-        let promises = new Array<Promise<KmsKey>>();
-        keys.forEach((key, idx) => {
-            console.log("Creating key idx: ", idx);
-            promises.push(this.keysModel.upsert({ keyArn: key.keyArn, username: username, name: "key" + idx, userId: selectedUser?.userId }));
-            console.log("Creating key: ", key.keyArn);
-        });
-        await Promise.all(promises);
-        console.log("Keys created");
+        try {
+            if (!username && !user) throw new Error("Either username or user must be provided");
+            const selectedUser = user || await this.getUser(username ?? "");
+            if (!selectedUser) throw new Error("User not found");
+            let promises = new Array<Promise<KmsKey>>();
+            keys.forEach((key, idx) => {
+                console.log("Creating key idx: ", idx);
+                promises.push(this.keysModel.upsert({ keyArn: key.keyArn, username: username, name: "key" + idx, userId: selectedUser?.userId }));
+                console.log("Creating key: ", key.keyArn);
+            });
+            await Promise.all(promises);
+            console.log("Keys created");
+        } catch (error) {
+            logger.error(error, "Error in UserRepository createKeys");
+            throw error;
+        }
     }
 
 
@@ -86,7 +104,7 @@ export class UserRepository {
 
             console.log("Table updated");
         } catch (error) {
-            //logger.error(error, "Error in UserRepository updateTable");
+            logger.error(error, "Error in UserRepository updateTable");
             console.error(error, "Error in UserRepository updateTable");
             throw error;
         }

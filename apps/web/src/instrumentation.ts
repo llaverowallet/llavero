@@ -10,8 +10,9 @@ export async function register() {
 
  try {
    console.log("registering instrumentation");
-   const siteUrl = await getParameterValue(process.env.SITEURL_PARAM_NAME ?? "emptySiteUrlParamName");
+   const siteUrl = await getParameterValue(process.env.SITEURL_PARAM_NAME ?? "https://localhost:3000");
    process.env.NEXTAUTH_URL = siteUrl;
+   process.env.NEXT_PUBLIC_SITE_URL = siteUrl;
  } catch (error) {
     logger.error(error);
     throw new AggregateError([new Error("Error in instrumentation"), error]);

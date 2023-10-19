@@ -1,23 +1,20 @@
+
 import React from 'react';
 import { Box, AppBar, Toolbar, styled, Stack, IconButton, Badge, Button } from '@mui/material';
 import PropTypes from 'prop-types';
 
 // components
 import Profile from './Profile';
-import Search from './Search';
 import { IconMenu2 } from '@tabler/icons-react';
 import Network from './Networks';
 import { useSession } from 'next-auth/react';
 
 interface ItemType {
-  toggleMobileSidebar:  (event: React.MouseEvent<HTMLElement>) => void;
+  toggleMobileSidebar: (event: React.MouseEvent<HTMLElement>) => void;
 }
 
-const Header = ({toggleMobileSidebar}: ItemType) => {
-
+const Header = ({ toggleMobileSidebar }: ItemType) => {
   const { data: session } = useSession();
-
-  
   const AppBarStyled = styled(AppBar)(({ theme }) => ({
     boxShadow: 'none',
     background: theme.palette.background.paper,
@@ -48,15 +45,16 @@ const Header = ({toggleMobileSidebar}: ItemType) => {
         >
           <IconMenu2 width="20" height="20" />
         </IconButton>
-          <h1>Llavero</h1>
-          
+ 
+        <img src='logo.svg' alt='Llavero CloudWallet' width='44px' height='44px' />
+        <h1>Llavero</h1>
         <Box flexGrow={1} />
-        { session &&
-        <Stack spacing={1} direction="row" alignItems="center">
-          <Network />
-          <Profile />
-        </Stack>
-      }
+        {session &&
+          <Stack spacing={1} direction="row" alignItems="center">
+            <Network />
+            <Profile />
+          </Stack>
+        }
       </ToolbarStyled>
     </AppBarStyled>
   );

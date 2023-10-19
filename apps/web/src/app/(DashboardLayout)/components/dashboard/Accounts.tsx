@@ -8,7 +8,7 @@ import { Typography, Table, Box,
   TableHead,
   TableRow, } from "@mui/material";
 import { useEffect } from "react";
-import { WalletInfo } from "@/app/wallet/wallet-models";
+import { WalletInfo } from "@/models/interfaces";
 
 
 const Accounts = () => {
