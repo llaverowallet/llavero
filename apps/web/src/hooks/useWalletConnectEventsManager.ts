@@ -65,6 +65,7 @@ export default function useWalletConnectEventsManager(initialized: boolean) {
     try {
       return web3wallet.engine.signClient.session.get(topic);
     } catch (error: any) {
+      console.error(error);
       web3wallet.engine.signClient.session.delete(topic, {code: 0, message: error.message} as ErrorResponse);
     }
   }

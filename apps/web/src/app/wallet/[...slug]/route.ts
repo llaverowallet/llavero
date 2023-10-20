@@ -46,17 +46,26 @@ export async function POST(req: NextRequest) {
         if(!session || !session?.user?.email) return NextResponse.json({ message: 'Not authorized' }, { status: 401 });
         const { action, addr } = getAction(req);
         let transaction: any;
+        let chainId: string;
+        let body: any;
         console.log("action POST: ", action);
         switch (action as string) {
             case "personalSign":
                 const { message } = await req.json();
                 return Response.json(await personalSign(session?.user?.email, addr as string, message));
             case "ethSendTransaction":
-                transaction  = (await req.json()).transaction;
-                return Response.json(await ethSendTransaction(session?.user?.email, addr as string, transaction));
+                body = await req.json();
+                console.log("body: ", body);
+                transaction = body?.transaction;
+                chainId = body?.chainId;
+                return Response.json(await ethSendTransaction(session?.user?.email, addr as string, transaction, chainId));
             case "ethSignTransaction":
-                transaction  = (await req.json()).transaction;
-                return Response.json(await ethSignTransaction(session?.user?.email, addr as string, transaction));
+                body = await req.json();
+                console.log("body: ", body);
+                transaction = body?.transaction;
+                chainId = body?.chainId;
+                console.log("transaction: ", transaction);  
+                return Response.json(await ethSignTransaction(session?.user?.email, addr as string, transaction, chainId));
             default:
                 console.log("default action: ", action);
                 throw new Error("Invalid Wallet action for GET HTTP method");

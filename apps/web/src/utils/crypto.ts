@@ -1,3 +1,5 @@
+import { EIP155_CHAINS, EIP155_MAINNET_CHAINS, EIP155_TEST_CHAINS, TEIP155Chain } from '@/data/EIP155Data';
+import { getChainData } from '@/data/chainsUtil';
 import { isAddress, isHexString, toUtf8String } from 'ethers';
 /**
  * Converts hex to utf8 string if it is valid bytes
@@ -48,6 +50,10 @@ export function getAddressFromParams(addresses: string[], params: any) {
     })
 
     return address;
+}
+
+export function getChainRpc(chainId: string) {
+    return EIP155_CHAINS[chainId].rpc;
 }
 
 

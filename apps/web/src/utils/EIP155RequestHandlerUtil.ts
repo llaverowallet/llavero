@@ -21,7 +21,7 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
     case EIP155_SIGNING_METHODS.ETH_SIGN:
       try {
         const message = getSignParamsMessage(request.params);
-        const signedMessage = await fetch(`/wallet/${addr}/personalSign`, {
+        const signedMessageResponse = await fetch(`/wallet/${addr}/personalSign`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -30,8 +30,7 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
             message
           })
         });
-        const signedMessageJson = await signedMessage.json();
-        debugger;
+        const signedMessageJson = await signedMessageResponse.json();
         return formatJsonRpcResult(id, signedMessageJson.signed);
       } catch (error: any) {
         console.error(error);
@@ -57,12 +56,24 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
 
     case EIP155_SIGNING_METHODS.ETH_SEND_TRANSACTION:
       try {
-        throw new Error("Not implemented");
-        //const provider = new JsonRpcProvider(EIP155_CHAINS[chainId as TEIP155Chain].rpc);
-        //const sendTransaction = request.params[0];
-        //const connectedWallet = addr.connect(provider);
-        //const { hash } = await connectedWallet.sendTransaction(sendTransaction);
-        //return formatJsonRpcResult(id, hash);
+        const transaction = request.params[0];
+        debugger;
+        const signedMessageResponse = await fetch(`/wallet/${addr}/ethSendTransaction`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            transaction,
+            chainId
+          })
+        });
+        const sendedTx = await signedMessageResponse.json();
+        debugger;
+        
+        // const connectedWallet = addr.connect(provider);
+        // const { hash } = await connectedWallet.sendTransaction(sendTransaction);
+        return formatJsonRpcResult(id, sendedTx.hash);
       } catch (error: any) {
         console.error(error)
         alert(error.message)
@@ -71,10 +82,20 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
 
     case EIP155_SIGNING_METHODS.ETH_SIGN_TRANSACTION:
       try {
-        throw new Error("Not implemented");
-        // const signTransaction = request.params[0];
-        // const signature = await addr.signTransaction(signTransaction);
-        // return formatJsonRpcResult(id, signature);
+        const transaction = request.params[0];
+        const signedMessageResponse = await fetch(`/wallet/${addr}/ethSignTransaction`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            transaction,
+            chainId 
+          })
+        });
+        debugger;
+        const signedTxJson = await signedMessageResponse.json();
+        return formatJsonRpcResult(id, signedTxJson.signed);
       } catch (error: any) {
         console.error(error)
         alert(error.message)

@@ -1,18 +1,10 @@
-import { Fragment, useState } from 'react'
-import { Divider, Modal, Text } from '@nextui-org/react'
-
-import ModalFooter from '@/components/ModalFooter'
-import ProjectInfoCard from '@/components/ProjectInfoCard'
-import RequestDataCard from '@/components/RequestDataCard'
-import RequesDetailsCard from '@/components/RequestDetalilsCard'
-import RequestMethodCard from '@/components/RequestMethodCard'
-import RequestModalContainer from '@/components/RequestModalContainer'
-import VerifyInfobox from '@/components/VerifyInfobox'
-import ModalStore from '@/store/ModalStore'
-import { approveEIP155Request, rejectEIP155Request } from '@/utils/EIP155RequestHandlerUtil'
-import { styledToast } from '@/utils/HelperUtil'
-import { web3wallet } from '@/utils/WalletConnectUtil'
-import RequestModal from './RequestModal'
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import ModalStore from '@/store/modalStore';
+import { approveEIP155Request, rejectEIP155Request } from '@/utils/EIP155RequestHandlerUtil';
+import { web3wallet } from '@/utils/walletConnectUtil';
+import { useSnapshot } from 'valtio';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from '@mui/material';
+import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 
 export default function SessionSendTransactionModal() {
   const [loading, setLoading] = useState(false)
@@ -20,10 +12,27 @@ export default function SessionSendTransactionModal() {
   // Get request and wallet data from store
   const requestEvent = ModalStore.state.data?.requestEvent
   const requestSession = ModalStore.state.data?.requestSession
+  const { open, view } = useSnapshot(ModalStore.state)
 
-  // Ensure request and wallet are defined
-  if (!requestEvent || !requestSession) {
-    return <Text>Missing request data</Text>
+  const onClose = useCallback(() => { // handle the modal being closed by click outside
+    if (open) {
+      ModalStore.close()
+    }
+  }, [open]);
+
+  const descriptionElementRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (open) {
+      const { current: descriptionElement } = descriptionElementRef;
+      if (descriptionElement !== null) {
+        descriptionElement.focus();
+      }
+    }
+  }, [open]);
+
+  if (!requestEvent || !requestSession) { // Ensure request and wallet are defined
+    console.error('Request event or wallet is undefined');
+    return <></>
   }
 
   // Get required proposal data
@@ -38,15 +47,16 @@ export default function SessionSendTransactionModal() {
       setLoading(true)
       try {
         const response = await approveEIP155Request(requestEvent)
+        debugger;
         await web3wallet.respondSessionRequest({
           topic,
           response
-        })
+        });
       } catch (e) {
-        styledToast((e as Error).message, 'error')
+        console.error("onApprove", e);
         return
       }
-      ModalStore.close()
+      ModalStore.close();
     }
   }
 
@@ -60,25 +70,60 @@ export default function SessionSendTransactionModal() {
           response
         })
       } catch (e) {
-        styledToast((e as Error).message, 'error')
+        console.error("onReject", e);
         return
       }
       ModalStore.close()
     }
   }
 
+
   return (
-    <RequestModal
-      intention="sign a transaction"
-      metadata={requestSession.peer.metadata}
-      onApprove={onApprove}
-      onReject={onReject}
-    >
-      <RequestDataCard data={transaction} />
-      <Divider y={1} />
-      <RequesDetailsCard chains={[chainId ?? '']} protocol={requestSession.relay.protocol} />
-      <Divider y={1} />
-      <RequestMethodCard methods={[request.method]} />
-    </RequestModal>
+    <>
+    <Dialog
+        open={open}
+        onClose={onClose}
+        scroll="paper"
+        aria-labelledby="scroll-dialog-title"
+        aria-describedby="scroll-dialog-description" >
+        <DialogTitle id="scroll-dialog-title">Sign Transaction</DialogTitle>
+        <DialogContent dividers={true}>
+          <DialogContentText
+            id="scroll-dialog-description"
+            ref={descriptionElementRef}
+            tabIndex={-1}>
+            <h1>Request a signature By: </h1>
+            <Typography>
+              <u>Name: </u> {requestSession.peer.metadata.name} <br />
+              <u>Description:</u> {requestSession.peer.metadata.description}<br />
+              <u>URL:</u>  {requestSession.peer.metadata.url}<br />
+            </Typography>
+            <Box>
+              <TextareaAutosize  minRows={3} value={JSON.stringify(transaction, null, 2)} />
+            </Box>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onReject}>Cancel</Button>
+          <Button onClick={onApprove}>Accept</Button>
+        </DialogActions>
+      </Dialog>
+    </>
   )
 }
+
+//   return (
+//     <RequestModal
+//       intention="sign a transaction"
+//       metadata={requestSession.peer.metadata}
+//       onApprove={onApprove}
+//       onReject={onReject}
+//     >
+//       <RequestDataCard data={transaction} />
+//       <Divider y={1} />
+//       <RequesDetailsCard chains={[chainId ?? '']} protocol={requestSession.relay.protocol} />
+//       <Divider y={1} />
+//       <RequestMethodCard methods={[request.method]} />
+//     </RequestModal>
+//   )
+// }

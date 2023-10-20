@@ -1,10 +1,9 @@
-import RequesDetailsCard from '@/components/RequestDetalilsCard'
-import ModalStore from '@/store/modalStore'
-import { approveEIP155Request, rejectEIP155Request } from '@/utils/EIP155RequestHandlerUtil'
-import { getSignParamsMessage } from '@/utils/crypto'
-import { web3wallet } from '@/utils/walletConnectUtil'
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from '@mui/material'
-import { useCallback, useEffect, useRef } from 'react'
+import ModalStore from '@/store/modalStore';
+import { approveEIP155Request, rejectEIP155Request } from '@/utils/EIP155RequestHandlerUtil';
+import { getSignParamsMessage } from '@/utils/crypto';
+import { web3wallet } from '@/utils/walletConnectUtil';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from '@mui/material';
+import { useCallback, useEffect, useRef } from 'react';
 import { useSnapshot } from 'valtio';
 
 export default function SessionSignModal() {
@@ -37,6 +36,7 @@ export default function SessionSignModal() {
 
   const { topic, params } = requestEvent
   const { request, chainId } = params
+  const transaction = request.params[0]
 
   
   const message = getSignParamsMessage(request.params) // Get message, convert it to UTF8 string if it is valid hex
@@ -44,8 +44,7 @@ export default function SessionSignModal() {
   // Handle approve action (logic varies based on request method)
   async function onApprove() {
     if (requestEvent) {
-      const response = await approveEIP155Request(requestEvent)
-      debugger;
+      const response = await approveEIP155Request(requestEvent);
       try {
         await web3wallet.respondSessionRequest({
           topic,
@@ -53,9 +52,9 @@ export default function SessionSignModal() {
         });
       } catch (e) {
         console.error("onApprove",e);
-        return
+        return;
       }
-      ModalStore.close()
+      ModalStore.close();
     }
   }
 
@@ -70,7 +69,7 @@ export default function SessionSignModal() {
         })
       } catch (e) {
         console.error("onReject",e);
-        return
+        return;
       }
       ModalStore.close()
     }
@@ -111,21 +110,3 @@ export default function SessionSignModal() {
     </>
   )
 }
-
-// <RequestModal
-//       intention="request a signature"
-//       metadata={requestSession.peer.metadata}
-//       onApprove={onApprove}
-//       onReject={onReject}
-//     >
-//       <RequesDetailsCard chains={[chainId ?? '']} protocol={requestSession.relay.protocol} />
-//       <Divider y={1} />
-//       <Row>
-//         <Col>
-//           <Text h5>Message</Text>
-//           <Text color="$gray400" data-testid="request-message-text">
-//             {message}
-//           </Text>
-//         </Col>
-//       </Row>
-//     </RequestModal> 

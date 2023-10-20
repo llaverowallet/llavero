@@ -39,10 +39,10 @@ export default function SessionSignTypedDataModal() {
         await web3wallet.respondSessionRequest({
           topic,
           response
-        })
+        });
       } catch (e) {
-        styledToast((e as Error).message, 'error')
-        return
+        styledToast((e as Error).message, 'error');
+        return;
       }
       ModalStore.close()
     }
@@ -58,8 +58,8 @@ export default function SessionSignTypedDataModal() {
           response
         })
       } catch (e) {
-        styledToast((e as Error).message, 'error')
-        return
+        styledToast((e as Error).message, 'error');
+        return;
       }
       ModalStore.close()
     }

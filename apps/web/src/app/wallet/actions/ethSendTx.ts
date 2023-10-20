@@ -4,14 +4,15 @@ import { UserRepository } from "@/repositories/user-repository";
 import { JsonRpcProvider, TransactionLike, TransactionResponse } from "ethers";
 import { AwsKmsSigner } from "@dennisdang/ethers-aws-kms-signer";
 import * as  kmsClient from "@aws-sdk/client-kms";
-import { getKeyId } from "@/utils/crypto";
+import { getChainRpc, getKeyId } from "@/utils/crypto";
+import { ReplySharp } from "@mui/icons-material";
 
 /**
  * ETH_SEND_TRANSACTION
  * @param username 
  * @returns 
  */
-export default async function ethSendTransaction(username: string, address: string, transaction: any): Promise<TransactionResponse> {
+export default async function ethSendTransaction(username: string, address: string, transaction: any, chainId:string): Promise<TransactionResponse> {
     try {
         const userRepo = new UserRepository();
         const user = await userRepo.getUser(username);
@@ -20,8 +21,9 @@ export default async function ethSendTransaction(username: string, address: stri
         if (!key?.keyArn) throw new Error("KeyArn not found");
 
         const keyClient = new kmsClient.KMSClient();
-        const provider = new JsonRpcProvider("https://sepolia.infura.io/v3/8a30a48106eb413bb29d9ff89d0b99a6"); //TODO get from an endpoint
-        const signer = new AwsKmsSigner(getKeyId(key.keyArn), keyClient, provider);
+        const rpc = getChainRpc(chainId);
+        const provider = new JsonRpcProvider(rpc); //TODO get from an endpoint
+        const signer = new AwsKmsSigner(getKeyId(key.keyArn), keyClient, provider );
         const response = await signer.sendTransaction(transaction as TransactionLike);
         return response;
     }

@@ -8,10 +8,17 @@
  */
 export type TEIP155Chain = keyof typeof EIP155_CHAINS
 
-/**
- * Chains
- */
-export const EIP155_MAINNET_CHAINS = {
+
+export interface Chain {
+  chainId: number;
+  name: string;
+  logo: string;
+  rgb: string;
+  rpc: string;
+  namespace: string;
+}
+
+export const EIP155_MAINNET_CHAINS: Record<string, Chain> = {
   'eip155:1': {
     chainId: 1,
     name: 'Ethereum',
@@ -62,7 +69,7 @@ export const EIP155_MAINNET_CHAINS = {
   }
 }
 
-export const EIP155_TEST_CHAINS = {
+export const EIP155_TEST_CHAINS : Record<string, Chain>  = {
   'eip155:5': {
     chainId: 5,
     name: 'Ethereum Goerli',
@@ -84,7 +91,7 @@ export const EIP155_TEST_CHAINS = {
     name: 'Polygon Mumbai',
     logo: '/chain-logos/eip155-137.png',
     rgb: '130, 71, 229',
-    rpc: 'https://matic-mumbai.chainstacklabs.com',
+    rpc: 'https://polygon-mumbai-bor.publicnode.com',
     namespace: 'eip155'
   },
   'eip155:420': {
