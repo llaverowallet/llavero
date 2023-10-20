@@ -1,6 +1,6 @@
-import { Web3Wallet, IWeb3Wallet } from '@walletconnect/web3wallet'
-import { Core } from '@walletconnect/core'
-export let web3wallet: IWeb3Wallet
+import { Web3Wallet, IWeb3Wallet } from '@walletconnect/web3wallet';
+import { Core } from '@walletconnect/core';
+export let web3wallet: IWeb3Wallet;
 
 export async function createWeb3Wallet(relayerRegionURL: string) {
   try {

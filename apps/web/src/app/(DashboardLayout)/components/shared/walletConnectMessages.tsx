@@ -3,7 +3,10 @@ import { useSnapshot } from 'valtio';
 import ModalStore from '@/store/modalStore';
 import SessionProposalModal from './modals/SessionProposalModal';
 
-export default function WalletConnectModal() {
+
+
+///Handles WalletConnect messages
+export default function WalletConnectMessages() {
     const { open, view } = useSnapshot(ModalStore.state);
 
     // // handle the modal being closed by click outside
@@ -14,8 +17,7 @@ export default function WalletConnectModal() {
     // }, [open]);
 
     return (
-            <>
-            <span>walletconnect</span>
+        <>
             {view === 'SessionProposalModal' && <SessionProposalModal />}
         </>
     );

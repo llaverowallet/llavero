@@ -7,7 +7,8 @@ import useWalletConnectEventsManager from "@/hooks/useWalletConnectEventsManager
 import { useSession } from "next-auth/react";
 import { web3wallet } from "@/utils/walletConnectUtil";
 import { RELAYER_EVENTS } from '@walletconnect/core';
-import WalletConnectModal from "./components/shared/walletConnectModal";
+import WalletConnectMessages from "./components/shared/walletConnectMessages"; 
+
 
 const MainWrapper = styled("div")(() => ({
   display: "flex",
@@ -87,7 +88,7 @@ export default function RootLayout({
             {/* <Footer /> */}
           </Container>
         </PageWrapper>
-        <WalletConnectModal />
+        <WalletConnectMessages />
     </MainWrapper>
   );
 }

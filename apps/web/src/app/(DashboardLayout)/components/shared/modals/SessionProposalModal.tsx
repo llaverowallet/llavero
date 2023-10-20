@@ -140,8 +140,7 @@ export default function SessionProposalModal() {
         supportedNamespaces
       });
 
-      console.log('approving namespaces:', namespaces)
-      debugger;
+      console.log('approving namespaces:', namespaces);
       try {
         await web3wallet.approveSession({
           id,
