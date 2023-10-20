@@ -26,7 +26,7 @@ export default async function personalSign(username: string, address: string, me
         const signer = new AwsKmsSigner(getKeyId(key.keyArn), keyClient, provider);
         const signed = await signer.signMessage(message);
         console.log("addr: ", key.address);
-        return { address: key.address, signed, message };
+        return { address: address, signed, message };
     }
     catch (error) {
         logger.error(error, "Error in list Wallet");

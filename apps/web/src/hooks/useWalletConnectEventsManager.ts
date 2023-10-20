@@ -5,6 +5,7 @@ import SettingsStore from '@/store/settingsStore';
 import { web3wallet } from '@/utils/walletConnectUtil';
 import { SignClientTypes } from '@walletconnect/types';
 import { useCallback, useEffect } from 'react';
+import { ErrorResponse } from "@walletconnect/jsonrpc-types";
 
 export default function useWalletConnectEventsManager(initialized: boolean) {
   /******************************************************************************
@@ -35,7 +36,7 @@ export default function useWalletConnectEventsManager(initialized: boolean) {
       console.log('session_request', requestEvent)
       const { topic, params, verifyContext } = requestEvent;
       const { request } = params;
-      const requestSession = web3wallet.engine.signClient.session.get(topic);
+      const requestSession = getRequestSession(topic);
       // set the verify context so it can be displayed in the projectInfoCard
       SettingsStore.setCurrentRequestVerifyContext(verifyContext);
       console.log('session_request_method', request.method);
@@ -58,7 +59,15 @@ export default function useWalletConnectEventsManager(initialized: boolean) {
       }
     },
     []
-  )
+  );
+
+  const getRequestSession = (topic: string) => {
+    try {
+      return web3wallet.engine.signClient.session.get(topic);
+    } catch (error: any) {
+      web3wallet.engine.signClient.session.delete(topic, {code: 0, message: error.message} as ErrorResponse);
+    }
+  }
 
   /******************************************************************************
    * Set up WalletConnect event listeners

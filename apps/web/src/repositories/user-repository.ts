@@ -8,6 +8,7 @@ export type KmsKey = Entity<typeof UserSchema.models.Keys>;
 export type UserKeys = { user: User, keys: KmsKey[] };
 export type UserNetworks = { user: User, networks: Network[] };
 import createLogger from "@/utils/logger";
+import { v4 as uuidv4 } from 'uuid';
 const logger = createLogger("user-repository");
 
 export class UserRepository {
@@ -40,6 +41,7 @@ export class UserRepository {
 
     async createUser(user: User) {
         try {
+            user.userId = uuidv4();
             const newUser = await this.userModel.create(user);
             return newUser;
         } catch (error) {
@@ -78,8 +80,10 @@ export class UserRepository {
             if (!selectedUser) throw new Error("User not found");
             let promises = new Array<Promise<KmsKey>>();
             keys.forEach((key, idx) => {
-                console.log("Creating key idx: ", idx);
-                promises.push(this.keysModel.upsert({ keyArn: key.keyArn, username: username, name: "key" + idx, userId: selectedUser?.userId }));
+                const name = key.name || "key" + idx;
+                console.log("Creating key name: ", name, key.address);
+                promises.push(this.keysModel.upsert({ keyArn: key.keyArn, username: username, 
+                    name: name, userId: selectedUser?.userId, address: key.address}));
                 console.log("Creating key: ", key.keyArn);
             });
             await Promise.all(promises);

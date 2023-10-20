@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useSnapshot } from 'valtio';
 import ModalStore from '@/store/modalStore';
 import SessionProposalModal from './modals/SessionProposalModal';
+import SessionSignModal from './modals/SessionSignModal';
 
 
 
@@ -19,6 +20,7 @@ export default function WalletConnectMessages() {
     return (
         <>
             {view === 'SessionProposalModal' && <SessionProposalModal />}
+            {view === 'SessionSignModal' && <SessionSignModal />}
         </>
     );
 }

@@ -6,7 +6,9 @@ import { assert } from 'console';
 import { AUTH_OPTIONS } from '@/utils/auth';
 import { getServerSession,  } from 'next-auth';
 import personalSign from '../actions/personalSign';
-const logger = createLogger("Wallet endpoint");
+import ethSendTransaction from '../actions/ethSendTx';
+import ethSignTransaction from '../actions/ethSignTx';
+const logger = createLogger("wallet-endpoint");
 
 
 type firstLevelActions = "list" | "get";
@@ -15,6 +17,7 @@ export async function GET(req: NextRequest) {
     try {
         const session = await getServerSession(AUTH_OPTIONS);
         const { action, addr } = getAction(req);
+        console.log("action GET: ", action);
         switch (action) {
             case "list":
                 console.log("session: ", session);
@@ -43,16 +46,17 @@ export async function POST(req: NextRequest) {
         if(!session || !session?.user?.email) return NextResponse.json({ message: 'Not authorized' }, { status: 401 });
         const { action, addr } = getAction(req);
         let transaction: any;
+        console.log("action POST: ", action);
         switch (action as string) {
             case "personalSign":
                 const { message } = await req.json();
                 return Response.json(await personalSign(session?.user?.email, addr as string, message));
             case "ethSendTransaction":
                 transaction  = (await req.json()).transaction;
-                return Response.json(await personalSign(session?.user?.email, addr as string, transaction));
+                return Response.json(await ethSendTransaction(session?.user?.email, addr as string, transaction));
             case "ethSignTransaction":
                 transaction  = (await req.json()).transaction;
-                return Response.json(await personalSign(session?.user?.email, addr as string, transaction));
+                return Response.json(await ethSignTransaction(session?.user?.email, addr as string, transaction));
             default:
                 console.log("default action: ", action);
                 throw new Error("Invalid Wallet action for GET HTTP method");
@@ -100,5 +104,6 @@ function isFirstLevelAction(input: unknown): input is firstLevelActions {
 }
 
 function isSecondLevelAction(input: unknown): input is secondLevelActions {
-    return input === 'update' || input === 'get' || input === 'delete';
+    return input === 'update' || input === 'get' || input === 'delete' || 
+    input === 'personalSign' || input === 'ethSendTransaction' || input === 'ethSignTransaction';
 }

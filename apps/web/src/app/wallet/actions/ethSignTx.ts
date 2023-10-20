@@ -13,7 +13,7 @@ import { SignedTransaction } from "@/models/interfaces";
  * @param username 
  * @returns 
  */
-export default async function EthSignTransaction(username: string, address: string, transaction: any): Promise<SignedTransaction> {
+export default async function ethSignTransaction(username: string, address: string, transaction: any): Promise<SignedTransaction> {
     try {
         const userRepo = new UserRepository();
         const user = await userRepo.getUser(username);
@@ -25,7 +25,7 @@ export default async function EthSignTransaction(username: string, address: stri
         const provider = new JsonRpcProvider("https://sepolia.infura.io/v3/8a30a48106eb413bb29d9ff89d0b99a6"); //TODO get from an endpoint
         const signer = new AwsKmsSigner(getKeyId(key.keyArn), keyClient, provider);
         const signed = await signer.signTransaction(transaction as TransactionLike);
-        return { address: key.address, signed, transaction };
+        return { address: address, signed, transaction };
     }
     catch (error) {
         logger.error(error, "Error in list Wallet");

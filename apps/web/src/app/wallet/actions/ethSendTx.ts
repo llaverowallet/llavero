@@ -11,7 +11,7 @@ import { getKeyId } from "@/utils/crypto";
  * @param username 
  * @returns 
  */
-export default async function EthSendTransaction(username: string, address: string, transaction: any): Promise<TransactionResponse> {
+export default async function ethSendTransaction(username: string, address: string, transaction: any): Promise<TransactionResponse> {
     try {
         const userRepo = new UserRepository();
         const user = await userRepo.getUser(username);

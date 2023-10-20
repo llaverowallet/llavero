@@ -10,7 +10,7 @@ export interface IBrowserWallet {
 
 export interface WalletInfo {
     address: string,
-    balance: bigint,
+    balance: string,
     name: string,
     description?: string
 }

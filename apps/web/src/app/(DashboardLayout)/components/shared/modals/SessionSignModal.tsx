@@ -45,11 +45,12 @@ export default function SessionSignModal() {
   async function onApprove() {
     if (requestEvent) {
       const response = await approveEIP155Request(requestEvent)
+      debugger;
       try {
         await web3wallet.respondSessionRequest({
           topic,
           response
-        })
+        });
       } catch (e) {
         console.error("onApprove",e);
         return

@@ -59,7 +59,7 @@ const UserSchema  = {
                 "type": String,
                 "value": "User#{userId}",
                 "required": true,
-                "unique": true
+                "unique": true,
             },
             "name": {
                 "type": String,
@@ -80,7 +80,6 @@ const UserSchema  = {
             },
             "userId": {
                 "type": String,
-                "generate": "uuid",
                 "required": true,
                 "unique": true
             },
@@ -106,7 +105,8 @@ const UserSchema  = {
             "sk": {
                 "type": String,
                 "value": "Keys#${address}",
-                "required": true
+                "required": false,
+                "unique": true
             },
             "name": {
                 "type": String,
@@ -144,6 +144,8 @@ const UserSchema  = {
         "typeField": "_type"
     },
     "queries": {},
-    "version": "1.0.0"
-}
+    "version": "1.0.0",
+    "changed": true
+};
+
 export default UserSchema;

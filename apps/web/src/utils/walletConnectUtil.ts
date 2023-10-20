@@ -1,5 +1,6 @@
 import { Web3Wallet, IWeb3Wallet } from '@walletconnect/web3wallet';
 import { Core } from '@walletconnect/core';
+import SettingsStore from '@/store/settingsStore';
 export let web3wallet: IWeb3Wallet;
 
 export async function createWeb3Wallet(relayerRegionURL: string) {
@@ -29,9 +30,9 @@ export async function createWeb3Wallet(relayerRegionURL: string) {
 }
 
 export async function updateSignClientChainId(chainId: string, address: string) {
-  console.log('chainId', chainId, address)
+  console.log('chainId', chainId, address);
   // get most recent session
-  const sessions = web3wallet.getActiveSessions()
+  const sessions = web3wallet.getActiveSessions();
   if (!sessions) return
   const namespace = chainId.split(':')[0]
   Object.values(sessions).forEach(async session => {
@@ -71,7 +72,8 @@ export async function updateSignClientChainId(chainId: string, address: string) 
       },
       chainId
     }
-    await web3wallet.emitSessionEvent(chainChanged)
-    await web3wallet.emitSessionEvent(accountsChanged)
+    await web3wallet.emitSessionEvent(chainChanged);
+    await web3wallet.emitSessionEvent(accountsChanged);
+    SettingsStore.setEIP155Address(address); //updates the selected address
   })
 }

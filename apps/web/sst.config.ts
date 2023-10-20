@@ -16,7 +16,7 @@ process.setMaxListeners(Infinity);
 const localhostUrl = "http://localhost:3000";
 
 const installationConfig = {
-  username: check<string>(process.env.EMAIL),
+  email: check<string>(process.env.EMAIL),
   phoneNumber: process.env.PHONE_NUMBER,
   region: check<string>(process.env.REGION),
 };
@@ -157,7 +157,7 @@ export function initLlavero({ stack, app }: StackContext) {
       siteUrl: site.url ?? localhostUrl
     },
   });
-  script.bind([userTable, logGroup, auth, SITE_URL]);
+  script.bind([userTable, logGroup, auth, SITE_URL, ...keys]);
   script.attachPermissions([
     new PolicyStatement({
       actions: ["dynamodb:*"],
