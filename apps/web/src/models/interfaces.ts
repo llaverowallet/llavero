@@ -15,6 +15,18 @@ export interface WalletInfo {
     description?: string
 }
 
+export interface SignedMessage { 
+    address: string, 
+    signed: string, 
+    message: string 
+};
+
+export interface SignedTransaction { 
+    address: string, 
+    signed: string, 
+    transaction: string 
+};
+
 // import { providers, Wallet } from 'ethers'
 
 // /**

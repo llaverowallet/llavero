@@ -1,33 +1,45 @@
-import { Col, Divider, Row, Text } from '@nextui-org/react'
-import { Fragment } from 'react'
-
-import ModalFooter from '@/components/ModalFooter'
-import ProjectInfoCard from '@/components/ProjectInfoCard'
 import RequesDetailsCard from '@/components/RequestDetalilsCard'
-import RequestMethodCard from '@/components/RequestMethodCard'
-import RequestModalContainer from '@/components/RequestModalContainer'
-import VerifyInfobox from '@/components/VerifyInfobox'
-import ModalStore from '@/store/ModalStore'
+import ModalStore from '@/store/modalStore'
 import { approveEIP155Request, rejectEIP155Request } from '@/utils/EIP155RequestHandlerUtil'
-import { getSignParamsMessage, styledToast } from '@/utils/HelperUtil'
-import { web3wallet } from '@/utils/WalletConnectUtil'
+import { getSignParamsMessage } from '@/utils/crypto'
+import { web3wallet } from '@/utils/walletConnectUtil'
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from '@mui/material'
+import { useCallback, useEffect, useRef } from 'react'
+import { useSnapshot } from 'valtio';
 
 export default function SessionSignModal() {
-  // Get request and wallet data from store
-  const requestEvent = ModalStore.state.data?.requestEvent
+  
+  const requestEvent = ModalStore.state.data?.requestEvent //// Get request and wallet data from store
   const requestSession = ModalStore.state.data?.requestSession
+  const { open, view } = useSnapshot(ModalStore.state)
+  
+  const onClose = useCallback(() => { // handle the modal being closed by click outside
+    if (open) {
+      ModalStore.close()
+    }
+  }, [open]);
 
-  // Ensure request and wallet are defined
-  if (!requestEvent || !requestSession) {
-    return <Text>Missing request data</Text>
+  const descriptionElementRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (open) {
+      const { current: descriptionElement } = descriptionElementRef;
+      if (descriptionElement !== null) {
+        descriptionElement.focus();
+      }
+    }
+  }, [open]);
+
+  
+  if (!requestEvent || !requestSession) { // Ensure request and wallet are defined
+    console.error('Request event or wallet is undefined');
+    return <></>
   }
 
-  // Get required request data
   const { topic, params } = requestEvent
   const { request, chainId } = params
 
-  // Get message, convert it to UTF8 string if it is valid hex
-  const message = getSignParamsMessage(request.params)
+  
+  const message = getSignParamsMessage(request.params) // Get message, convert it to UTF8 string if it is valid hex
 
   // Handle approve action (logic varies based on request method)
   async function onApprove() {
@@ -39,7 +51,7 @@ export default function SessionSignModal() {
           response
         })
       } catch (e) {
-        styledToast((e as Error).message, 'error')
+        console.error("onApprove",e);
         return
       }
       ModalStore.close()
@@ -56,7 +68,7 @@ export default function SessionSignModal() {
           response
         })
       } catch (e) {
-        styledToast((e as Error).message, 'error')
+        console.error("onReject",e);
         return
       }
       ModalStore.close()
@@ -64,22 +76,55 @@ export default function SessionSignModal() {
   }
 
   return (
-    <RequestModal
-      intention="request a signature"
-      metadata={requestSession.peer.metadata}
-      onApprove={onApprove}
-      onReject={onReject}
-    >
-      <RequesDetailsCard chains={[chainId ?? '']} protocol={requestSession.relay.protocol} />
-      <Divider y={1} />
-      <Row>
-        <Col>
-          <Text h5>Message</Text>
-          <Text color="$gray400" data-testid="request-message-text">
-            {message}
-          </Text>
-        </Col>
-      </Row>
-    </RequestModal>
+    <>
+    <Dialog
+        open={open}
+        onClose={onClose}
+        scroll="paper"
+        aria-labelledby="scroll-dialog-title"
+        aria-describedby="scroll-dialog-description" >
+        <DialogTitle id="scroll-dialog-title">Subscribe</DialogTitle>
+        <DialogContent dividers={true}>
+          <DialogContentText
+            id="scroll-dialog-description"
+            ref={descriptionElementRef}
+            tabIndex={-1}>
+            <h1>Request a signature By: </h1>
+            <Typography>
+              <u>Name: </u> {requestSession.peer.metadata.name} <br />
+              <u>Description:</u> {requestSession.peer.metadata.description}<br />
+              <u>URL:</u>  {requestSession.peer.metadata.url}<br />
+            </Typography>
+            <Box>
+              <Typography>
+                <u>Message to sign: </u> {message}
+              </Typography>
+            </Box>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onReject}>Cancel</Button>
+          <Button onClick={onApprove}>Accept</Button>
+        </DialogActions>
+      </Dialog>
+    </>
   )
 }
+
+// <RequestModal
+//       intention="request a signature"
+//       metadata={requestSession.peer.metadata}
+//       onApprove={onApprove}
+//       onReject={onReject}
+//     >
+//       <RequesDetailsCard chains={[chainId ?? '']} protocol={requestSession.relay.protocol} />
+//       <Divider y={1} />
+//       <Row>
+//         <Col>
+//           <Text h5>Message</Text>
+//           <Text color="$gray400" data-testid="request-message-text">
+//             {message}
+//           </Text>
+//         </Col>
+//       </Row>
+//     </RequestModal> 

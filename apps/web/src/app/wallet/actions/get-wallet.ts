@@ -8,22 +8,17 @@ import { AwsKmsSigner } from "@dennisdang/ethers-aws-kms-signer";
 import { getKeyId } from "@/utils/crypto";
 import { WalletInfo } from "@/models/interfaces";
 
-export default async function getWallet(name:string, username: string) : Promise<WalletInfo> {
+export default async function getWallet(address:string, username: string) : Promise<WalletInfo> {
     try {
-        assert(name);
         const userRepo = new UserRepository();
         const user = await userRepo.getUser(username); 
         if(!user) throw new Error("User not found");
-        
-        const keyDb = await userRepo.getKey(name, "", user);
-        const provider = new JsonRpcProvider("https://sepolia.infura.io/v3/8a30a48106eb413bb29d9ff89d0b99a6"); //TODO get from an endpoint
-        const keyClient = new kmsClient.KMSClient();
-        assert(keyDb && keyDb.keyArn);
+        const keyDb = await userRepo.getKey(address, "", user);
+        if(!keyDb?.keyArn) throw new Error("KeyArn not found");
         console.log("keyDb.keyArn: ", keyDb?.keyArn);
-        const signer = new AwsKmsSigner(getKeyId(keyDb?.keyArn as string), keyClient, provider);
-        const addr = await signer.getAddress();
-        const balance = await provider.getBalance(addr);
-        return { address: addr, balance, name: keyDb?.name ?? "", description: keyDb?.description };
+        const provider = new JsonRpcProvider("https://sepolia.infura.io/v3/8a30a48106eb413bb29d9ff89d0b99a6"); //TODO get from an endpoint
+        const balance = await provider.getBalance(keyDb.address as string);
+        return { address: keyDb.address, balance, name: keyDb?.name ?? "", description: keyDb?.description };
     }
     catch (error) {
         logger.error(error, "Error in get Wallet");

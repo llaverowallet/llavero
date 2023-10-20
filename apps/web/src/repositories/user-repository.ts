@@ -60,10 +60,10 @@ export class UserRepository {
         }
     }
 
-    async getKey(name: string, username = "", user?: User): Promise<KmsKey | undefined> {
+    async getKey(address: string, username = "", user?: User): Promise<KmsKey | undefined> {
         try {
             const keys = await this.getKeys(username, user);
-            const selectedKey = keys.find(k => k.name === name);
+            const selectedKey = keys.find(k => k.address === address);
             return selectedKey;
         } catch (error) {
             logger.error(error, "Error in UserRepository getKey");
@@ -86,6 +86,25 @@ export class UserRepository {
             console.log("Keys created");
         } catch (error) {
             logger.error(error, "Error in UserRepository createKeys");
+            throw error;
+        }
+    }
+
+    async updateKeys(keys: KmsKey[], username?: string, user?: User) {
+        try {
+            if (!username && !user) throw new Error("Either username or user must be provided");
+            const selectedUser = user || await this.getUser(username ?? "");
+            if (!selectedUser) throw new Error("User not found");
+            let promises = new Array<Promise<KmsKey>>();
+            keys.forEach((key, idx) => {
+                console.log("Updating key idx: ", idx);
+                promises.push(this.keysModel.upsert({ keyArn: key.keyArn, username: username, name: "key" + idx, userId: selectedUser?.userId }));
+                console.log("Updating key: ", key.keyArn);
+            });
+            await Promise.all(promises);
+            console.log("Keys updated");
+        } catch (error) {
+            logger.error(error, "Error in UserRepository updateKeys");
             throw error;
         }
     }
