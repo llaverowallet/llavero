@@ -24,6 +24,7 @@ export default async function ethSendTransaction(username: string, address: stri
         const rpc = getChainRpc(chainId);
         const provider = new JsonRpcProvider(rpc); //TODO get from an endpoint
         const signer = new AwsKmsSigner(getKeyId(key.keyArn), keyClient, provider );
+        console.log("transaction: ", transaction);
         const response = await signer.sendTransaction(transaction as TransactionLike);
         return response;
     }

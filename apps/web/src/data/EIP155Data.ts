@@ -78,6 +78,14 @@ export const EIP155_TEST_CHAINS : Record<string, Chain>  = {
     rpc: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
     namespace: 'eip155'
   },
+  'eip155:11155111': {
+    chainId: 11155111,
+    name: 'Sepolia Eth',
+    logo: '/chain-logos/eip155-43113.png',
+    rgb: '232, 65, 66',
+    rpc: 'https://sepolia.infura.io/v3/8a30a48106eb413bb29d9ff89d0b99a6',
+    namespace: 'eip155'
+  },
   'eip155:43113': {
     chainId: 43113,
     name: 'Avalanche Fuji',
@@ -91,7 +99,7 @@ export const EIP155_TEST_CHAINS : Record<string, Chain>  = {
     name: 'Polygon Mumbai',
     logo: '/chain-logos/eip155-137.png',
     rgb: '130, 71, 229',
-    rpc: 'https://polygon-mumbai-bor.publicnode.com',
+    rpc: 'https://polygon-mumbai.infura.io/v3/8a30a48106eb413bb29d9ff89d0b99a6',
     namespace: 'eip155'
   },
   'eip155:420': {
