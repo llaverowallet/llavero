@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTheme } from "@mui/material/styles";
-import Link from "next/link";
+import { useSession, signIn, signOut } from "next-auth/react"
 import {
   Box,
   Menu,
@@ -23,7 +23,9 @@ import {
   IconUser,
 } from "@tabler/icons-react";
 
+
 const Profile = () => {
+  const { data: session } = useSession();
   const [anchorEl2, setAnchorEl2] = useState(null);
   const handleClick2 = (event: any) => {
     setAnchorEl2(event.currentTarget);
@@ -40,33 +42,9 @@ const Profile = () => {
   const success = theme.palette.success.main;
   const successlight = theme.palette.success.light;
 
-  /*profile data*/
-  const profiledata = [
-    {
-      href: "/",
-      title: "My Profile",
-      subtitle: "Account Settings",
-      icon: <IconCurrencyDollar width="20" height="20" />,
-      color: primary,
-      lightcolor: primarylight,
-    },
-    {
-      href: "/",
-      title: "My Inbox",
-      subtitle: "Messages & Emails",
-      icon: <IconShield width="20" height="20" />,
-      color: success,
-      lightcolor: successlight,
-    },
-    {
-      href: "/",
-      title: "My Tasks",
-      subtitle: "To-do and Daily Tasks",
-      icon: <IconCreditCard width="20" height="20" />,
-      color: error,
-      lightcolor: errorlight,
-    },
-  ];
+  if(!session) {
+    return (<></>)
+  }
 
   return (
     <Box>
@@ -83,7 +61,7 @@ const Profile = () => {
         }}
         onClick={handleClick2}
       >
-        <IconUser width="30" height="30" />
+        
         <Box
           sx={{
             display: {
@@ -94,21 +72,13 @@ const Profile = () => {
           }}
         >
           <Typography
-            color="textSecondary"
-            variant="h5"
-            fontWeight="400"
-            sx={{ ml: 1 }}
-          >
-            Hi,
-          </Typography>
-          <Typography
             variant="h5"
             fontWeight="700"
             sx={{
               ml: 1,
             }}
           >
-            Username
+            {session.user?.email} <IconUser width="20" height="20" />
           </Typography>
           <IconChevronDown width="20" height="20" />
         </Box>
@@ -154,7 +124,7 @@ const Profile = () => {
         </Box>
         <Divider />
         <Box mt={2}>
-          <Button fullWidth variant="contained" color="primary">
+          <Button fullWidth variant="contained" color="primary" onClick={() => signOut()}>
             Logout
           </Button>
         </Box>

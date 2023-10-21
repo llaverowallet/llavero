@@ -4,20 +4,27 @@ import PropTypes from 'prop-types';
 
 // components
 import Profile from './Profile';
-import Search from './Search';
-import { IconMenu2 } from '@tabler/icons-react';
+import { IconMenu2, IconQrcode } from '@tabler/icons-react';
 import Network from './Networks';
+import { useSession } from 'next-auth/react';
+import ConnectToWalletConnectModal from '../../components/shared/connectToWalletConnectModal';
 
 interface ItemType {
-  toggleMobileSidebar:  (event: React.MouseEvent<HTMLElement>) => void;
+  toggleMobileSidebar: (event: React.MouseEvent<HTMLElement>) => void;
 }
 
-const Header = ({toggleMobileSidebar}: ItemType) => {
+const Header = ({ toggleMobileSidebar }: ItemType) => {
+  const { data: session } = useSession();
+  const [openQr, setOpenQr] = React.useState(false);
 
-  // const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
-  // const lgDown = useMediaQuery((theme) => theme.breakpoints.down('lg'));
+  const handleOpenQr = () => {
+    setOpenQr(true);
+  };
 
-  
+  const handleCloseQr = () => {
+    setOpenQr(false);
+  };
+
   const AppBarStyled = styled(AppBar)(({ theme }) => ({
     boxShadow: 'none',
     background: theme.palette.background.paper,
@@ -48,13 +55,22 @@ const Header = ({toggleMobileSidebar}: ItemType) => {
         >
           <IconMenu2 width="20" height="20" />
         </IconButton>
-          <h1>CloudWallet</h1>
-          <Network />
+
+        <img src='logo.svg' alt='Llavero CloudWallet' width='44px' height='44px' />
+        <h1>Llavero</h1>
         <Box flexGrow={1} />
-        <Stack spacing={1} direction="row" alignItems="center">
-          <Profile />
-        </Stack>
+        {session &&
+          <Stack spacing={1} direction="row" alignItems="center">
+            <IconButton color="inherit" sx={{ mr: 1 }} onClick={handleOpenQr}>
+              <IconQrcode width="20" height="20"  />
+            </IconButton>
+            <Network />
+            <Profile />
+          </Stack>
+        }
       </ToolbarStyled>
+      <ConnectToWalletConnectModal isOpen={openQr} setClose={handleCloseQr}/>
+
     </AppBarStyled>
   );
 };

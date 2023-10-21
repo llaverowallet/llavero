@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTheme } from "@mui/material/styles";
-import Link from "next/link";
+import { useSession } from "next-auth/react"
 import {
   Box,
   Menu,
@@ -41,33 +41,6 @@ const Networks = () => {
   const success = theme.palette.success.main;
   const successlight = theme.palette.success.light;
 
-  /*profile data*/
-  const profiledata = [
-    {
-      href: "/",
-      title: "My Profile",
-      subtitle: "Account Settings",
-      icon: <IconCurrencyDollar width="20" height="20" />,
-      color: primary,
-      lightcolor: primarylight,
-    },
-    {
-      href: "/",
-      title: "My Inbox",
-      subtitle: "Messages & Emails",
-      icon: <IconShield width="20" height="20" />,
-      color: success,
-      lightcolor: successlight,
-    },
-    {
-      href: "/",
-      title: "My Tasks",
-      subtitle: "To-do and Daily Tasks",
-      icon: <IconCreditCard width="20" height="20" />,
-      color: error,
-      lightcolor: errorlight,
-    },
-  ];
 
   return (
     <Box>
@@ -84,7 +57,7 @@ const Networks = () => {
         }}
         onClick={handleClick2}
       >
-        <IconNetwork width="20" height="20" />
+       
         <Box
           sx={{
             display: {
@@ -100,7 +73,7 @@ const Networks = () => {
             fontWeight="400"
             sx={{ ml: 1 }}
           >
-            Mainnet
+            Mainnet  <IconNetwork width="20" height="20" />
           </Typography>
           <IconChevronDown width="20" height="20" />
         </Box>
