@@ -39,6 +39,7 @@ export async function executeCommand(
     });
 
     childProcess.on('error', (err: Error) => {
+      console.error('Error executing command:', err.message);
       reject(err);
     });
   });

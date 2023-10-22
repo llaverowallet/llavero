@@ -76,10 +76,13 @@
     "@aws-sdk/client-cloudformation": "^3.428.0",
     "@aws-sdk/client-ec2": "^3.428.0",
     "@aws-sdk/client-sts": "^3.428.0",
+    "@mui/material": "^5.14.14",
+    "@mui/styled-engine-sc": "^6.0.0-alpha.2",
     "aws-cdk": "^2.101.1",
     "aws-cdk-lib": "2.95.1",
     "aws-sdk": "^2.1473.0",
     "cdk-assets": "2.95.1",
+    "clsx": "^2.0.0",
     "constructs": "10.2.69",
     "electron-root-path": "^1.1.0",
     "electron-squirrel-startup": "^1.0.0",
@@ -87,6 +90,7 @@
     "promptly": "^3.2.0",
     "proxy-agent": "^6.3.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "styled-components": "^6.1.0"
   }
 }

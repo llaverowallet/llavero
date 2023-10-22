@@ -122,9 +122,8 @@ const UserSchema  = {
                 "value": "User#${userId}",
                 "required": true
             },
-            "id": {
+            "userId": {
                 "type": String,
-                "generate": "uuid",
                 "required": true,
                 "unique": true
             },

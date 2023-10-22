@@ -1,3 +1,5 @@
+import Loading from '@/app/loading'
+import { Button } from '@mui/material'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { Fragment, useState } from 'react'
@@ -43,7 +45,7 @@ export default function QrReader({ onConnect }: IProps) {
     <div className="container">
       {show ? (
         <Fragment>
-          {loading && <Loading css={{ position: 'absolute' }} />}
+          {loading && <div style={{ position: 'absolute' }}><Loading /></div>}
           <div className="qrVideoMask">
             <ReactQrReader
               onLoad={() => setLoading(false)}
@@ -63,12 +65,7 @@ export default function QrReader({ onConnect }: IProps) {
             alt="qr code icon"
             className="qrIcon"
           />
-          <Button
-            color="gradient"
-            css={{ marginTop: '$10', width: '100%' }}
-            onClick={onShowScanner}
-            data-testid="qrcode-button"  
-          >
+          <Button>
             Scan QR code
           </Button>
         </div>

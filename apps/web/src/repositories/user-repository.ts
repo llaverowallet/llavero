@@ -41,7 +41,7 @@ export class UserRepository {
 
     async createUser(user: User) {
         try {
-            user.userId = uuidv4();
+            user.userId = user.userId ?? uuidv4();
             const newUser = await this.userModel.create(user);
             return newUser;
         } catch (error) {
