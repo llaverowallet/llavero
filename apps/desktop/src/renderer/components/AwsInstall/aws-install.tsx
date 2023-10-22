@@ -64,6 +64,7 @@ export function AwsInstall({ accessKeyId, secretAccessKey }: Props) {
             return result;
         } catch (error) {
             console.error('error on installWallet', error);
+            debugger;
         }
     }
     async function openBrowser(url: string) {
@@ -71,10 +72,11 @@ export function AwsInstall({ accessKeyId, secretAccessKey }: Props) {
         await (window as any).openInBrowser(url);
     }
 
-    async function install(): Promise<void> {
+    async function install(event: React.FormEvent<HTMLFormElement>): Promise<void> {
+        event.preventDefault();
         try {
+            event.preventDefault();
             //setInstalling(true);
-            debugger;
             setInstallation('installing');
             console.log('installing...', selectedRegion);
             setRegion(selectedRegion);
@@ -127,7 +129,9 @@ export function AwsInstall({ accessKeyId, secretAccessKey }: Props) {
                         </Table>
                     </TableContainer>
                     <br /><br />
-                    <form onSubmit={async()=>{await install()}}>
+
+                    <form onSubmit={install}>
+                        <FormControl fullWidth>
                             <TextField
                                 sx={{ minWidth: 400 }}
                                 required
@@ -153,10 +157,12 @@ export function AwsInstall({ accessKeyId, secretAccessKey }: Props) {
                             <InputLabel id="demo-simple-select-label">Required</InputLabel>
 
                             <br /><br />
-                            {installation !== "installed" && installation !== "installing" ? (
+                            {installation !== "installed" && installation !== "installing" &&
                                 <Fab variant="extended" size="small" color="primary" type="submit">
                                     Install
-                                </Fab>) : (
+                                </Fab>
+                            }
+                            {installation === "installed" &&
                                 <div className='aws-install__content__item'>
                                     <Typography>Llavero has been install successfully</Typography>
                                     <Typography>Now visit and setup your user:</Typography>
@@ -165,8 +171,9 @@ export function AwsInstall({ accessKeyId, secretAccessKey }: Props) {
                                     <Typography>Site:</Typography>
                                     <Link onClick={() => openBrowser(siteUrl)}>{siteUrl}</Link>
                                 </div>
-                            )}
+                            }
                             {installation === "installing" && <Typography>Installing... this will take long. So wait. Do not close the window.</Typography>}
+                        </FormControl>
                     </form>
                 </div>
             )}
