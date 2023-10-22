@@ -158,22 +158,21 @@ async function installWallet(email: string, region: string): Promise<string> {
     checkInputs(envVars);
     const assetsWalletPath = path.join(process.cwd(), '.wallet');
     console.log('assetsWalletPath: ', assetsWalletPath);
-    await executeCommand("pwd", [], assetsWalletPath, (data: unknown) => { console.log("pwd: " + data) });
-    console.log('ls: ', assetsWalletPath);
-    await executeCommand("ls", [], assetsWalletPath, (data: unknown) => { console.log("ls: " + data) });
     console.log('About to install in: ', assetsWalletPath);
-    console.log("Region and Email", region, email, suffix);
     console.log("envVars", envVars);
-    await executeCommand("npm", ["install"], assetsWalletPath, (data: unknown) => { console.log(data) });
+    await executeCommand("yarn", [], assetsWalletPath, (data: unknown) => { console.log(data) });
     let siteUrl = "";
     console.log('About to deploy in: ', assetsWalletPath);
-    await executeCommand("npm", ["run","deploy"], assetsWalletPath, (data: unknown) => {
+    await executeCommand("yarn", ["deploy"], assetsWalletPath, (data: unknown) => {
       const log = data.toString();
       const start = log.indexOf("https://");
       const end = log.indexOf("cloudfront.net");
       const url = log.substring(start, end + "cloudfront.net".length);
-      console.log("url: " + url);
-      siteUrl = url;
+      if(url.startsWith("https://") && url.endsWith("cloudfront.net")) {
+        console.log("url: " + url);
+        siteUrl = url;
+      }
+      console.log(data);
     }, envVars);
     return siteUrl;
   } catch (error) {

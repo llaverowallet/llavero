@@ -1,5 +1,4 @@
-const UserSchema  = 
-{
+export default Schema = {
     "format": "onetable:1.1.0",
     "indexes": {
         "primary": {
@@ -146,6 +145,4 @@ const UserSchema  =
     },
     "queries": {},
     "version": "1.0.0"
-};
-
-export default UserSchema;
+}
