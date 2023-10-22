@@ -55,7 +55,7 @@ export async function main(event: { params: ICloudWalletInitParams }) {
         const signer = new AwsKmsSigner(getKeyId(element), keyClient, provider);
         const addr = await signer.getAddress();
         console.log("addr for keyArn: ", addr, element);
-        keys.push({ keyArn: element, address: addr, name: "key" + index, username: user?.username, userId: user?.userId });
+        keys.push({ keyArn: element, address: addr, name: "key" + index, username: user?.username });
     }
     if (keys.length <= 0) throw new Error("No keys found");
 

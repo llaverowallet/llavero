@@ -1,5 +1,7 @@
+import { Fab, FormControl, InputLabel, Link, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import { EnvVars } from '../../appPreload';
 import { useEffect, useState } from 'react';
+import Paper from '@mui/material/Paper';
 
 import * as React from 'react';
 
@@ -14,9 +16,11 @@ export function AwsInstall({ accessKeyId, secretAccessKey }: Props) {
     const [enVars, setEnVars] = useState<EnvVars>();
     const [loading, setLoading] = useState<boolean>(true);
     const [regions, setRegions] = useState<string[]>();
-    const [selectedRegion, setSelectedRegion] = useState('');
-    const [installing, setInstalling] = useState<boolean>(false);
+    const [selectedRegion, setSelectedRegion] = useState('us-east-1');
+    //const [installing, setInstalling] = useState<boolean>(false);
     const [installation, setInstallation] = useState<InstallationType>("none");
+    const [email, setEmail] = useState<string>('');
+    const [siteUrl, setSiteUrl] = useState<string>('');
 
     useEffect(() => {
         async function init(accessKeyId: string, secretAccessKey: string): Promise<void> {
@@ -53,26 +57,40 @@ export function AwsInstall({ accessKeyId, secretAccessKey }: Props) {
         await (window as any).bootstrapCdk(account, region);
     }
 
-    async function installWallet(email:string, region: string): Promise<void> {
+    async function installWallet(email: string, region: string): Promise<string> {
+        try {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any 
+            const result = await (window as any).installWallet(email, region);
+            return result;
+        } catch (error) {
+            console.error('error on installWallet', error);
+        }
+    }
+    async function openBrowser(url: string) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any 
-        await (window as any).installWallet(email, region);
+        await (window as any).openInBrowser(url);
     }
 
     async function install(): Promise<void> {
         try {
-            setInstalling(true);
+            //setInstalling(true);
+            debugger;
             setInstallation('installing');
             console.log('installing...', selectedRegion);
             setRegion(selectedRegion);
             console.log('bootstraping CDK', selectedRegion);
             //await bootstrapCdk(enVars.AWS_ACCOUNT_ID, selectedRegion);
             console.log('installing wallet', selectedRegion);
-            await installWallet("elranu@gmail.com", selectedRegion); //TODO: get email from input
-            setInstalling(false);
+            console.log('email', email);
+            const url = await installWallet(email, selectedRegion); //TODO: get email from input
+            console.log("paso");
+            setSiteUrl(url);
+            //setInstalling(false);
             setInstallation('installed');
         } catch (error) {
+            debugger;
             console.log('error ui', error);
-            setInstalling(false);
+            //setInstalling(false);
             setInstallation('failed');
         }
     }
@@ -83,43 +101,74 @@ export function AwsInstall({ accessKeyId, secretAccessKey }: Props) {
                 <div className='loading'> Loading...</div>
             ) : (
                 <div className='aws-install'>
-                    <div className='aws-install__title'>AWS Install</div>
-                    <div className='aws-install__content'>
-                        <div className='aws-install__content__item'>
-                            <div className='aws-install__content__item__title'>AWS Account ID</div>
-                            <div className='aws-install__content__item__value'>{enVars?.AWS_ACCOUNT_ID}</div>
-                        </div>
-                        <div className='aws-install__content__item'>
-                            <div className='aws-install__content__item__title'>AWS Identity</div>
-                            <div className='aws-install__content__item__value'>{enVars?.IDENTITY}</div>
-                        </div>
-                        <div className='aws-install__content__item'>
-                            <div className='aws-install__content__item__title'>AWS User ID</div>
-                            <div className='aws-install__content__item__value'>{enVars?.AWsUserId}</div>
-                        </div>
-                    </div>
-                    <div className='aws-install__title'>AWS Regions</div>
-                    <div className='aws-install__content'>
-                        <select value={selectedRegion} onChange={(event) => setSelectedRegion(event.target.value)}
-                            className='aws-install__content__item__value' key="awsRegions">
-                            {regions?.map((region) => (
-                                <option key={region} value={region}>{region}</option>
-                            ))}
-                        </select>
-                    </div>
-                    {installation !== "installed" ? (
-                        <button disabled={installing} onClick={install}> INSTALL </button>
-                    ) : (
-                        <div className='aws-install__content__item'>
-                            <div className='aws-install__content__item__title'>CDK Installed</div>
-                            <div className='aws-install__content__item__value'>YES</div>
-                        </div>
-                    )}
-                    {installing && <div className='loading'> Installing...</div>}
-                    {installation === "failed" && <div className='loading'> Installation failed</div> }
+                    <TableContainer component={Paper}>
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>AWS Account ID</TableCell>
+                                    <TableCell align="right">AWS Identity</TableCell>
+                                    <TableCell align="right">AWS User ID</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+
+                                <TableRow
+                                    key={"Awsids"}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell component="th" scope="row">
+                                        {enVars?.AWS_ACCOUNT_ID}
+                                    </TableCell>
+                                    <TableCell align="right">{enVars?.IDENTITY}</TableCell>
+                                    <TableCell align="right">{enVars?.AWsUserId}</TableCell>
+                                </TableRow>
+
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    <br /><br />
+                    <form onSubmit={async()=>{await install()}}>
+                            <TextField
+                                sx={{ minWidth: 400 }}
+                                required
+                                id="outlined-required"
+                                label="EMAIL"
+                                defaultValue="mail@mail.com"
+                                value={email} onChange={(e) => setEmail(e.target.value)}
+                            /><br /><br />
+
+                            <InputLabel id="demo-simple-select-label">Required</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value={selectedRegion}
+                                label="Aws  Region"
+                                onChange={(event) => setSelectedRegion(event.target.value)}
+                            >
+                                {regions?.map((region) => (
+                                    <MenuItem key={region} value={region}>{region}</MenuItem>
+                                ))}
+
+                            </Select>
+                            <InputLabel id="demo-simple-select-label">Required</InputLabel>
+
+                            <br /><br />
+                            {installation !== "installed" && installation !== "installing" ? (
+                                <Fab variant="extended" size="small" color="primary" type="submit">
+                                    Install
+                                </Fab>) : (
+                                <div className='aws-install__content__item'>
+                                    <Typography>Llavero has been install successfully</Typography>
+                                    <Typography>Now visit and setup your user:</Typography>
+                                    <Typography>User: {email}</Typography>
+                                    <Typography>Temporary password: Llavero1234!</Typography>
+                                    <Typography>Site:</Typography>
+                                    <Link onClick={() => openBrowser(siteUrl)}>{siteUrl}</Link>
+                                </div>
+                            )}
+                            {installation === "installing" && <Typography>Installing... this will take long. So wait. Do not close the window.</Typography>}
+                    </form>
                 </div>
             )}
         </div>);
 }
-
-

@@ -81,7 +81,6 @@ const UserSchema  =
             },
             "userId": {
                 "type": String,
-                "generate": "uuid",
                 "required": true,
                 "unique": true
             },
@@ -130,7 +129,6 @@ const UserSchema  =
             "userId": {
                 "type": String,
                 "required": true,
-                "unique": true
             },
             "username": {
                 "type": String,
