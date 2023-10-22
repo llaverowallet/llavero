@@ -1,6 +1,7 @@
 
 import { getChainData } from '@/data/chainsUtil'
 import { Box } from '@mui/material'
+import { useMemo } from 'react'
 
 
 interface Props {

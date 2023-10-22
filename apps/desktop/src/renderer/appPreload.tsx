@@ -7,6 +7,8 @@ import { Bootstrapper } from 'aws-cdk/lib/api/bootstrap';
 import { SdkProvider } from 'aws-cdk/lib/api/aws-auth';
 import path from 'path';
 import { executeCommand } from './runCommand';
+import { hostname } from 'os';
+import crypto from 'crypto';
 
 const nodeModulesPath = path.join(process.cwd(), 'node_modules');
 console.log(nodeModulesPath);
@@ -143,24 +145,75 @@ async function bootstrapCdk(account: string, region: string) {
 contextBridge.exposeInMainWorld('bootstrapCdk', (account: string, region: string) => bootstrapCdk(account, region));
 
 //installWallet
-async function installWallet(email: string, region: string) {
+async function installWallet(email: string, region: string): Promise<string> {
   try {
-    const envVars = { REGION: region, EMAIL: email, AWS_ACCESS_KEY_ID: process.env['AWS_ACCESS_KEY_ID'], 
-      AWS_SECRET_ACCESS_KEY: process.env['AWS_SECRET_ACCESS_KEY'] };
+    const suffix = getDeterministicRandomString();
+    const envVars = {
+      REGION: region,
+      EMAIL: email,
+      AWS_ACCESS_KEY_ID: process.env['AWS_ACCESS_KEY_ID'],
+      AWS_SECRET_ACCESS_KEY: process.env['AWS_SECRET_ACCESS_KEY'],
+      COGNITO_URL_SUFFIX: suffix
+    };
+    checkInputs(envVars);
     const assetsWalletPath = path.join(process.cwd(), '.wallet');
     console.log('assetsWalletPath: ', assetsWalletPath);
-    await executeCommand("pwd", [], assetsWalletPath, (data: unknown) => { console.log("pwd: " + data) });
-    console.log('ls: ', assetsWalletPath);
-    await executeCommand("ls", [], assetsWalletPath, (data: unknown) => { console.log("ls: "+ data) });
-    console.log('yarn: ', assetsWalletPath);
-    await executeCommand("yarn", [], assetsWalletPath, (data: unknown) => { console.log(data) }, envVars);
-    await executeCommand("yarn", ["deploy"], assetsWalletPath, (data: unknown) => { console.log(data) }, envVars);
+    console.log('About to install in: ', assetsWalletPath);
+    console.log("envVars", envVars);
+    await executeCommand("yarn", [], assetsWalletPath, (data: unknown) => { console.log(data) });
+    let siteUrl = "";
+    console.log('About to deploy in: ', assetsWalletPath);
+    await executeCommand("yarn", ["deploy"], assetsWalletPath, (data: unknown) => {
+      const log = data.toString();
+      const start = log.indexOf("https://");
+      const end = log.indexOf("cloudfront.net");
+      const url = log.substring(start, end + "cloudfront.net".length);
+      if(url.startsWith("https://") && url.endsWith("cloudfront.net")) {
+        console.log("url: " + url);
+        siteUrl = url;
+      }
+      console.log(data);
+    }, envVars);
+    return siteUrl;
   } catch (error) {
+    debugger;
     console.log('installWallet error: ', error);
   }
 }
-contextBridge.exposeInMainWorld('installWallet', (email: string, region: string) => installWallet(email, region));
+contextBridge.exposeInMainWorld('installWallet', async (email: string, region: string): Promise<string> => await installWallet(email, region));
+
+function openInBrowser(url: string) {
+  require('electron').shell.openExternal(url);
+}
+contextBridge.exposeInMainWorld('openInBrowser', (url: string) => openInBrowser(url));
 
 
+function getDeterministicRandomString(max = 5): string {
+  // Use the machine's hostname as a seed
+  const seedString = hostname();
 
+  // Create a deterministic hash from the seed
+  const hash = crypto.createHmac('sha256', seedString)
+    .update('deterministicSalt')
+    .digest('hex');
 
+  return hash.substring(0, max).replace("0x", "");
+}
+
+function checkInputs(envVars: { REGION: string; EMAIL: string; AWS_ACCESS_KEY_ID: string; AWS_SECRET_ACCESS_KEY: string; COGNITO_URL_SUFFIX: string; }) {
+  if (!envVars.REGION) {
+    throw new Error('REGION is required');
+  }
+  if (!envVars.EMAIL) {
+    throw new Error('EMAIL is required');
+  }
+  if (!envVars.AWS_ACCESS_KEY_ID) {
+    throw new Error('AWS_ACCESS_KEY_ID is required');
+  }
+  if (!envVars.AWS_SECRET_ACCESS_KEY) {
+    throw new Error('AWS_SECRET_ACCESS_KEY is required');
+  }
+  if (!envVars.COGNITO_URL_SUFFIX) {
+    throw new Error('COGNITO_URL_SUFFIX is required');
+  }
+}

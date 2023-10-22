@@ -45,6 +45,7 @@
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
+    "@types/uuid": "^9.0.6",
     "autoprefixer": "latest",
     "aws-cdk-lib": "2.95.1",
     "constructs": "10.2.69",

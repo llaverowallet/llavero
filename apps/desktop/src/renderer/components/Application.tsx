@@ -2,17 +2,21 @@ import React, { useEffect, useState } from 'react';
 import './Application.scss';
 import { AwsCredentialsForm } from './CredentialsForm/aws-credentials-from';
 import { AwsInstall } from './AwsInstall/aws-install';
+import { Card, CardContent, Grid, Link, Typography } from '@mui/material';
+import logoLlavero from '@assets/llavero-logo.png';
 
 const Application: React.FC = () => {
   const [darkTheme, setDarkTheme] = useState(true);
   const [showCredentialsForm, setShowCredentialsForm] = useState(true);
   const [accessKeyId, setAccessKeyId] = useState('');
   const [secretAccessKey, setSecretAccessKey] = useState('');
+  const [showCard, setShowCard] = useState(true);
 
   function handleCredentialsSubmit(accessKeyId: string, secretAccessKey: string) {
     setAccessKeyId(accessKeyId);
     setSecretAccessKey(secretAccessKey);
     setShowCredentialsForm(false);
+    setShowCard(false);
     //onCredentialsSubmit(accessKeyId, secretAccessKey);
   }
 
@@ -54,38 +58,77 @@ const Application: React.FC = () => {
     setDarkTheme(!darkTheme);
   }
 
+  async function openBrowser(url: string) {
+    await (window as any).openInBrowser(url);
+  }
+
   return (
-    <div id='erwt'>
-      <div className='header'>
-        <div className='main-heading'>
-          <h1 className='themed'>Llavero Installer</h1>
-        </div>
-        <div className='main-teaser'>
-          <div>
-            Install information
-          </div>
-        </div>
-        <div className="application">
-        <div>
-      {showCredentialsForm ? (
-        <AwsCredentialsForm onSubmit={handleCredentialsSubmit} />
-      ) : (
-        <AwsInstall accessKeyId={accessKeyId} secretAccessKey={secretAccessKey} />
-      )}
-    </div>
-        </div>
-      </div>
 
-      <div className='footer'>
-        <div className='center'>
-          {/* <button onClick={toggleTheme}>
-            {darkTheme ? 'Light Theme' : 'Dark Theme'}
-          </button> */}
 
-          Llavero © 2023
-        </div>
-      </div>
-    </div>
+    <Grid container spacing={2}>
+      <Grid xs={12}>
+        <span>{/* empty */}</span>
+        <br />
+        <br />
+      </Grid>
+      <Grid xs={2}>
+        <span>{/* empty */}</span>
+      </Grid>
+      <Grid xs={10}>
+        <img src={logoLlavero} height="150px" />
+      </Grid>
+      <Grid xs={0}>
+        <span>{/* empty */}</span>
+      </Grid>
+      <Grid xs={2}>
+        <span>{/* empty */}</span>
+      </Grid>
+      <Grid xs={10}>
+        <Typography ><h1>Installer</h1> </Typography><br />
+      </Grid>
+      <Grid xs={0}>
+        <span>{/* empty */}</span>
+      </Grid>
+      <Grid xs={2}>
+        <span>{/* empty */}</span>
+      </Grid>
+      <Grid xs={10} style={{}}>
+        {showCard &&
+          <>
+            <Card sx={{ maxWidth: 600 }}>
+              <CardContent>
+                <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                  How to create AWS Credentials
+                </Typography>
+                <Typography variant="body2">
+                  <span>Follow the instructions to create your AWS Credentials </span>
+                  <Link onClick={() => openBrowser("https://sst.dev/chapters/create-an-iam-user.html")}>Instructions</Link>
+                </Typography>
+              </CardContent>
+            </Card>
+
+            <br />
+          </>
+        }
+      </Grid>
+      <Grid xs={0}>
+        <span>{/* empty */}</span>
+      </Grid>
+      <Grid xs={2}>
+        <span>{/* empty */}</span>
+      </Grid>
+      <Grid xs={8}>
+        {showCredentialsForm ? (
+          <AwsCredentialsForm onSubmit={handleCredentialsSubmit} />
+        ) : (
+          <AwsInstall accessKeyId={accessKeyId} secretAccessKey={secretAccessKey} />
+        )}
+      </Grid>
+      <Grid xs={2}>
+        <span>{/* empty */}</span>
+      </Grid>
+    </Grid>
+
   );
 };
 

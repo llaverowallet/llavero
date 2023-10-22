@@ -19,6 +19,7 @@ const installationConfig = {
   email: check<string>(process.env.EMAIL),
   phoneNumber: process.env.PHONE_NUMBER,
   region: check<string>(process.env.REGION),
+  cognitoURLSuffix: process.env.COGNITO_URL_SUFFIX ?? "", 
 };
 
 export default {
@@ -95,7 +96,7 @@ export function llaveroStack({ stack, app }: StackContext) {
 
   auth.cdk.userPool.addDomain("LlaveroDomain", {
     cognitoDomain: {
-      domainPrefix: "llavero" + app.stage, //TODO config input, should be saved or query
+      domainPrefix: "llavero-"+ installationConfig.cognitoURLSuffix + app.stage, //TODO config input, should be saved or query
     },
   });
 

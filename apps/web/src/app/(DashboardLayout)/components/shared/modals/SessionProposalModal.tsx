@@ -75,8 +75,8 @@ export default function SessionProposalModal() {
       const chains = key.includes(':') ? key : values.chains
       optional.push(chains)
     }
-    console.log('requestedChains', [...new Set([...required.flat(), ...optional.flat()])])
-    return [...new Set([...required.flat(), ...optional.flat()])]
+    //console.log('requestedChains', [...new Set([...required.flat(), ...optional.flat()])])
+    return [... ([...required.flat(), ...optional.flat()])]
   }, [proposal]);
 
   // the chains that are supported by the wallet from the proposal

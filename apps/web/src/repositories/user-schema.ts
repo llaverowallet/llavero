@@ -1,4 +1,5 @@
-const UserSchema  = {
+const UserSchema  = 
+{
     "format": "onetable:1.1.0",
     "indexes": {
         "primary": {
@@ -59,7 +60,7 @@ const UserSchema  = {
                 "type": String,
                 "value": "User#{userId}",
                 "required": true,
-                "unique": true,
+                "unique": true
             },
             "name": {
                 "type": String,
@@ -122,14 +123,12 @@ const UserSchema  = {
                 "value": "User#${userId}",
                 "required": true
             },
-            "id": {
-                "type": String,
-                "generate": "uuid",
-                "required": true,
-                "unique": true
-            },
             "updated": {
                 "type": Date
+            },
+            "userId": {
+                "type": String,
+                "required": true,
             },
             "username": {
                 "type": String,
@@ -144,8 +143,7 @@ const UserSchema  = {
         "typeField": "_type"
     },
     "queries": {},
-    "version": "1.0.0",
-    "changed": true
+    "version": "1.0.0"
 };
 
 export default UserSchema;
