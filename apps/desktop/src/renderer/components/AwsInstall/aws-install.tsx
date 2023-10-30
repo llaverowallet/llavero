@@ -61,9 +61,7 @@ export function AwsInstall({ accessKeyId, secretAccessKey }: Props) {
     async function installWallet(email: string, region: string): Promise<string> {
         try {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any 
-            const path = await (window as any).paths.userPath;
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any 
-            const result = await (window as any).installWallet(email, region, path);
+            const result = await (window as any).installWallet(email, region);
             return result;
         } catch (error) {
             console.error('error on installWallet', error);

@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, contextBridge, ipcMain } from 'electron';
 import path from 'path';
 
 // Electron Forge automatically creates these entry points
@@ -21,14 +21,18 @@ export function createAppWindow(): BrowserWindow {
     autoHideMenuBar: true,
     icon: path.resolve('assets/images/appIcon.ico'),
     webPreferences: {
-      nodeIntegration: true,
+      nodeIntegration: false,
       contextIsolation: true,
       nodeIntegrationInWorker: false,
       nodeIntegrationInSubFrames: false,
       preload: APP_WINDOW_PRELOAD_WEBPACK_ENTRY,
       sandbox: false,
-
     },
+  });
+
+  ipcMain.handle('userDataPath', () => {
+    console.log('getAppData', app.getPath('appData'));
+    return app.getPath('userData');
   });
 
 

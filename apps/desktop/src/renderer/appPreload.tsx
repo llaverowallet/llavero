@@ -1,5 +1,5 @@
 import * as sdk from 'aws-sdk';
-import { contextBridge } from 'electron';
+import { contextBridge, ipcRenderer } from 'electron';
 import { STSClient, GetCallerIdentityCommand } from '@aws-sdk/client-sts';
 import { EC2Client, DescribeRegionsCommand } from '@aws-sdk/client-ec2';
 import { DescribeStackEventsCommand, CloudFormationClient, DescribeStacksCommand } from '@aws-sdk/client-cloudformation';
@@ -9,6 +9,7 @@ import path from 'path';
 import { executeCommand } from './runCommand';
 import { hostname } from 'os';
 import crypto from 'crypto';
+import { env } from 'process';
 // import { User } from 'aws-cdk-lib/aws-iam';
 const fsExtra = require('fs-extra');  
 
@@ -147,7 +148,7 @@ async function bootstrapCdk(account: string, region: string) {
 contextBridge.exposeInMainWorld('bootstrapCdk', (account: string, region: string) => bootstrapCdk(account, region));
 
 //installWallet
-async function installWallet(email: string, region: string,  userPath: string): Promise<string> {
+async function installWallet(email: string, region: string): Promise<string> {
   try {
     const suffix = getDeterministicRandomString();
     const envVars = {
@@ -155,19 +156,24 @@ async function installWallet(email: string, region: string,  userPath: string): 
       EMAIL: email,
       AWS_ACCESS_KEY_ID: process.env['AWS_ACCESS_KEY_ID'],
       AWS_SECRET_ACCESS_KEY: process.env['AWS_SECRET_ACCESS_KEY'],
-      COGNITO_URL_SUFFIX: suffix
+      COGNITO_URL_SUFFIX: suffix,
+      APP_PATH: await ipcRenderer.invoke('userDataPath'),
+      APP_WALLET: ""
     };
+    envVars.APP_WALLET = path.join(envVars.APP_PATH, '/wallet');
     checkInputs(envVars);
+    
     const assetsWalletPath = path.join(process.resourcesPath, '/.wallet');
     console.log('assetsWalletPath: ', assetsWalletPath);
-    console.log('About to install in: ', assetsWalletPath);
     console.log("envVars", envVars);
-    const userWalletFolder = path.join(userPath, '/llavero');
-    fsExtra.copySync(assetsWalletPath, userWalletFolder);
-    await executeCommand("yarn", [], assetsWalletPath, (data: unknown) => { console.log(data) });
+    debugger;
+    await executeCommand("ls", ["-a"], assetsWalletPath, (data: unknown) => { console.log(data) });
+    await executeCommand("ls", ["-a"], envVars.APP_PATH, (data: unknown) => { console.log(data) });
+    fsExtra.copySync(assetsWalletPath, envVars.APP_WALLET);
+    await executeCommand("npm", ["install"], envVars.APP_WALLET, (data: unknown) => { console.log(data) });
     let siteUrl = "";
-    console.log('About to deploy in: ', userWalletFolder);
-    await executeCommand("yarn", ["deploy"], userWalletFolder, (data: unknown) => {
+
+    await executeCommand("npm", ["run", "deploy"],  envVars.APP_WALLET, (data: unknown) => {
       const log = data.toString();
       const start = log.indexOf("https://");
       const end = log.indexOf("cloudfront.net");
@@ -184,7 +190,7 @@ async function installWallet(email: string, region: string,  userPath: string): 
     console.log('installWallet error: ', error);
   }
 }
-contextBridge.exposeInMainWorld('installWallet', async (email: string, region: string,  userPath: string): Promise<string> => await installWallet(email, region, userPath));
+contextBridge.exposeInMainWorld('installWallet', async (email: string, region: string): Promise<string> => await installWallet(email, region));
 
 function openInBrowser(url: string) {
   require('electron').shell.openExternal(url);
