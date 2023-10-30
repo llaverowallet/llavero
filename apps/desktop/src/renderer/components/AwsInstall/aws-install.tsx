@@ -3,6 +3,7 @@ import { EnvVars } from '../../appPreload';
 import { useEffect, useState } from 'react';
 import Paper from '@mui/material/Paper';
 
+
 import * as React from 'react';
 
 interface Props {
@@ -84,8 +85,7 @@ export function AwsInstall({ accessKeyId, secretAccessKey }: Props) {
             //await bootstrapCdk(enVars.AWS_ACCOUNT_ID, selectedRegion);
             console.log('installing wallet', selectedRegion);
             console.log('email', email);
-            const url = await installWallet(email, selectedRegion); //TODO: get email from input
-            console.log("paso");
+            const url = await installWallet(email, selectedRegion);
             setSiteUrl(url);
             //setInstalling(false);
             setInstallation('installed');

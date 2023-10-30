@@ -16,6 +16,13 @@ module.exports = {
       });
       fsExtra.removeSync(".wallet/next.config.js", (err) => console.log(err));
       fsExtra.renameSync(".wallet/next.config-deploy.js", ".wallet/next.config.js");
+    },
+    packageAfterCopy: async (config, buildPath, electronVersion, platform, arch) => {
+      var src = path.join(rootDir, '.wallet');
+      console.log("src: ", src);
+      var dst = buildPath;
+      console.log("dst: ", dst);
+      fsExtra.copySync(src, dst + '/.wallet');
     }
   },
   // Packager Config
@@ -23,12 +30,13 @@ module.exports = {
     // Create asar archive for main, renderer process files
     asar: true,
     // Set executable name
-    executableName: 'llavero-setup',
+    executableName: 'desktop',
     // Set application copyright
     appCopyright: 'Copyright (C) 2023 Mariano Vicario',
     // Set application icon
     icon: path.resolve('assets/images/appIcon.ico'),
     name: 'llavero',
+    extraResource: [".wallet"],
   },
   // Forge Makers
   makers: [
@@ -37,7 +45,7 @@ module.exports = {
       // Windows applications and is therefore the most user friendly you can get.
       name: '@electron-forge/maker-squirrel',
       config: {
-        name: 'electron-react-typescript-webpack-2022',
+        name: 'Llavero',
       },
     },
     {
@@ -50,21 +58,25 @@ module.exports = {
       // The deb target builds .deb packages, which are the standard package format for Debian-based
       // Linux distributions such as Ubuntu.
       name: '@electron-forge/maker-deb',
-      config: {},
-    },
-    {
-      // The RPM target builds .rpm files, which is the standard package format for
-      // RedHat-based Linux distributions such as Fedora.
-      name: '@electron-forge/maker-rpm',
-      config: {},
-    },
-    { //mac
-      name: '@electron-forge/maker-dmg',
       config: {
-        background: './assets/dmg-background.png',
-        format: 'ULFO'
-      }
-    }
+        name: 'Llavero',
+      },
+
+
+    },
+    // {
+    //   // The RPM target builds .rpm files, which is the standard package format for
+    //   // RedHat-based Linux distributions such as Fedora.
+    //   name: '@electron-forge/maker-rpm',
+    //   config: {},
+    // },
+    // { //mac
+    //   name: '@electron-forge/maker-dmg',
+    //   config: {
+    //     background: './assets/dmg-background.png',
+    //     format: 'ULFO'
+    //   }
+    // }
   ],
   // Forge Plugins
   plugins: [
@@ -112,12 +124,9 @@ module.exports = {
 
 
 
-
-
-
 const filterFunc = (src) => {
   // Paths to omit
-  const omitPaths = ['node_modules', '/.next'];
+  const omitPaths = ['node_modules', '/.next', '.sst', '.open-next'];
   for (const omitPath of omitPaths) {
     if (src.includes(omitPath)) {
       return false;

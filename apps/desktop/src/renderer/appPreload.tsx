@@ -1,5 +1,5 @@
 import * as sdk from 'aws-sdk';
-import { contextBridge } from 'electron';
+import { contextBridge, ipcRenderer } from 'electron';
 import { STSClient, GetCallerIdentityCommand } from '@aws-sdk/client-sts';
 import { EC2Client, DescribeRegionsCommand } from '@aws-sdk/client-ec2';
 import { DescribeStackEventsCommand, CloudFormationClient, DescribeStacksCommand } from '@aws-sdk/client-cloudformation';
@@ -9,6 +9,9 @@ import path from 'path';
 import { executeCommand } from './runCommand';
 import { hostname } from 'os';
 import crypto from 'crypto';
+import { env } from 'process';
+// import { User } from 'aws-cdk-lib/aws-iam';
+const fsExtra = require('fs-extra');  
 
 const nodeModulesPath = path.join(process.cwd(), 'node_modules');
 console.log(nodeModulesPath);
@@ -153,22 +156,28 @@ async function installWallet(email: string, region: string): Promise<string> {
       EMAIL: email,
       AWS_ACCESS_KEY_ID: process.env['AWS_ACCESS_KEY_ID'],
       AWS_SECRET_ACCESS_KEY: process.env['AWS_SECRET_ACCESS_KEY'],
-      COGNITO_URL_SUFFIX: suffix
+      COGNITO_URL_SUFFIX: suffix,
+      APP_PATH: await ipcRenderer.invoke('userDataPath'),
+      APP_WALLET: ""
     };
+    envVars.APP_WALLET = path.join(envVars.APP_PATH, '/wallet');
     checkInputs(envVars);
-    const assetsWalletPath = path.join(process.cwd(), '.wallet');
+    
+    const assetsWalletPath = path.join(process.resourcesPath, '/.wallet');
     console.log('assetsWalletPath: ', assetsWalletPath);
-    console.log('About to install in: ', assetsWalletPath);
     console.log("envVars", envVars);
-    await executeCommand("yarn", [], assetsWalletPath, (data: unknown) => { console.log(data) });
+    await executeCommand("ls", ["-a"], assetsWalletPath, (data: unknown) => { console.log(data) });
+    await executeCommand("ls", ["-a"], envVars.APP_PATH, (data: unknown) => { console.log(data) });
+    fsExtra.copySync(assetsWalletPath, envVars.APP_WALLET);
+    await executeCommand("npm", ["install"], envVars.APP_WALLET, (data: unknown) => { console.log(data) });
     let siteUrl = "";
-    console.log('About to deploy in: ', assetsWalletPath);
-    await executeCommand("yarn", ["deploy"], assetsWalletPath, (data: unknown) => {
+
+    await executeCommand("npm", ["run", "deploy"],  envVars.APP_WALLET, (data: unknown) => {
       const log = data.toString();
       const start = log.indexOf("https://");
       const end = log.indexOf("cloudfront.net");
       const url = log.substring(start, end + "cloudfront.net".length);
-      if(url.startsWith("https://") && url.endsWith("cloudfront.net")) {
+      if (url.startsWith("https://") && url.endsWith("cloudfront.net")) {
         console.log("url: " + url);
         siteUrl = url;
       }

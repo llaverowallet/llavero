@@ -17,18 +17,18 @@
     "llavero"
   ],
   "author": {
-    "name": "Mariano Vicario",
+    "name": "Mariano Julio Vicario",
     "url": "https://github.com/elranu"
   },
   "contributors": [
     {
-      "name": "Mariano Vicario",
+      "name": "Mariano Julio Vicario",
       "url": "https://github.com/elranu"
     }
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/elranu/cloudwallet"
+    "url": "https://github.com/elranu/llavero"
   },
   "license": "MIT",
   "config": {

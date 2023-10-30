@@ -1,4 +1,4 @@
-import { TextField } from '@mui/material';
+import { FormControl, TextField } from '@mui/material';
 import React, { useState } from 'react';
 import Fab from '@mui/material/Fab';
 import NavigationIcon from '@mui/icons-material/Navigation';
@@ -19,29 +19,30 @@ export function AwsCredentialsForm({ onSubmit }: Props) {
 
     return (
         <form onSubmit={handleSubmit}>
-            <TextField
-                sx={{ minWidth: 400}}
-                required
-                id="outlined-required"
-                label="AWS Access Key ID"
-                defaultValue="uiuwiuiw"
-                value={accessKeyId} onChange={(e) => setAccessKeyId(e.target.value)}
-            /><br /><br />
-            <TextField
-                sx={{ minWidth: 400}}
-                required
-                id="outlined-required"
-                label=" AWS Secret Access Key"
-                defaultValue="53434gsf"
-                value={secretAccessKey} onChange={(e) => setSecretAccessKey(e.target.value)}
-            />
+            <FormControl fullWidth>
+                <TextField
+                    sx={{ minWidth: 400 }}
+                    required
+                    id="outlined-required"
+                    label="AWS Access Key ID"
+                    defaultValue="uiuwiuiw"
+                    value={accessKeyId} onChange={(e) => setAccessKeyId(e.target.value)}
+                /><br /><br />
+                <TextField
+                    sx={{ minWidth: 400 }}
+                    required
+                    id="outlined-required"
+                    label="AWS Secret Access Key"
+                    defaultValue="53434gsf"
+                    value={secretAccessKey} onChange={(e) => setSecretAccessKey(e.target.value)}
+                />
 
-            <br /><br />
-            <Fab variant="extended" size="small" color="primary" type="submit">
-            <NavigationIcon sx={{ mr: 1 }} />
-                Login
-            </Fab>
-            
+                <br /><br />
+                <Fab variant="extended" size="small" color="primary" type="submit">
+                    <NavigationIcon sx={{ mr: 1 }} />
+                    Login
+                </Fab>
+            </FormControl>
         </form>
     );
 }

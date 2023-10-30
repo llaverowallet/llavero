@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, contextBridge, ipcMain } from 'electron';
 import path from 'path';
 
 // Electron Forge automatically creates these entry points
@@ -21,7 +21,7 @@ export function createAppWindow(): BrowserWindow {
     autoHideMenuBar: true,
     icon: path.resolve('assets/images/appIcon.ico'),
     webPreferences: {
-      nodeIntegration: true,
+      nodeIntegration: false,
       contextIsolation: true,
       nodeIntegrationInWorker: false,
       nodeIntegrationInSubFrames: false,
@@ -29,6 +29,12 @@ export function createAppWindow(): BrowserWindow {
       sandbox: false,
     },
   });
+
+  ipcMain.handle('userDataPath', () => {
+    console.log('getAppData', app.getPath('appData'));
+    return app.getPath('userData');
+  });
+
 
   // Load the index.html of the app window.
   appWindow.loadURL(APP_WINDOW_WEBPACK_ENTRY);
@@ -39,7 +45,14 @@ export function createAppWindow(): BrowserWindow {
   }
 
   // Show window when its ready to
-  appWindow.on('ready-to-show', () => appWindow.show());
+  appWindow.on('ready-to-show', () => {
+    appWindow.show();
+    // contextBridge.exposeInMainWorld('paths', {
+    //   userPath: app.getPath('userData'),
+    //   appPath: app.getPath('appData'),
+    //   home: app.getPath('home'),
+    // })
+  });
 
   // Close all windows when main window is closed
   appWindow.on('close', () => {
