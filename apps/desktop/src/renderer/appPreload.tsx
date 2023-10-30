@@ -9,6 +9,8 @@ import path from 'path';
 import { executeCommand } from './runCommand';
 import { hostname } from 'os';
 import crypto from 'crypto';
+// import { User } from 'aws-cdk-lib/aws-iam';
+const fsExtra = require('fs-extra');  
 
 const nodeModulesPath = path.join(process.cwd(), 'node_modules');
 console.log(nodeModulesPath);
@@ -145,7 +147,7 @@ async function bootstrapCdk(account: string, region: string) {
 contextBridge.exposeInMainWorld('bootstrapCdk', (account: string, region: string) => bootstrapCdk(account, region));
 
 //installWallet
-async function installWallet(email: string, region: string): Promise<string> {
+async function installWallet(email: string, region: string,  userPath: string): Promise<string> {
   try {
     const suffix = getDeterministicRandomString();
     const envVars = {
@@ -156,19 +158,21 @@ async function installWallet(email: string, region: string): Promise<string> {
       COGNITO_URL_SUFFIX: suffix
     };
     checkInputs(envVars);
-    const assetsWalletPath = path.join(process.cwd(), '.wallet');
+    const assetsWalletPath = path.join(process.resourcesPath, '/.wallet');
     console.log('assetsWalletPath: ', assetsWalletPath);
     console.log('About to install in: ', assetsWalletPath);
     console.log("envVars", envVars);
+    const userWalletFolder = path.join(userPath, '/llavero');
+    fsExtra.copySync(assetsWalletPath, userWalletFolder);
     await executeCommand("yarn", [], assetsWalletPath, (data: unknown) => { console.log(data) });
     let siteUrl = "";
-    console.log('About to deploy in: ', assetsWalletPath);
-    await executeCommand("yarn", ["deploy"], assetsWalletPath, (data: unknown) => {
+    console.log('About to deploy in: ', userWalletFolder);
+    await executeCommand("yarn", ["deploy"], userWalletFolder, (data: unknown) => {
       const log = data.toString();
       const start = log.indexOf("https://");
       const end = log.indexOf("cloudfront.net");
       const url = log.substring(start, end + "cloudfront.net".length);
-      if(url.startsWith("https://") && url.endsWith("cloudfront.net")) {
+      if (url.startsWith("https://") && url.endsWith("cloudfront.net")) {
         console.log("url: " + url);
         siteUrl = url;
       }
@@ -180,7 +184,7 @@ async function installWallet(email: string, region: string): Promise<string> {
     console.log('installWallet error: ', error);
   }
 }
-contextBridge.exposeInMainWorld('installWallet', async (email: string, region: string): Promise<string> => await installWallet(email, region));
+contextBridge.exposeInMainWorld('installWallet', async (email: string, region: string,  userPath: string): Promise<string> => await installWallet(email, region, userPath));
 
 function openInBrowser(url: string) {
   require('electron').shell.openExternal(url);

@@ -27,8 +27,10 @@ export function createAppWindow(): BrowserWindow {
       nodeIntegrationInSubFrames: false,
       preload: APP_WINDOW_PRELOAD_WEBPACK_ENTRY,
       sandbox: false,
+
     },
   });
+
 
   // Load the index.html of the app window.
   appWindow.loadURL(APP_WINDOW_WEBPACK_ENTRY);
@@ -39,7 +41,14 @@ export function createAppWindow(): BrowserWindow {
   }
 
   // Show window when its ready to
-  appWindow.on('ready-to-show', () => appWindow.show());
+  appWindow.on('ready-to-show', () => {
+    appWindow.show();
+    // contextBridge.exposeInMainWorld('paths', {
+    //   userPath: app.getPath('userData'),
+    //   appPath: app.getPath('appData'),
+    //   home: app.getPath('home'),
+    // })
+  });
 
   // Close all windows when main window is closed
   appWindow.on('close', () => {
