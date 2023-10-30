@@ -166,7 +166,6 @@ async function installWallet(email: string, region: string): Promise<string> {
     const assetsWalletPath = path.join(process.resourcesPath, '/.wallet');
     console.log('assetsWalletPath: ', assetsWalletPath);
     console.log("envVars", envVars);
-    debugger;
     await executeCommand("ls", ["-a"], assetsWalletPath, (data: unknown) => { console.log(data) });
     await executeCommand("ls", ["-a"], envVars.APP_PATH, (data: unknown) => { console.log(data) });
     fsExtra.copySync(assetsWalletPath, envVars.APP_WALLET);
