@@ -25,9 +25,13 @@ jobs:
           node-version: 20
       - name: Run install
         uses: borales/actions-yarn@v4
-          with:
-            cmd: install
+        with:
+          cmd: install
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GH_TOKEN }}
+      - name: Publish
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: workspace desktop publish
           env:
             NODE_AUTH_TOKEN: ${{ secrets.GH_TOKEN }}
-      - name: Publish app
-        run: yarn workspace desktop publish
