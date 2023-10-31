@@ -61,22 +61,23 @@ module.exports = {
       config: {
         name: 'Llavero',
       },
-
-
     },
-    // {
-    //   // The RPM target builds .rpm files, which is the standard package format for
-    //   // RedHat-based Linux distributions such as Fedora.
-    //   name: '@electron-forge/maker-rpm',
-    //   config: {},
-    // },
-    // { //mac
-    //   name: '@electron-forge/maker-dmg',
-    //   config: {
-    //     background: './assets/dmg-background.png',
-    //     format: 'ULFO'
-    //   }
-    // }
+    {
+      // The RPM target builds .rpm files, which is the standard package format for
+      // RedHat-based Linux distributions such as Fedora.
+      name: '@electron-forge/maker-rpm',
+      config: {
+        name  : 'Llavero',
+      },
+    },
+    { //mac
+      name: '@electron-forge/maker-dmg',
+      config: {
+        background: './assets/dmg-background.png',
+        format: 'ULFO',
+        name: 'Llavero',
+      }
+    }
   ],
   // Forge Plugins
   plugins: [
