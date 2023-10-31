@@ -73,7 +73,7 @@ module.exports = {
     { //mac
       name: '@electron-forge/maker-dmg',
       config: {
-        background: './assets/dmg-background.png',
+        background: path.join(rootDir, 'assets/llavero-logo.png'),
         format: 'ULFO',
         name: 'Llavero',
       }
