@@ -120,6 +120,19 @@ module.exports = {
       },
     },
   ],
+  publishers: [
+    {
+      name: '@electron-forge/publisher-github',
+      config: {
+        repository: {
+          owner: 'elranu',
+          name: 'llavero',
+          repository: 'https://github.com/elranu/llavero.git'
+        },
+        prerelease: true
+      }
+    }
+  ]
 };
 
 

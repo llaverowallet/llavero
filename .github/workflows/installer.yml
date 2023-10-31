@@ -1,8 +1,12 @@
-name: Release app
+name: Installer builder
 
 on:
   workflow_dispatch:
 
+env:
+  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+  NODE_AUTH_TOKEN: ${{ secrets.GH_TOKEN }}
+  NPM_AUTH_TOKEN: ${{ secrets.GH_TOKEN }}
 jobs:
   build:
     strategy:
@@ -23,7 +27,4 @@ jobs:
       - run: npm install yarn -g
       - run: yarn
       - name: Publish app
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: yarn workspace desktop publish
