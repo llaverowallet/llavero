@@ -33,5 +33,5 @@ jobs:
         uses: borales/actions-yarn@v4
         with:
           cmd: workspace desktop publish
-          env:
-            NODE_AUTH_TOKEN: ${{ secrets.GH_TOKEN }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GH_TOKEN }}
