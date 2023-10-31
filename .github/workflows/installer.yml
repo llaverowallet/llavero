@@ -3,9 +3,9 @@ on:
   workflow_dispatch:
 
 env:
-  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-  NODE_AUTH_TOKEN: ${{ secrets.GH_TOKEN }}
-  NPM_AUTH_TOKEN: ${{ secrets.GH_TOKEN }}
+  GITHUB_TOKEN: ${{ ssecrets.GITHUB_TOKEN  }}
+  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
 jobs:
   build:
     strategy:
@@ -28,10 +28,10 @@ jobs:
         with:
           cmd: install
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GH_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
       - name: Publish
         uses: borales/actions-yarn@v4
         with:
-          cmd: workspace desktop publish --auth-token=${{GITHUB_TOKEN}}
+          cmd: workspace desktop publish --auth-token=${{secrets.GITHUB_TOKEN }}
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GH_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
