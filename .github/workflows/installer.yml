@@ -7,11 +7,10 @@ jobs:
   build:
     strategy:
       matrix:
-        os:
-          [
-            { name: 'linux', image: 'ubuntu-latest' },
-            { name: 'windows', image: 'windows-latest' },
-            { name: 'macos', image: 'macos-latest' },
+        os: [ 
+        { name: 'linux', image: 'ubuntu-latest' },
+        { name: 'windows', image: 'windows-latest' },
+        { name: 'macos', image: 'macos-latest' },
           ]
     runs-on: ${{ matrix.os.image }}
     steps:
@@ -26,4 +25,5 @@ jobs:
       - name: Publish app
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: yarn workspace desktop publish
