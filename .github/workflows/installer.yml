@@ -32,6 +32,6 @@ jobs:
       - name: Publish
         uses: borales/actions-yarn@v4
         with:
-          cmd: workspace desktop publish --auth-token=${{secrets.GITHUB_TOKEN }}
+          cmd: workspace desktop publish-app --auth-token=${{secrets.GITHUB_TOKEN }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
