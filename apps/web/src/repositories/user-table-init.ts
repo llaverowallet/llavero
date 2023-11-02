@@ -1,135 +1,168 @@
-import { updateUserPoolClientCallbackUrl } from "@/utils/aws";
-import { KmsKey, UserRepository } from "./user-repository";
-import { CognitoIdentityProviderClient, AdminGetUserCommand, AdminCreateUserCommand, UserType, ListUsersCommand } from "@aws-sdk/client-cognito-identity-provider";
+import { updateUserPoolClientCallbackUrl } from '@/shared/utils/aws';
+import { KmsKey, UserRepository } from './user-repository';
+import {
+  CognitoIdentityProviderClient,
+  AdminGetUserCommand,
+  AdminCreateUserCommand,
+  UserType,
+  ListUsersCommand,
+} from '@aws-sdk/client-cognito-identity-provider';
 import { SSMClient, PutParameterCommand } from '@aws-sdk/client-ssm';
-import { AwsKmsSigner } from "@dennisdang/ethers-aws-kms-signer";
-import { getKeyId } from "@/utils/crypto";
-import * as  kmsClient from "@aws-sdk/client-kms";
-import { JsonRpcProvider } from "ethers";
-import { EIP155_MAINNET_CHAINS } from "@/data/EIP155Data";
+import { AwsKmsSigner } from '@dennisdang/ethers-aws-kms-signer';
+import { getKeyId } from '@/shared/utils/crypto';
+import * as kmsClient from '@aws-sdk/client-kms';
+import { JsonRpcProvider } from 'ethers';
+import { EIP155_MAINNET_CHAINS } from '@/data/EIP155Data';
 
 export interface ICloudWalletInitParams {
-    tableName: string,
-    keys: [{ keyArn: string }]
-    cognitoPoolId: string,
-    UserPoolClientId: string,
-    config: any
-    arnSiteParameter: string,
-    siteUrl: string
+  tableName: string;
+  keys: [{ keyArn: string }];
+  cognitoPoolId: string;
+  UserPoolClientId: string;
+  config: any;
+  arnSiteParameter: string;
+  siteUrl: string;
 }
 
 export async function main(event: { params: ICloudWalletInitParams }) {
-    await UserRepository.updateTable(event.params.tableName);
-    const userRepo = new UserRepository(event.params.tableName);
-    await updateParameterStoreValue(event.params.arnSiteParameter, event.params.siteUrl, event.params.config.region);
-    if (event.params.siteUrl.indexOf("localhost") <= -1)
-        await updateUserPoolClientCallbackUrl(event.params.UserPoolClientId ?? "empty", event.params.cognitoPoolId ?? "empty", event.params.siteUrl + "/api/auth/callback/cognito");
-    const cognitoUser = await createCognitoUser(event.params.cognitoPoolId,
-        event.params.config.email,
-        "Llavero1234!",
-        event.params.config.phoneNumber,
-        event.params.config.region);
-    if (!cognitoUser) throw new Error("Cognito user not created");
-    console.log("Cognito user created: ", cognitoUser);
-    const email = cognitoUser?.Attributes?.find(x => x.Name === "email")?.Value as string;
-    const userId = cognitoUser?.Attributes?.find(x => x.Name === "sub")?.Value as string;
-    console.log("email y sub ", email, userId);
-    let user = await userRepo.getUser(email);
-    console.log("user: ", user);
-    let newUser;
-    if (!user) {
-        console.log("Creating new user");
-        newUser = await userRepo.createUser({ username: email, mail: email, name: email, userId: userId });
-        console.log("New user created: ", newUser.username);
-    }
-    user = user || newUser;
-    if (!user) throw new Error("User not found");
+  await UserRepository.updateTable(event.params.tableName);
+  const userRepo = new UserRepository(event.params.tableName);
+  await updateParameterStoreValue(
+    event.params.arnSiteParameter,
+    event.params.siteUrl,
+    event.params.config.region,
+  );
+  if (event.params.siteUrl.indexOf('localhost') <= -1)
+    await updateUserPoolClientCallbackUrl(
+      event.params.UserPoolClientId ?? 'empty',
+      event.params.cognitoPoolId ?? 'empty',
+      event.params.siteUrl + '/api/auth/callback/cognito',
+    );
+  const cognitoUser = await createCognitoUser(
+    event.params.cognitoPoolId,
+    event.params.config.email,
+    'Llavero1234!',
+    event.params.config.phoneNumber,
+    event.params.config.region,
+  );
+  if (!cognitoUser) throw new Error('Cognito user not created');
+  console.log('Cognito user created: ', cognitoUser);
+  const email = cognitoUser?.Attributes?.find((x) => x.Name === 'email')?.Value as string;
+  const userId = cognitoUser?.Attributes?.find((x) => x.Name === 'sub')?.Value as string;
+  console.log('email y sub ', email, userId);
+  let user = await userRepo.getUser(email);
+  console.log('user: ', user);
+  let newUser;
+  if (!user) {
+    console.log('Creating new user');
+    newUser = await userRepo.createUser({
+      username: email,
+      mail: email,
+      name: email,
+      userId: userId,
+    });
+    console.log('New user created: ', newUser.username);
+  }
+  user = user || newUser;
+  if (!user) throw new Error('User not found');
 
-    const keys = new Array<KmsKey>();
-    const keysArn = event.params.keys.map(k => k.keyArn);
-    console.log("keysArn: ", keysArn);
-    const keyClient = new kmsClient.KMSClient();
-    const provider = new JsonRpcProvider(EIP155_MAINNET_CHAINS["eip155:1"].rpc); //TODO get from an endpoint
-    for (let index = 0; index < keysArn.length; index++) {
-        const element = keysArn[index];
-        const signer = new AwsKmsSigner(getKeyId(element), keyClient, provider);
-        const addr = await signer.getAddress();
-        console.log("addr for keyArn: ", addr, element);
-        keys.push({ keyArn: element, address: addr, name: "key" + index, username: user?.username });
-    }
-    if (keys.length <= 0) throw new Error("No keys found");
+  const keys = new Array<KmsKey>();
+  const keysArn = event.params.keys.map((k) => k.keyArn);
+  console.log('keysArn: ', keysArn);
+  const keyClient = new kmsClient.KMSClient();
+  const provider = new JsonRpcProvider(EIP155_MAINNET_CHAINS['eip155:1'].rpc); //TODO get from an endpoint
+  for (let index = 0; index < keysArn.length; index++) {
+    const element = keysArn[index];
+    const signer = new AwsKmsSigner(getKeyId(element), keyClient, provider);
+    const addr = await signer.getAddress();
+    console.log('addr for keyArn: ', addr, element);
+    keys.push({ keyArn: element, address: addr, name: 'key' + index, username: user?.username });
+  }
+  if (keys.length <= 0) throw new Error('No keys found');
 
-    await userRepo.createKeys(keys, user.username);
+  await userRepo.createKeys(keys, user.username);
 }
 
-async function createCognitoUser(cognitoPoolId: string, email: string, password: string, phone: string, region: string): Promise<UserType | undefined> {
-    console.log("Getting cognito user: ", email);
-    const client = new CognitoIdentityProviderClient({ region: region });
-    const cognitoUsername = await getCognitoUser(cognitoPoolId, client, email); //TODO is not getting de user error
-    if (cognitoUsername) return cognitoUsername;
-    console.log("Creating cognito user: ", email);
-    const command = new AdminCreateUserCommand({
-        UserPoolId: cognitoPoolId,
-        Username: email,
-        TemporaryPassword: password,
-        UserAttributes: [
-            {
-                Name: "email",
-                Value: email
-            },
-            // {
-            //     Name: "phone_number",
-            //     Value: phone
-            //     ,
-            // },
-            // {
-            //     Name: "email_verified",
-            //     Value: "true"
-            // },
-            // {
-            //     Name: "phone_number_verified",
-            //     Value: "true"
-            // }
-        ]
-    });
+async function createCognitoUser(
+  cognitoPoolId: string,
+  email: string,
+  password: string,
+  phone: string,
+  region: string,
+): Promise<UserType | undefined> {
+  console.log('Getting cognito user: ', email);
+  const client = new CognitoIdentityProviderClient({ region: region });
+  const cognitoUsername = await getCognitoUser(cognitoPoolId, client, email); //TODO is not getting de user error
+  if (cognitoUsername) return cognitoUsername;
+  console.log('Creating cognito user: ', email);
+  const command = new AdminCreateUserCommand({
+    UserPoolId: cognitoPoolId,
+    Username: email,
+    TemporaryPassword: password,
+    UserAttributes: [
+      {
+        Name: 'email',
+        Value: email,
+      },
+      // {
+      //     Name: "phone_number",
+      //     Value: phone
+      //     ,
+      // },
+      // {
+      //     Name: "email_verified",
+      //     Value: "true"
+      // },
+      // {
+      //     Name: "phone_number_verified",
+      //     Value: "true"
+      // }
+    ],
+  });
 
+  const response = await client.send(command);
+  return response.User;
+}
+
+async function getCognitoUser(
+  cognitoPoolId: string,
+  client: CognitoIdentityProviderClient,
+  email: string,
+) {
+  try {
+    const command = new ListUsersCommand({
+      UserPoolId: cognitoPoolId,
+      Filter: `email = "${email}"`,
+    });
     const response = await client.send(command);
-    return response.User;
+    const users = response.Users;
+    if (users && users.length > 0) {
+      return users[0];
+    }
+    return null;
+  } catch (error) {
+    return null;
+  }
 }
 
-async function getCognitoUser(cognitoPoolId: string, client: CognitoIdentityProviderClient, email: string) {
-    try {
-        const command = new ListUsersCommand({
-            UserPoolId: cognitoPoolId,
-            Filter: `email = "${email}"`
-        });
-        const response = await client.send(command);
-        const users = response.Users;
-        if (users && users.length > 0) {
-            return users[0];
-        }
-        return null;
-    } catch (error) {
-        return null;
-    }
-}
+async function updateParameterStoreValue(
+  name: string,
+  value: string,
+  region: string,
+): Promise<void> {
+  const ssmClient = new SSMClient({ region: region }); // Replace REGION with your AWS region
+  const command = new PutParameterCommand({
+    Name: name,
+    Value: value,
+    Overwrite: true,
+    Type: 'String',
+  });
 
-
-
-async function updateParameterStoreValue(name: string, value: string, region: string): Promise<void> {
-    const ssmClient = new SSMClient({ region: region }); // Replace REGION with your AWS region
-    const command = new PutParameterCommand({
-        Name: name,
-        Value: value,
-        Overwrite: true,
-        Type: 'String',
-    });
-
-    try {
-        await ssmClient.send(command);
-        console.log(`Successfully updated parameter ${name}`);
-    } catch (error) {
-        console.error(`Error updating parameter ${name}: ${error}`);
-        throw error;
-    }
+  try {
+    await ssmClient.send(command);
+    console.log(`Successfully updated parameter ${name}`);
+  } catch (error) {
+    console.error(`Error updating parameter ${name}: ${error}`);
+    throw error;
+  }
 }

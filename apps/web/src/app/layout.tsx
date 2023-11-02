@@ -1,31 +1,29 @@
-"use client";
-import { baselightTheme } from "@/utils/theme/DefaultColors";
-import { ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import { SessionProvider } from "next-auth/react";
+import './globals.css';
+import { Inter as FontSans } from 'next/font/google';
+
+import { cn } from '@/lib/utils';
+import { ClientLayout } from './client-layout';
 
 // @ts-expect-error 🚧 ETHERS IS BROKEN. THIS IS A WORKAROUND
 BigInt.prototype.toJSON = function () {
-  return this.toString()
-}
+  return this.toString();
+};
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+const fontSans = FontSans({
+  subsets: ['latin'],
+  variable: '--font-sans',
+});
+
+export const metadata = {
+  title: 'Llavero CloudWallet',
+  description: 'Llavero CloudWallet is a non-custodial wallet that runs in your server',
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" title="Llavero">
-     <link rel="icon" href="/favicon.ico" />
-
-      <body>
-        <SessionProvider>
-        <ThemeProvider theme={baselightTheme}>
-          {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-          <CssBaseline />
-          {children}
-        </ThemeProvider>
-        </SessionProvider>
+    <html lang='en'>
+      <body className={cn('min-h-screen bg-background font-sans antialiased', fontSans.variable)}>
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );

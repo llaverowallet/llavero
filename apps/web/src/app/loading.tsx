@@ -1,19 +1,10 @@
-'use client'
-import CircularProgress from "@mui/material/CircularProgress";
-import Box from "@mui/material/Box";
+import { Container } from '@/shared/components/ui/container';
+import { Skeleton } from '@/shared/components/ui/skeleton';
 
 export default function Loading() {
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        width: "100%",
-        height: "100vh",
-      }}
-    >
-      <CircularProgress />
-    </Box>
+    <Container className='flex-1 flex flex-col px-4 lg:px-0'>
+      <Skeleton className='w-full flex-1' />
+    </Container>
   );
 }
