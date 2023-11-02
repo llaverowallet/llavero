@@ -147,13 +147,10 @@ export function llaveroStack({ stack, app }: StackContext) {
 }
 
 export function initLlavero({ stack, app }: StackContext) {
-  const arnParameter = `arn:aws:ssm:${app.region}:${app.account}:parameter${getParameterPath(
-    SITE_URL,
-    'value',
-  )}`;
-  const basePath = process.env.BasePath ?? '';
-  const script = new Script(stack, 'AfterDeploy', {
-    onCreate: basePath + 'src/repositories/user-table-init.main',
+  const arnParameter = `arn:aws:ssm:${app.region}:${app.account}:parameter${getParameterPath(SITE_URL, "value")}`;
+  const basePath = process.cwd() + "/";
+  const script = new Script(stack, "AfterDeploy", {
+    onCreate: basePath + "src/repositories/user-table-init.main",
     params: {
       tableName: userTable.tableName,
       keys: keys.map((k) => ({ keyArn: k.keyArn })),
