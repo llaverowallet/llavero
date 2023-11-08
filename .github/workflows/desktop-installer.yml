@@ -1,0 +1,37 @@
+name: Desktop Installer builder
+on:
+  workflow_dispatch:
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
+  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ 
+        { name: 'linux', image: 'ubuntu-latest' },
+        { name: 'windows', image: 'windows-latest' },
+        { name: 'macos', image: 'macos-latest' },
+          ]
+    runs-on: ${{ matrix.os.image }}
+    steps:
+      - name: Github checkout
+        uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - name: Run install
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: install
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
+      - name: Publish
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: workspace desktop publish-app --auth-token=${{secrets.GITHUB_TOKEN }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
