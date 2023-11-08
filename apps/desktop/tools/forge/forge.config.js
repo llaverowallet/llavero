@@ -6,6 +6,7 @@ const fsExtra = require('fs-extra');
 module.exports = {
   hooks: {
     generateAssets: (forgeConfig, platform, arch) => {
+      fsExtra.removeSync(".wallet");
       fsExtra.copySync("../web", ".wallet", { filter: filterFunc }, (err) => {
         if (err) {
           console.error('An error occurred while copying the folder.');
@@ -22,6 +23,7 @@ module.exports = {
       console.log("src: ", src);
       var dst = buildPath;
       console.log("dst: ", dst);
+      fsExtra.removeSync(dst + '/.wallet');
       fsExtra.copySync(src, dst + '/.wallet');
     }
   },
