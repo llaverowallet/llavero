@@ -1,0 +1,18 @@
+{
+  "name": "installer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "install-sst": "ts-node -P tsconfig.json sst-deploy.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "ts-node": "^10.9.1"
+  },
+  "dependencies": {
+    "sst": "2.29.2"
+  }
+}
