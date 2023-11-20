@@ -21,13 +21,16 @@ type secondLevelActions =
 export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession(AUTH_OPTIONS);
+    const { searchParams } = req.nextUrl;
+    const network = searchParams.get('network');
+
     const { action, addr } = getAction(req);
     console.log('action GET: ', action);
     switch (action) {
       case 'list':
         console.log('session: ', session);
         if (session?.user && session?.user?.email)
-          return Response.json(await listWallets(session?.user?.email));
+          return Response.json(await listWallets(session?.user?.email, network));
         else return Response.json([]);
       case 'get':
         console.log('entro');

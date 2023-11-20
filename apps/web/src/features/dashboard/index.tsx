@@ -34,6 +34,9 @@ import {
 import { Label } from '@/shared/components/ui/label';
 import { Input } from '@/shared/components/ui/input';
 import { Skeleton } from '@/shared/components/ui/skeleton';
+import { useSnapshot } from 'valtio';
+import SettingsStore from '@/store/settingsStore';
+import { getChainByEip155Address } from '@/data/chainsUtil';
 
 // @ts-ignore
 BigInt.prototype.toJSON = function () {
@@ -41,13 +44,18 @@ BigInt.prototype.toJSON = function () {
 };
 
 const Dashboard = () => {
+  const { network } = useSnapshot(SettingsStore.state);
+  const eip155Address = `${network.namespace}:${network.chainId}`;
   const [isLoading, setIsLoading] = useState(true);
   const [accounts, setAccounts] = useState<WalletInfo[]>([]);
 
   useEffect(() => {
-    (async () => {
+    if (!eip155Address) return;
+
+    const getWalletList = async (eip155Address: string) => {
+      const { rpc } = getChainByEip155Address(eip155Address);
       try {
-        const response = await fetch('/wallet/list');
+        const response = await fetch(`/wallet/list?network=${rpc}`);
 
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -60,8 +68,11 @@ const Dashboard = () => {
       } finally {
         setIsLoading(false);
       }
-    })();
-  }, []);
+    };
+
+    setIsLoading(true);
+    getWalletList(eip155Address);
+  }, [eip155Address]);
 
   return (
     <Container>
