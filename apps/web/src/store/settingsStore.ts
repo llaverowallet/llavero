@@ -1,16 +1,18 @@
-import { Verify } from '@walletconnect/types'
-import { proxy } from 'valtio'
+import { Chain, EIP155_TEST_CHAINS } from '@/data/EIP155Data';
+import { Verify } from '@walletconnect/types';
+import { proxy } from 'valtio';
 
 /**
  * Types
  */
 interface State {
-  testNets: boolean
-  account: number
-  eip155Address: string
-  relayerRegionURL: string
-  activeChainId: string
-  currentRequestVerifyContext?: Verify.Context
+  testNets: boolean;
+  account: number;
+  eip155Address: string;
+  relayerRegionURL: string;
+  activeChainId: string;
+  currentRequestVerifyContext?: Verify.Context;
+  network: Chain;
 }
 
 /**
@@ -21,7 +23,8 @@ const state = proxy<State>({
   account: 0,
   activeChainId: '1',
   eip155Address: '',
-  relayerRegionURL: ''
+  relayerRegionURL: '',
+  network: EIP155_TEST_CHAINS['eip155:80001'],
 });
 
 /**
@@ -31,29 +34,33 @@ const SettingsStore = {
   state,
 
   setAccount(value: number) {
-    state.account = value
+    state.account = value;
   },
 
   setEIP155Address(eip155Address: string) {
-    state.eip155Address = eip155Address
+    state.eip155Address = eip155Address;
   },
 
   setActiveChainId(value: string) {
-    state.activeChainId = value
+    state.activeChainId = value;
   },
 
   setCurrentRequestVerifyContext(context: Verify.Context) {
-    state.currentRequestVerifyContext = context
+    state.currentRequestVerifyContext = context;
+  },
+
+  setNetwork(chain: Chain) {
+    state.network = chain;
   },
 
   toggleTestNets() {
-    state.testNets = !state.testNets
+    state.testNets = !state.testNets;
     if (state.testNets) {
-      localStorage.setItem('TEST_NETS', 'YES')
+      localStorage.setItem('TEST_NETS', 'YES');
     } else {
-      localStorage.removeItem('TEST_NETS')
+      localStorage.removeItem('TEST_NETS');
     }
-  }
-}
+  },
+};
 
-export default SettingsStore
+export default SettingsStore;

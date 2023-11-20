@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Container } from '@/shared/components/ui/container';
@@ -14,10 +14,22 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import { Button } from '../ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select';
 import { UserCircle, Waypoints } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
 import { WalletConnectDialog } from '@/features/wallet-connect';
+import { getChainByEip155Address, getMainnetChains, getTestnetChains } from '@/data/chainsUtil';
+import SettingsStore from '@/store/settingsStore';
+import { useSnapshot } from 'valtio';
 
 const links = [
   { href: '#', label: 'Edit Profile' },
@@ -29,6 +41,8 @@ const links = [
 const REDIRECT_AFTER_LOGOUT_URL = '/';
 
 const Header = () => {
+  const { network } = useSnapshot(SettingsStore.state);
+  const eip155Address = `${network.namespace}:${network.chainId}`;
   const { data: session } = useSession();
   const { user } = session || {};
   const { email } = user || {};
@@ -56,14 +70,40 @@ const Header = () => {
                 <WalletConnectDialog />
 
                 <div className='min-w-[125px]'>
-                  <Select defaultValue='mainnet'>
+                  <Select
+                    value={eip155Address}
+                    onValueChange={(eip155Address) => {
+                      SettingsStore.setNetwork(getChainByEip155Address(eip155Address));
+                    }}
+                  >
                     <SelectTrigger>
                       <Waypoints className='h-4 w-4 mr-2' />
                       <SelectValue placeholder='Select a network' />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value='mainnet'>Mainnet </SelectItem>
-                      <SelectItem value='testnet'>Testnet</SelectItem>
+                      <SelectGroup>
+                        <SelectLabel>Mainnet</SelectLabel>
+                        {getMainnetChains()?.map((chain) => (
+                          <SelectItem
+                            key={chain.chainId}
+                            value={`${chain.namespace}:${chain.chainId}`}
+                          >
+                            {chain.name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                      <SelectSeparator />
+                      <SelectGroup>
+                        <SelectLabel>Testnet</SelectLabel>
+                        {getTestnetChains()?.map((chain) => (
+                          <SelectItem
+                            key={chain.chainId}
+                            value={`${chain.namespace}:${chain.chainId}`}
+                          >
+                            {chain.name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
                     </SelectContent>
                   </Select>
                 </div>
