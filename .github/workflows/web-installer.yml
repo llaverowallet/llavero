@@ -1,7 +1,13 @@
 name: Web Installer
 on:
-    repository_dispatch:
-        types: [web-installer]
+  workflow_dispatch:
+    inputs:
+      cognito_url_suffix:
+        description: 'Cognito URL Suffix'
+        required: true
+      aws_region:
+        description: 'AWS Region'
+        required: true
 jobs:
   build:
     name: Workflow-Installer
@@ -21,8 +27,8 @@ jobs:
         with:
           cmd: workspace codedeploy cdk deploy --require-approval never
         env:
-          COGNITO_URL_SUFFIX: ${{ github.event.client_payload.cognito_url_suffix }}
-          REGION: ${{ github.event.client_payload.region }}
-          EMAIL: ${{ github.event.client_payload.email }}
-          AWS_ACCESS_KEY_ID: ${{ github.event.client_payload.aws_access_key_id }}
-          AWS_SECRET_ACCESS_KEY: ${{ github.event.client_payload.aws_secret_access_key }}
+          COGNITO_URL_SUFFIX: ${{ inputs.cognito_url_suffix }}
+          REGION: ${{ inputs.aws_region }}
+          EMAIL: ${{ secrets.EMAIL }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
