@@ -60,7 +60,8 @@ export class CodedeployStack extends Stack {
           repo: 'llavero',
           //Hardcoded PAT because is the only way I found to clone a public repo
           //The PAT only has access to public repo
-          oauthToken: SecretValue.unsafePlainText("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"), 
+          //TODO: Try to send the PAT as a parameter
+          oauthToken: SecretValue.unsafePlainText("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"), 
           trigger: GitHubTrigger.NONE,
         }),
       ],
