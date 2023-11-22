@@ -58,7 +58,9 @@ export class CodedeployStack extends Stack {
           output: code,
           owner: 'elranu',
           repo: 'llavero',
-          oauthToken: SecretValue.unsafePlainText("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"),
+          //Hardcoded PAT because is the only way I found to clone a public repo
+          //The PAT only has access to public repo
+          oauthToken: SecretValue.unsafePlainText("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"), 
           trigger: GitHubTrigger.NONE,
         }),
       ],
