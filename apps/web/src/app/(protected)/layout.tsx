@@ -7,6 +7,11 @@ import Loading from '../loading';
 import { WalletConnectMessages } from '@/features/wallet-connect';
 import { useStartWallet } from '@/shared/hooks/use-start-wallet';
 
+// @ts-ignore
+BigInt.prototype.toJSON = function () {
+  return this.toString();
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { status: sessionStatus, data: sessionData } = useSession();

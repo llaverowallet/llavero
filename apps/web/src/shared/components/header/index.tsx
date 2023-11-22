@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Container } from '@/shared/components/ui/container';
@@ -29,19 +29,19 @@ import { signOut, useSession } from 'next-auth/react';
 import { WalletConnectDialog } from '@/features/wallet-connect';
 import { getChainByEip155Address, getMainnetChains, getTestnetChains } from '@/data/chainsUtil';
 import SettingsStore from '@/store/settingsStore';
-import { useSnapshot } from 'valtio';
+import { useNetwork } from '@/shared/hooks/use-network';
 
 const links = [
-  { href: '#', label: 'Edit Profile' },
-  { href: '#', label: 'Account' },
-  { href: '#', label: 'Change Password' },
-  { href: '#', label: 'My Settings' },
+  { href: '/accounts', label: 'Accounts', disabled: false },
+  { href: '/dashboard', label: 'Dashboard', disabled: false },
+  { href: '#', label: 'Change Password', disabled: true },
+  { href: '#', label: 'My Settings', disabled: true },
 ];
 
 const REDIRECT_AFTER_LOGOUT_URL = '/';
 
 const Header = () => {
-  const { network } = useSnapshot(SettingsStore.state);
+  const { network } = useNetwork();
   const eip155Address = `${network.namespace}:${network.chainId}`;
   const { data: session } = useSession();
   const { user } = session || {};
@@ -54,13 +54,15 @@ const Header = () => {
   return (
     <header className='px-4 xl:px-0 sm:flex sm:justify-between py-3 border-b shadow-md sticky top-0'>
       <Container>
-        <div className='flex h-16 items-center justify-between w-full '>
+        <div className='flex h-12 items-center justify-between w-full '>
           <div className='flex items-center justify-between w-full'>
             <div>
               <Link href='/'>
                 <div className='flex gap-2 items-center'>
-                  <Image src={Logo} alt='Llavero CloudWallet' width={45} height={45} />
-                  <span>Llavero</span>
+                  <Image src={Logo} alt='Llavero CloudWallet' width={35} height={35} />
+                  <span className='hidden sm:block'>
+                    <span className='font-semibold'>Llavero</span> CloudWallet
+                  </span>
                 </div>
               </Link>
             </div>
@@ -112,14 +114,14 @@ const Header = () => {
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild className='min-w-fit md:min-w-[200px]'>
                       <Button variant='outline'>
-                        <UserCircle className='h-4 w-4 md:mr-2' />
+                        <UserCircle className='h-4 w-4' />
                         <DropdownMenuLabel className='hidden md:inline'>{email}</DropdownMenuLabel>
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className='min-w-fit md:min-w-[200px] mr-4 md:mr-auto'>
-                      {links.map(({ href, label }) => (
+                      {links.map(({ href, label, disabled }) => (
                         <Link key={label} href={href}>
-                          <DropdownMenuItem>{label}</DropdownMenuItem>
+                          <DropdownMenuItem disabled={disabled}>{label}</DropdownMenuItem>
                         </Link>
                       ))}
                       <DropdownMenuSeparator />
