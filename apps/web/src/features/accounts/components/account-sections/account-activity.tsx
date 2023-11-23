@@ -30,11 +30,6 @@ type TransactionData = {
   timestamp: number | undefined;
 };
 
-const txHashes = [
-  '0x73c1923e1ea513c924ab5a0b121dd919caae89b147023b78e814dfa0a2b59514',
-  '0x72f692276a5fe99a37a7427a94ee11ee130cb3389699f0ea2401ec3fc4d206df',
-];
-
 const getTransaction = ({ network, txHash }: { network: string; txHash: string }) => {
   return async (): Promise<TransactionData> => {
     const provider = new JsonRpcProvider(network);
@@ -44,13 +39,6 @@ const getTransaction = ({ network, txHash }: { network: string; txHash: string }
     if (!receipt && !transaction) return Promise.reject("Couldn't find transaction");
 
     const block = await provider.getBlock(transaction?.blockNumber!);
-
-    // console.log({
-    //   receipt,
-    //   transaction,
-    //   block,
-    // });
-
     const { status, gasUsed } = receipt || {};
     const { from, to, value, nonce, hash, chainId, gasLimit } = transaction || {};
     const { timestamp } = block || {};

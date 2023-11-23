@@ -21,14 +21,13 @@ import { FormEvent, useState } from 'react';
 import { setTxHash } from '../utils/transactions';
 
 const SendDialog = ({ account }: { account: WalletInfo | null }) => {
-  // TODO: This only works for Mumbai testnet <<
-
   const { network } = useNetwork();
+  const eip155Address = `${network.namespace}:${network.chainId}`;
   const { address } = account || {};
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const TX_CHAIN_ID = '80001';
-  const CHAIN_ID = 'eip155:80001';
+  const TX_CHAIN_ID = `${network.chainId}`;
+  const CHAIN_ID = eip155Address;
   const SEND_TX_URL = `/wallet/${address}/ethSendTransaction`;
 
   const handleSend = async (e: FormEvent<HTMLFormElement>) => {
