@@ -10,6 +10,6 @@ const DashboardPage = () => {
   );
 };
 
-DashboardPage.displayName = 'HomePage';
+DashboardPage.displayName = 'DashboardPage';
 
 export default DashboardPage;

@@ -16,7 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     if (loading) return;
 
     if (authorized) {
-      router.push('/dashboard');
+      router.push('/accounts');
     }
   }, [loading, authorized, sessionStatus, router]);
 

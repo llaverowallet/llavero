@@ -12,7 +12,7 @@ import {
 import { Container } from '@/shared/components/ui/container';
 import { signIn } from 'next-auth/react';
 
-const REDIRECT_AFTER_LOGIN_URL = '/dashboard';
+const REDIRECT_AFTER_LOGIN_URL = '/accounts';
 
 const HomePage = () => {
   const handleLogin = async () => {
