@@ -15,6 +15,9 @@ import { CopyToClipboard } from '@/shared/components/ui/copy-to-clipboard';
 import { useQuery } from '@tanstack/react-query';
 import { useNetwork } from '@/shared/hooks/use-network';
 import { AccountMenu } from '@/features/accounts/components/account-menu';
+import { JsonRpcProvider } from 'ethers';
+import { AccountSections } from './components/account-sections';
+import { Separator } from '@/shared/components/ui/separator';
 
 const getAccounts = (network: string) => {
   return async (): Promise<WalletInfo[]> => {
@@ -68,7 +71,7 @@ const Accounts = () => {
             </div>
 
             <CardContent>
-              <div className='flex flex-col gap-2 items-center'>
+              <div className='flex flex-col gap-2 items-center mb-4'>
                 <CopyToClipboard textToCopy={accountAddress || ''}>
                   <Badge variant='outline' className='flex gap-2 py-2 cursor-pointer'>
                     {getShortWalletAddress(accountAddress || '')} <Copy className='w-4 h-4' />
@@ -82,6 +85,8 @@ const Accounts = () => {
                   <SendDialog account={selectedAccount} />
                 </div>
               </div>
+              <Separator className='mb-4' />
+              <AccountSections account={selectedAccount} />
             </CardContent>
           </Card>
         )}
