@@ -5,7 +5,6 @@ import { Button } from '@/shared/components/ui/button';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -49,7 +48,11 @@ const AccountsHeader = ({
         <DialogHeader className='mb-2'>
           <DialogTitle>Select an account</DialogTitle>
         </DialogHeader>
-        <AccountList accounts={accounts} onSelectAccount={handleSelectAccount} />
+        <AccountList
+          accounts={accounts}
+          onSelectAccount={handleSelectAccount}
+          selectedAccount={selectedAccount}
+        />
       </DialogContent>
     </Dialog>
   );

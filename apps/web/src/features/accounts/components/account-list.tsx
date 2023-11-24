@@ -10,28 +10,46 @@ import { useNetwork } from '@/shared/hooks/use-network';
 type Props = {
   accounts: WalletInfo[];
   onSelectAccount: (account: WalletInfo) => void;
+  selectedAccount: WalletInfo | null;
 };
 
-const AccountList = ({ accounts, onSelectAccount }: Props) => {
+const AccountList = ({ accounts, onSelectAccount, selectedAccount }: Props) => {
   return (
-    <div className='flex flex-col gap-2'>
+    <div className='flex flex-col'>
       {accounts?.length > 0 &&
-        accounts.map((account) => (
-          <AccountListItem
-            key={account.address}
-            account={account}
-            onClick={() => onSelectAccount(account)}
-          />
-        ))}
+        accounts.map((account) => {
+          const isSelected = selectedAccount?.address === account.address;
+          return (
+            <AccountListItem
+              key={account.address}
+              account={account}
+              onClick={() => onSelectAccount(account)}
+              isSelected={isSelected}
+            />
+          );
+        })}
     </div>
   );
 };
 
-const AccountListItem = ({ account, onClick }: { account: WalletInfo; onClick?: () => void }) => {
+const AccountListItem = ({
+  account,
+  onClick,
+  isSelected,
+}: {
+  account: WalletInfo;
+  onClick?: () => void;
+  isSelected: boolean;
+}) => {
   const { network } = useNetwork();
 
+  const selectedStyles = isSelected ? 'bg-blue-100 border-l-2 border-primary' : '';
+
   return (
-    <div className='flex gap-4 cursor-pointer hover:bg-blue-100 px-2 py-2' onClick={onClick}>
+    <div
+      className={`flex gap-4 cursor-pointer hover:bg-blue-100 p-3 ${selectedStyles}`}
+      onClick={onClick}
+    >
       <div className='flex gap-2'>
         <div>
           <Avatar>
