@@ -15,9 +15,9 @@ import { CopyToClipboard } from '@/shared/components/ui/copy-to-clipboard';
 import { useQuery } from '@tanstack/react-query';
 import { useNetwork } from '@/shared/hooks/use-network';
 import { AccountMenu } from '@/features/accounts/components/account-menu';
-import { JsonRpcProvider } from 'ethers';
 import { AccountSections } from './components/account-sections';
 import { Separator } from '@/shared/components/ui/separator';
+import { ReceiveDialog } from './components/receive-dialog';
 
 const getAccounts = (network: string) => {
   return async (): Promise<WalletInfo[]> => {
@@ -81,8 +81,13 @@ const Accounts = () => {
                 <div className='text-3xl mb-4 mt-2'>
                   {formatBalance(accountBalance || 0)} {network.symbol}
                 </div>
-                <div>
-                  <SendDialog account={selectedAccount} />
+                <div className='flex gap-4'>
+                  <div>
+                    <SendDialog account={selectedAccount} />
+                  </div>
+                  <div>
+                    <ReceiveDialog account={selectedAccount} />
+                  </div>
                 </div>
               </div>
               <Separator className='mb-4' />
