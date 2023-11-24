@@ -19,11 +19,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/shared/components/ui/table';
-import { Key } from 'lucide-react';
+import { Copy, Eye, Key, KeyRound } from 'lucide-react';
 
 import { Skeleton } from '@/shared/components/ui/skeleton';
 import { getChainByEip155Address } from '@/data/chainsUtil';
 import { useNetwork } from '@/shared/hooks/use-network';
+import { formatBalance, getShortWalletAddress } from '@/shared/utils/crypto';
+import { CopyToClipboard } from '@/shared/components/ui/copy-to-clipboard';
+import { Button } from '@/shared/components/ui/button';
+import Link from 'next/link';
 
 const Dashboard = () => {
   const { network } = useNetwork();
@@ -73,26 +77,42 @@ const Dashboard = () => {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className='w-[100px]'>Name</TableHead>
-                        <TableHead>Address</TableHead>
-                        <TableHead className='w-[300px]'>Balance</TableHead>
-                        {/* <TableHead className='w-[100px] text-end'>Actions</TableHead> */}
+                        <TableHead className='w-fit'>Name</TableHead>
+                        <TableHead className='w-fit'>Address</TableHead>
+                        <TableHead className='w-fit'>Balance</TableHead>
+                        <TableHead className='w-fit text-end'>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       <>
-                        {accounts.map((account) => (
+                        {accounts.map((account, index) => (
                           <TableRow key={account.address}>
                             <TableCell className='font-medium py-4'>
-                              <div className='flex items-center'>
-                                <Key className='h-4 w-4 mr-2 text-red-500' /> {account.name}
+                              <div className='flex items-center text-xs'>
+                                <KeyRound className='h-4 w-4 mr-1 text-primary' /> {account.name}
                               </div>
                             </TableCell>
-                            <TableCell>{account.address}</TableCell>
-                            <TableCell className='font-semibold'>
-                              {account.balance.toString()}
+                            <TableCell>
+                              <CopyToClipboard textToCopy={account.address || ''}>
+                                <div className='flex gap-2 items-center'>
+                                  {getShortWalletAddress(account.address || '')}
+                                  <Copy className='w-4 h-4' />
+                                </div>
+                              </CopyToClipboard>
                             </TableCell>
-                            {/* <TableCell></TableCell> */}
+                            <TableCell>
+                              <div className='font-semibold flex flex-wrap gap-2 items-center'>
+                                {formatBalance(account.balance.toString() || 0)}
+                                <span className='text-xs'>{network.symbol}</span>
+                              </div>
+                            </TableCell>
+                            <TableCell className='text-end'>
+                              <Button size='icon' asChild>
+                                <Link href={`/accounts?k=${index}`}>
+                                  <Eye className='w-4 h-4' />
+                                </Link>
+                              </Button>
+                            </TableCell>
                           </TableRow>
                         ))}
                       </>

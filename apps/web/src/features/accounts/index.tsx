@@ -18,6 +18,7 @@ import { AccountMenu } from '@/features/accounts/components/account-menu';
 import { AccountSections } from './components/account-sections';
 import { Separator } from '@/shared/components/ui/separator';
 import { ReceiveDialog } from './components/receive-dialog';
+import { useSearchParams } from 'next/navigation';
 
 const getAccounts = (network: string) => {
   return async (): Promise<WalletInfo[]> => {
@@ -32,6 +33,9 @@ const getAccounts = (network: string) => {
 };
 
 const Accounts = () => {
+  const queryParams = useSearchParams();
+  const accountIndex = Number(queryParams.get('k')) || 0;
+
   const { network } = useNetwork();
   const eip155Address = `${network.namespace}:${network.chainId}`;
   const { rpc } = getChainByEip155Address(eip155Address);
@@ -45,8 +49,9 @@ const Accounts = () => {
   useEffect(() => {
     if (!accounts) return;
 
-    setSelectedAccount(accounts[0]);
-  }, [accounts]);
+    const account = accounts?.[accountIndex] || accounts[0];
+    setSelectedAccount(account);
+  }, [accounts, accountIndex]);
 
   const handleSelectAccount = (account: WalletInfo) => {
     setSelectedAccount(account);
