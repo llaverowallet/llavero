@@ -75,7 +75,7 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
       <DialogTrigger asChild>
-        <div className='flex flex-col gap-1'>
+        <div className='flex flex-col gap-1 items-center'>
           <Button className='rounded-full w-9 h-9 p-0' aria-label='Send'>
             <Send className='w-4 h-4' />
           </Button>

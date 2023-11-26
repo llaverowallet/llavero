@@ -67,10 +67,13 @@ const AccountActivity = ({ account }: Props) => {
 
   return (
     <div className='py-4 pt-2 flex flex-col'>
-      {transactionsHashes?.length > 0 &&
+      {transactionsHashes?.length > 0 ? (
         transactionsHashes
           .toReversed()
-          .map((txHash) => <AccountActivityItem key={txHash} txHash={txHash} account={account} />)}
+          .map((txHash) => <AccountActivityItem key={txHash} txHash={txHash} account={account} />)
+      ) : (
+        <span className='text-center text-gray-500'>You have no transactions</span>
+      )}
     </div>
   );
 };
