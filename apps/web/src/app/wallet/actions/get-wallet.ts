@@ -1,11 +1,7 @@
 import createLogger from '@/shared/utils/logger';
 const logger = createLogger('GetWallet');
 import { UserRepository } from '@/repositories/user-repository';
-import { assert } from 'console';
 import { JsonRpcProvider, formatEther } from 'ethers';
-import * as kmsClient from '@aws-sdk/client-kms';
-import { AwsKmsSigner } from '@dennisdang/ethers-aws-kms-signer';
-import { getKeyId } from '@/shared/utils/crypto';
 import { WalletInfo } from '@/models/interfaces';
 
 export default async function getWallet(address: string, username: string): Promise<WalletInfo> {

@@ -8,9 +8,10 @@ import { getServerSession } from 'next-auth';
 import personalSign from '../actions/personalSign';
 import ethSendTransaction from '../actions/ethSendTx';
 import ethSignTransaction from '../actions/ethSignTx';
+import { updateWalletName } from '../actions/update-wallet';
 const logger = createLogger('wallet-endpoint');
 
-type firstLevelActions = 'list' | 'get';
+type firstLevelActions = 'list' | 'get' | 'update';
 type secondLevelActions =
   | 'update'
   | 'get'
@@ -23,9 +24,10 @@ export async function GET(req: NextRequest) {
     const session = await getServerSession(AUTH_OPTIONS);
     const { searchParams } = req.nextUrl;
     const network = searchParams.get('network');
+    const address = searchParams.get('address');
+    const name = searchParams.get('name');
 
     const { action, addr } = getAction(req);
-    console.log('action GET: ', action);
     switch (action) {
       case 'list':
         console.log('session: ', session);
@@ -33,12 +35,21 @@ export async function GET(req: NextRequest) {
           return Response.json(await listWallets(session?.user?.email, network));
         else return Response.json([]);
       case 'get':
-        console.log('entro');
         assert(addr !== undefined, 'address is undefined');
         if (!session?.user?.email)
           return NextResponse.json({ message: 'Not authorized' }, { status: 401 });
         const wallet = await getWallet(addr as string, session?.user?.email);
         return Response.json(wallet);
+
+      case 'update':
+        // assert(addr !== undefined, 'address is undefined');
+        if (!session?.user?.email)
+          return NextResponse.json({ message: 'Not authorized' }, { status: 401 });
+        const response = await updateWalletName(address || '', session?.user?.email, {
+          name: name || '',
+        });
+
+        return Response.json(response);
       default:
         console.log('default action: ', action);
         throw new Error('Invalid Wallet action for GET HTTP method');
@@ -123,7 +134,7 @@ const getAction = (req: NextRequest) => {
 };
 
 function isFirstLevelAction(input: unknown): input is firstLevelActions {
-  return input === 'list' || input === 'create';
+  return input === 'list' || input === 'create' || input === 'update';
 }
 
 function isSecondLevelAction(input: unknown): input is secondLevelActions {
