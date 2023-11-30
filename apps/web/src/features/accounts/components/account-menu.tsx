@@ -21,6 +21,7 @@ import {
 import { CopyToClipboard } from '@/shared/components/ui/copy-to-clipboard';
 import { Badge } from '@/shared/components/ui/badge';
 import QRCode from 'react-qr-code';
+import { AccountEditableName } from './account-editable-name';
 
 type Props = {
   selectedAccount: WalletInfo | null;
@@ -54,10 +55,19 @@ function AccountMenu({ selectedAccount }: Props) {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <DialogContent className='max-w-[360px] sm:max-w-[425px]'>
+      <DialogContent
+        className='max-w-[360px] sm:max-w-[425px]'
+        onOpenAutoFocus={(e) => {
+          e.preventDefault();
+        }}
+      >
         <DialogHeader>
-          <DialogTitle>{accountName}</DialogTitle>
+          <DialogTitle>Account details</DialogTitle>
         </DialogHeader>
+        <AccountEditableName
+          accountName={accountName || ''}
+          accountAddress={accountAddress || ''}
+        />
         <div className='mb-2'>
           <QRCode
             size={256}

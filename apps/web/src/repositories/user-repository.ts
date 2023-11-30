@@ -20,13 +20,14 @@ export class UserRepository {
   constructor(tableName?: string) {
     try {
       tableName = tableName || process.env.USER_TABLE_NAME;
+
       if (!tableName) {
         throw new Error(
           'Table name not provided. Not on the constructor, not in the environment USER_TABLE_NAME',
         );
       }
       const client = new DynamoDBClient({});
-      this.userTable = new Table({ client, name: tableName, schema: UserSchema });
+      this.userTable = new Table({ client, name: tableName, schema: UserSchema, partial: true });
       this.userModel = this.userTable.getModel('User');
       this.keysModel = this.userTable.getModel('Keys');
       this.networkModel = this.userTable.getModel('Networks');
@@ -99,6 +100,26 @@ export class UserRepository {
       console.log('Keys created');
     } catch (error) {
       logger.error(error, 'Error in UserRepository createKeys');
+      throw error;
+    }
+  }
+
+  async updateKey(address: string, user: User, payload: { name: string }) {
+    try {
+      if (!user) throw new Error('User must be provided');
+
+      console.log('Updating address: ', address, 'with', payload);
+
+      return await this.keysModel.update(
+        {
+          address,
+          userId: user.userId,
+          ...payload,
+        },
+        { return: 'get' },
+      );
+    } catch (error) {
+      logger.error(error, 'Error in UserRepository updateKey');
       throw error;
     }
   }

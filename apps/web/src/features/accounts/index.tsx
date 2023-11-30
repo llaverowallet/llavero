@@ -18,7 +18,7 @@ import { AccountMenu } from '@/features/accounts/components/account-menu';
 import { AccountSections } from './components/account-sections';
 import { Separator } from '@/shared/components/ui/separator';
 import { ReceiveDialog } from './components/receive-dialog';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const getAccounts = (network: string) => {
   return async (): Promise<WalletInfo[]> => {
@@ -33,6 +33,7 @@ const getAccounts = (network: string) => {
 };
 
 const Accounts = () => {
+  const router = useRouter();
   const queryParams = useSearchParams();
   const accountIndex = Number(queryParams.get('k')) || 0;
 
@@ -54,7 +55,8 @@ const Accounts = () => {
   }, [accounts, accountIndex]);
 
   const handleSelectAccount = (account: WalletInfo) => {
-    setSelectedAccount(account);
+    // To avoid re-rendering the whole page, we use the router to update the query params
+    router.replace(`/accounts?k=${accounts?.findIndex((a) => a.address === account.address)}`);
   };
 
   return (
