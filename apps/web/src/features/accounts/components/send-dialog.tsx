@@ -28,7 +28,7 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
   const [isLoading, setIsLoading] = useState(false);
   const TX_CHAIN_ID = `${network.chainId}`;
   const CHAIN_ID = eip155Address;
-  const SEND_TX_URL = `/wallet/${address}/ethSendTransaction`;
+  const SEND_TX_URL = `/api/wallet/${address}/eth-send-transaction`;
 
   const handleSend = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
