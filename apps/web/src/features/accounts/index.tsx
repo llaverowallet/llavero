@@ -22,7 +22,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 const getAccounts = (network: string) => {
   return async (): Promise<WalletInfo[]> => {
-    const response = await fetch(`/wallet/list?network=${network}`);
+    const response = await fetch(`/api/accounts?network=${network}`);
 
     if (!response.ok) {
       throw new Error('Network response was not ok');

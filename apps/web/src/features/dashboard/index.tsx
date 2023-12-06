@@ -41,7 +41,7 @@ const Dashboard = () => {
     const getWalletList = async (eip155Address: string) => {
       const { rpc } = getChainByEip155Address(eip155Address);
       try {
-        const response = await fetch(`/wallet/list?network=${rpc}`);
+        const response = await fetch(`/api/accounts?network=${rpc}`);
 
         if (!response.ok) {
           throw new Error('Network response was not ok');

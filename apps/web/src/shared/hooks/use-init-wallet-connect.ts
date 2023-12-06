@@ -14,7 +14,7 @@ export default function useInitWalletConnect(session: DefaultSession | null) {
     try {
       if (!session || !session.user || !session.user?.email) return;
 
-      const eip155Addresses = await (await fetch('/wallet/list')).json();
+      const eip155Addresses = await (await fetch(`/api/accounts?network=`)).json();
       SettingsStore.setEIP155Address(eip155Addresses[0].address);
       await createWeb3Wallet(relayerRegionURL); //aca arranca todo
       setInitialized(true);

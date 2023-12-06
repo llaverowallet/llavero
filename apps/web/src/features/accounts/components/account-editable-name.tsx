@@ -18,7 +18,13 @@ const updateKey = async ({
   status: string;
   message: string;
 }> => {
-  const response = await fetch(`/wallet/update?address=${address}&name=${name}`);
+  const response = await fetch(`api/accounts/${address}`, {
+    method: 'PATCH', // PUT (update all fields) or PATCH (update selected fields)
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ name }),
+  });
 
   if (!response.ok) {
     throw new Error('Network response was not ok');

@@ -21,7 +21,7 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
     case EIP155_SIGNING_METHODS.ETH_SIGN:
       try {
         const message = getSignParamsMessage(request.params);
-        const signedMessageResponse = await fetch(`/wallet/${addr}/personalSign`, {
+        const signedMessageResponse = await fetch(`api/wallet/${addr}/personal-sign`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
       try {
         const transaction = request.params[0];
         debugger;
-        const signedMessageResponse = await fetch(`/wallet/${addr}/ethSendTransaction`, {
+        const signedMessageResponse = await fetch(`api/wallet/${addr}/eth-send-transaction`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
     case EIP155_SIGNING_METHODS.ETH_SIGN_TRANSACTION:
       try {
         const transaction = request.params[0];
-        const signedMessageResponse = await fetch(`/wallet/${addr}/ethSignTransaction`, {
+        const signedMessageResponse = await fetch(`api/wallet/${addr}/eth-sign-transaction`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
