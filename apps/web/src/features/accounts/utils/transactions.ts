@@ -35,8 +35,6 @@ export const removeTxHash = ({
   address: string;
 }) => {
   const localKey = `txHashes:${chainId}:${String(address).toLowerCase()}`;
-  // TransactionsStore.removeTxHash(txHash);
-
   const txsString = localStorage.getItem(localKey);
   let txsArray: string[] = [];
 

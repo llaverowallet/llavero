@@ -29,18 +29,6 @@ const getActivity = ({ address, chainId }: { address: string; chainId: string })
   };
 };
 
-// const getAccounts = (network: string) => {
-//   return async (): Promise<WalletInfo[]> => {
-//     const response = await fetch(`/api/accounts?network=${network}`);
-
-//     if (!response.ok) {
-//       throw new Error('Network response was not ok');
-//     }
-
-//     return await response.json();
-//   };
-// };
-
 const useTransactions = ({ account }: { account: WalletInfo }) => {
   const { network } = useNetwork();
   const { address } = account || {};
@@ -50,7 +38,6 @@ const useTransactions = ({ account }: { account: WalletInfo }) => {
   });
   const { transactionsHashes } = useSnapshot(TransactionsStore.state);
   const localKey = address ? `txHashes:${network.chainId}:${String(address).toLowerCase()}` : '';
-  // const [transactions, setTransactions] = useState<ActivityItem[]>([]);
 
   useEffect(() => {
     if (!localKey) {

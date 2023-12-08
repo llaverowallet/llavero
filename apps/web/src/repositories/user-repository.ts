@@ -160,8 +160,6 @@ export class UserRepository {
     try {
       if (!user) throw new Error('User must be provided');
 
-      console.log('addActivity: with', payload);
-
       return await this.activityModel.upsert(
         {
           userId: user.userId,
