@@ -92,6 +92,12 @@ const AccountActivity = ({ account }: Props) => {
     isPending,
   } = useTransactions({ account: account! });
 
+  const sortedTransactions = transactions.sort((a, b) => {
+    const aTimestamp = JSON.parse(a.data).timestamp;
+    const bTimestamp = JSON.parse(b.data).timestamp;
+    return bTimestamp - aTimestamp;
+  });
+
   return (
     <>
       <div className='py-4 pt-2 flex flex-col'>
@@ -107,13 +113,13 @@ const AccountActivity = ({ account }: Props) => {
                   ))
               : null}
 
-            {transactions?.length > 0
-              ? transactions.map((tx) => (
+            {sortedTransactions?.length > 0
+              ? sortedTransactions.map((tx) => (
                   <AccountActivityItem key={tx.txHash} transaction={tx} account={account} />
                 ))
               : null}
 
-            {transactions?.length === 0 && transactionsHashes?.length === 0 && (
+            {sortedTransactions?.length === 0 && transactionsHashes?.length === 0 && (
               <span className='text-center text-gray-500'>You have no transactions</span>
             )}
           </>
