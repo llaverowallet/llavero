@@ -152,6 +152,11 @@ const UserSchema  =
             },
             "txHash": {
                 "type": String,
+                "required": true
+            },
+            "txHash2": {
+                "type": String,
+                "required": true
             },
             "pk": {
                 "type": String,

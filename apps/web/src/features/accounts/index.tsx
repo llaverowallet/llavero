@@ -79,10 +79,10 @@ const Accounts = () => {
                 </div>
                 <div className='flex gap-4'>
                   <div>
-                    <SendDialog account={selectedAccount} />
+                    <ReceiveDialog account={selectedAccount} />
                   </div>
                   <div>
-                    <ReceiveDialog account={selectedAccount} />
+                    <SendDialog account={selectedAccount} />
                   </div>
                 </div>
               </div>
