@@ -4,6 +4,7 @@ import UserSchema from './user-schema';
 
 export type User = Entity<typeof UserSchema.models.User>;
 export type Network = Entity<typeof UserSchema.models.Networks>;
+export type Activity = Entity<typeof UserSchema.models.Activity>;
 export type KmsKey = Entity<typeof UserSchema.models.Keys>;
 export type UserKeys = { user: User; keys: KmsKey[] };
 export type UserNetworks = { user: User; networks: Network[] };
@@ -15,6 +16,7 @@ export class UserRepository {
   private readonly userTable: Table;
   private readonly userModel;
   private readonly keysModel;
+  private readonly activityModel;
   private readonly networkModel;
 
   constructor(tableName?: string) {
@@ -31,6 +33,7 @@ export class UserRepository {
       this.userModel = this.userTable.getModel('User');
       this.keysModel = this.userTable.getModel('Keys');
       this.networkModel = this.userTable.getModel('Networks');
+      this.activityModel = this.userTable.getModel('Activity');
     } catch (error) {
       logger.error(error, 'Error in UserRepository constructor');
       throw error;
@@ -146,6 +149,44 @@ export class UserRepository {
       console.log('Keys updated');
     } catch (error) {
       logger.error(error, 'Error in UserRepository updateKeys');
+      throw error;
+    }
+  }
+
+  async addActivity(
+    user: User,
+    payload: { address: string; chainId: string; txHash: string; data: string },
+  ) {
+    try {
+      if (!user) throw new Error('User must be provided');
+
+      console.log('addActivity: with', payload);
+
+      return await this.activityModel.upsert(
+        {
+          userId: user.userId,
+          ...payload,
+        },
+        { return: 'get' },
+      );
+    } catch (error) {
+      logger.error(error, 'Error in UserRepository addActivity');
+      throw error;
+    }
+  }
+
+  async getActivity(user: User, params: { address: string; chainId: string }) {
+    try {
+      if (!user) throw new Error('User must be provided');
+
+      const { address, chainId } = params;
+      const activityList = await this.activityModel.find({ userId: user.userId, chainId, address });
+
+      console.log({ activityList });
+
+      return activityList;
+    } catch (error) {
+      logger.error(error, 'Error in UserRepository getActivity');
       throw error;
     }
   }
