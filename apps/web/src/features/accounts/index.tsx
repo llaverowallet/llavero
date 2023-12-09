@@ -19,18 +19,7 @@ import { AccountSections } from './components/account-sections';
 import { Separator } from '@/shared/components/ui/separator';
 import { ReceiveDialog } from './components/receive-dialog';
 import { useRouter, useSearchParams } from 'next/navigation';
-
-const getAccounts = (network: string) => {
-  return async (): Promise<WalletInfo[]> => {
-    const response = await fetch(`/api/accounts?network=${network}`);
-
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-
-    return await response.json();
-  };
-};
+import { getAccounts } from '@/shared/services/account';
 
 const Accounts = () => {
   const router = useRouter();
@@ -90,10 +79,10 @@ const Accounts = () => {
                 </div>
                 <div className='flex gap-4'>
                   <div>
-                    <SendDialog account={selectedAccount} />
+                    <ReceiveDialog account={selectedAccount} />
                   </div>
                   <div>
-                    <ReceiveDialog account={selectedAccount} />
+                    <SendDialog account={selectedAccount} />
                   </div>
                 </div>
               </div>

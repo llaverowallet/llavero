@@ -27,6 +27,13 @@ const TransactionsStore = {
   setTxHashes(txHashes: string[]) {
     state.transactionsHashes = txHashes;
   },
+
+  removeTxHash(txHash: string) {
+    const index = state.transactionsHashes.indexOf(txHash);
+    if (index > -1) {
+      state.transactionsHashes.splice(index, 1);
+    }
+  },
 };
 
 export default TransactionsStore;

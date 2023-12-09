@@ -134,7 +134,43 @@ const UserSchema  =
                 "type": String,
                 "required": true
             }
-        }
+        },
+        "Activity": {
+            "created": {
+                "type": Date
+            },
+            "sk": {
+                "type": String,
+                "value": "Activity#${chainId}#${txHash}",
+                "required": true
+            },
+            "address": {
+                "type": String,
+            },
+            "chainId": {
+                "type": String,
+            },
+            "txHash": {
+                "type": String,
+                "required": true
+            },
+            "pk": {
+                "type": String,
+                "value": "Address#${address}",
+                "required": true
+            },
+            "data": {
+                "type": String,
+                "required": true,
+            },
+            "userId": {
+                "type": String,
+                "required": true,
+            },
+            "updated": {
+                "type": Date
+            }
+        },
     },
     "params": {
         "nulls": true,

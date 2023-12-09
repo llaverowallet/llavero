@@ -28,37 +28,17 @@ import { formatBalance, getShortWalletAddress } from '@/shared/utils/crypto';
 import { CopyToClipboard } from '@/shared/components/ui/copy-to-clipboard';
 import { Button } from '@/shared/components/ui/button';
 import Link from 'next/link';
+import { useQuery } from '@tanstack/react-query';
+import { getAccounts } from '@/shared/services/account';
 
 const Dashboard = () => {
   const { network } = useNetwork();
   const eip155Address = `${network.namespace}:${network.chainId}`;
-  const [isLoading, setIsLoading] = useState(true);
-  const [accounts, setAccounts] = useState<WalletInfo[]>([]);
-
-  useEffect(() => {
-    if (!eip155Address) return;
-
-    const getWalletList = async (eip155Address: string) => {
-      const { rpc } = getChainByEip155Address(eip155Address);
-      try {
-        const response = await fetch(`/api/accounts?network=${rpc}`);
-
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-
-        const accounts = await response.json();
-        setAccounts(accounts);
-      } catch (e: unknown) {
-        console.error(e);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    setIsLoading(true);
-    getWalletList(eip155Address);
-  }, [eip155Address]);
+  const { rpc } = getChainByEip155Address(eip155Address);
+  const { data: accounts = [], isPending } = useQuery({
+    queryKey: ['getAccounts', eip155Address],
+    queryFn: getAccounts(rpc),
+  });
 
   return (
     <Container>
@@ -69,7 +49,7 @@ const Dashboard = () => {
             <CardDescription>List of all yours accounts</CardDescription>
           </CardHeader>
           <CardContent>
-            {isLoading ? (
+            {isPending ? (
               <AccountsSkeleton />
             ) : (
               <>
