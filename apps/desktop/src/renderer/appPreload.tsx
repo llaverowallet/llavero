@@ -1,17 +1,14 @@
 import * as sdk from 'aws-sdk';
 import { contextBridge, ipcRenderer } from 'electron';
-import { STSClient, GetCallerIdentityCommand } from '@aws-sdk/client-sts';
-import { EC2Client, DescribeRegionsCommand } from '@aws-sdk/client-ec2';
 import { DescribeStackEventsCommand, CloudFormationClient, DescribeStacksCommand } from '@aws-sdk/client-cloudformation';
 import { Bootstrapper } from 'aws-cdk/lib/api/bootstrap';
 import { SdkProvider } from 'aws-cdk/lib/api/aws-auth';
 import path from 'path';
-import { executeCommand } from './runCommand';
-import { hostname } from 'os';
 import crypto from 'crypto';
-import { env } from 'process';
-// import { User } from 'aws-cdk-lib/aws-iam';
-const fsExtra = require('fs-extra');  
+import * as cfDeployments from 'aws-cdk/lib/api/cloudformation-deployments';
+import * as cdk from 'aws-cdk-lib';
+import * as cxapi from '@aws-cdk/cx-api';
+import { CodedeployStack } from './code-deploy';
 
 const nodeModulesPath = path.join(process.cwd(), 'node_modules');
 console.log(nodeModulesPath);
@@ -34,40 +31,36 @@ const setCredentials = async (accessKeyId: string, secretAccessKey: string) => {
   if (!accessKeyId || !secretAccessKey) {
     throw new Error('Access Key ID and Secret Access Key are required');
   }
-
-  const envVars: EnvVars = {
-    AWS_ACCESS_KEY_ID: accessKeyId,
-    AWS_SECRET_ACCESS_KEY: secretAccessKey.split('').map(() => "*").join('')
-  }
-  process.env['AWS_ACCESS_KEY_ID'] = accessKeyId;
-  process.env['AWS_SECRET_ACCESS_KEY'] = secretAccessKey;
-  sdk.config.update({ accessKeyId, secretAccessKey });
-  const stsClient = new STSClient({});
-
-  // Call the getCallerIdentity method
-  const command = new GetCallerIdentityCommand({});
-  const response = await stsClient.send(command);
-
-  envVars.AWS_ACCOUNT_ID = process.env.CDK_DEFAULT_ACCOUNT = response.Account;
-  const identityArn = response.Arn.split(':');
-  envVars.IDENTITY = identityArn.pop();
-  envVars.AWsUserId = response.UserId;
-  return envVars;
+  return new Promise((resolve, reject) => {
+    const envVars: EnvVars = {
+      AWS_ACCESS_KEY_ID: accessKeyId,
+      AWS_SECRET_ACCESS_KEY: secretAccessKey.split('').map(() => "*").join('')
+    }
+    process.env['AWS_ACCESS_KEY_ID'] = accessKeyId;
+    process.env['AWS_SECRET_ACCESS_KEY'] = secretAccessKey;
+    sdk.config.update({ accessKeyId, secretAccessKey });
+    const stsClient = new sdk.STS();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    stsClient.getCallerIdentity((err: unknown, data: any) => {
+      if (err) {
+        console.log('err: ', err);
+        reject(err);
+      } else {
+        console.log('data: ', data);
+        envVars.AWS_ACCOUNT_ID = process.env.CDK_DEFAULT_ACCOUNT = data.Account;
+        const identityArn = data.Arn.split(':');
+        envVars.IDENTITY = identityArn.pop();
+        envVars.AWsUserId = data.UserId;
+        resolve(envVars);
+      }
+    });
+  });
 };
 contextBridge.exposeInMainWorld('setCredentials', (accessKeyId: string, secretAccessKey: string) => setCredentials(accessKeyId, secretAccessKey));
 
 //getAllRegions
 async function getAllRegions() {
-  // Create an EC2 client
-  const ec2Client = new EC2Client({});
-
-  // Call the DescribeRegions method
-  const command = new DescribeRegionsCommand({});
-  const response = await ec2Client.send(command);
-
-  // Extract the region names from the response
-  const regionNames = response.Regions?.map((region) => region.RegionName) ?? [];
-  return regionNames;
+  return ['us-east-1', 'us-east-2', 'us-west-1', 'us-west-2', 'eu-west-1', 'eu-west-2', 'eu-west-3', 'eu-central-1', 'eu-north-1', 'ap-east-1', 'ap-south-1', 'ap-northeast-1', 'ap-northeast-2', 'ap-southeast-1', 'ap-southeast-2', 'ca-central-1', 'cn-north-1', 'cn-northwest-1', 'me-south-1', 'sa-east-1'];
 }
 contextBridge.exposeInMainWorld('getAllRegions', () => getAllRegions());
 
@@ -133,7 +126,10 @@ async function bootstrapCdk(account: string, region: string) {
   try {
     console.log(`Running bootstrapCdk for aws://${account}/${region}`);
     console.log('process.env.AWS_PROFILE: ', process.env.AWS_PROFILE);
-    const sdkProvider = await SdkProvider.withAwsCliCompatibleDefaults({});
+
+    const credentials = new sdk.Credentials({ accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY });
+    const chain = new sdk.CredentialProviderChain([() => credentials]);
+    const sdkProvider = new SdkProvider(chain, region, {});
     const template = nodeModulesPath + '/aws-cdk/lib/api/bootstrap/bootstrap-template.yaml';
     console.log('template: ', template);
     const bootstrapper = new Bootstrapper({ 'source': 'custom', templateFile: template });
@@ -147,10 +143,64 @@ async function bootstrapCdk(account: string, region: string) {
 }
 contextBridge.exposeInMainWorld('bootstrapCdk', (account: string, region: string) => bootstrapCdk(account, region));
 
-//installWallet
-async function installWallet(email: string, region: string): Promise<string> {
+/* 
+* This function synths the CDK app and returns the stack template
+*/
+const getStackArtifact = (app: cdk.App, stack: any): cxapi.CloudArtifact | undefined => {
   try {
-    const suffix = getDeterministicRandomString();
+    const synthesized = app.synth();
+
+    // Reload the synthesized artifact for stack using the cxapi from dependencies
+    const assembly = new cxapi.CloudAssembly(synthesized.directory, { skipVersionCheck: true }); //TODO ver esto
+
+    return cxapi.CloudFormationStackArtifact.fromManifest(
+      assembly,
+      stack.artifactId,
+      synthesized.getStackArtifact(stack.artifactId).manifest
+    );
+  } catch (error) {
+    console.log("getArtifact:" + error);
+    throw error;
+  }
+};
+
+/* 
+* This function creates a basic CDK app that creates an S3 bucket
+*/
+async function createCdkStack(account: any, region: any, cognitoSuffix: any, email: any) {
+  try {
+    const app = new cdk.App();
+    const stack = new CodedeployStack(app, 'CodedeployStack', {
+      env: { account: account, region: region }},
+      { region: region, account: account, email: email, numberOfKeys: 2, cognitoUrlSuffix: cognitoSuffix, 
+        awsAccessKeyId: process.env.AWS_ACCESS_KEY_ID, awsSecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY 
+      }
+    );
+    const stackArtifact = getStackArtifact(app, stack);
+    const credentials = new sdk.Credentials({ accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY });
+    const chain = new sdk.CredentialProviderChain([() => credentials]);
+    const sdkProvider = new SdkProvider(chain, region, {});
+    const cloudFormation = new cfDeployments.CloudFormationDeployments({ sdkProvider });
+
+    if (!stackArtifact) throw new Error('stackArtifact is null');
+
+    await cloudFormation.deployStack({
+      stack: stackArtifact as cxapi.CloudFormationStackArtifact,
+      quiet: false,
+    });
+    process.env.AWS_ACCESS_KEY_ID = "dfdsfregrgrtgthtrhrththt";
+    process.env.AWS_SECRET_ACCESS_KEY = "dfdsfregrgrtgthtrhrththt";
+  }
+  catch (e) {
+    console.log(e);
+    throw e;
+  }
+}
+
+//installWallet
+async function installWallet(email: string, region: string, accountId: string): Promise<string> {
+  try {
+    const suffix = getDeterministicRandomString(email);
     const envVars = {
       REGION: region,
       EMAIL: email,
@@ -158,38 +208,24 @@ async function installWallet(email: string, region: string): Promise<string> {
       AWS_SECRET_ACCESS_KEY: process.env['AWS_SECRET_ACCESS_KEY'],
       COGNITO_URL_SUFFIX: suffix,
       APP_PATH: await ipcRenderer.invoke('userDataPath'),
-      APP_WALLET: ""
+      APP_WALLET: "",
+      AWS_ACCOUNT_ID: accountId
     };
     envVars.APP_WALLET = path.join(envVars.APP_PATH, '/wallet');
     checkInputs(envVars);
-    
-    const assetsWalletPath = path.join(process.resourcesPath, '/.wallet');
-    console.log('assetsWalletPath: ', assetsWalletPath);
-    console.log("envVars", envVars);
-    await executeCommand("ls", ["-a"], assetsWalletPath, (data: unknown) => { console.log(data) });
-    await executeCommand("ls", ["-a"], envVars.APP_PATH, (data: unknown) => { console.log(data) });
-    fsExtra.copySync(assetsWalletPath, envVars.APP_WALLET);
-    await executeCommand("npm", ["install"], envVars.APP_WALLET, (data: unknown) => { console.log(data) });
-    let siteUrl = "";
+    console.log('envVars bootstrapCdk: ', envVars);
+    setCredentials(envVars.AWS_ACCESS_KEY_ID, envVars.AWS_SECRET_ACCESS_KEY);
+    await bootstrapCdk(envVars.AWS_ACCOUNT_ID, envVars.REGION);
+    console.log('envVars createCdkStack: ', envVars);
+    await createCdkStack(envVars.AWS_ACCOUNT_ID, region, envVars.COGNITO_URL_SUFFIX, email);
 
-    await executeCommand("npm", ["run", "deploy"],  envVars.APP_WALLET, (data: unknown) => {
-      const log = data.toString();
-      const start = log.indexOf("https://");
-      const end = log.indexOf("cloudfront.net");
-      const url = log.substring(start, end + "cloudfront.net".length);
-      if (url.startsWith("https://") && url.endsWith("cloudfront.net")) {
-        console.log("url: " + url);
-        siteUrl = url;
-      }
-      console.log(data);
-    }, envVars);
-    return siteUrl;
+    return "true";
   } catch (error) {
     debugger;
     console.log('installWallet error: ', error);
   }
 }
-contextBridge.exposeInMainWorld('installWallet', async (email: string, region: string): Promise<string> => await installWallet(email, region));
+contextBridge.exposeInMainWorld('installWallet', async (email: string, region: string, accountId: string): Promise<string> => await installWallet(email, region, accountId));
 
 function openInBrowser(url: string) {
   require('electron').shell.openExternal(url);
@@ -197,12 +233,9 @@ function openInBrowser(url: string) {
 contextBridge.exposeInMainWorld('openInBrowser', (url: string) => openInBrowser(url));
 
 
-function getDeterministicRandomString(max = 5): string {
-  // Use the machine's hostname as a seed
-  const seedString = hostname();
-
+function getDeterministicRandomString(seed: string, max = 5,): string {
   // Create a deterministic hash from the seed
-  const hash = crypto.createHmac('sha256', seedString)
+  const hash = crypto.createHmac('sha256', seed.toLocaleLowerCase())
     .update('deterministicSalt')
     .digest('hex');
 
