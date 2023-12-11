@@ -11,20 +11,23 @@ import { KMS } from './sst/kms-construct';
 import crypto from 'crypto';
 import { getParameterPath } from 'sst/constructs/util/functionBinding.js';
 
-process.setMaxListeners(Infinity);
+process.setMaxListeners(Infinity); //TODO remove this
 const localhostUrl = 'http://localhost:3000';
 
 const installationConfig = {
-  email: check<string>(process.env.EMAIL),
+  email: check<string>(process.env.EMAIL, "EMAIL"),
   phoneNumber: process.env.PHONE_NUMBER,
-  region: check<string>(process.env.REGION),
-  cognitoURLSuffix: process.env.COGNITO_URL_SUFFIX ?? '',
+  region: check<string>(process.env.REGION, "REGION"),
+  suffix: getDeterministicRandomString(check<string>(process.env.EMAIL, "EMAIL")),
+  numberOfKeys: process.env.NUMBER_OF_KEYS ? parseInt(process.env.NUMBER_OF_KEYS) : 2,
 };
+
+const name = 'llavero'+installationConfig.suffix;
 
 export default {
   config(_input) {
     return {
-      name: 'web',
+      name: name,
       region: installationConfig.region,
     };
   },
@@ -42,7 +45,7 @@ let site: NextjsSite;
 let SITE_URL: Config.Parameter;
 
 export function llaveroStack({ stack, app }: StackContext) {
-  keys = createKeys(stack);
+  keys = createKeys(stack, installationConfig.numberOfKeys);
   logGroup = createLogGroup(stack, LOG_GROUP_NAME + 'ID', { name: LOG_GROUP_NAME });
 
   userTable = new Table(stack, 'UserData', {
@@ -96,7 +99,7 @@ export function llaveroStack({ stack, app }: StackContext) {
 
   auth.cdk.userPool.addDomain('LlaveroDomain', {
     cognitoDomain: {
-      domainPrefix: 'llavero-' + installationConfig.cognitoURLSuffix + app.stage, //TODO config input, should be saved or query
+      domainPrefix: name + app.stage, //TODO config input, should be saved or query
     },
   });
 
@@ -193,4 +196,13 @@ function randomString(length: number, justChars = false): string {
   }
 
   return password;
+}
+
+function getDeterministicRandomString(seed: string, max = 5,): string {
+  // Create a deterministic hash from the seed
+  const hash = crypto.createHmac('sha256', seed.toLocaleLowerCase())
+    .update('deterministicSalt')
+    .digest('hex');
+
+  return hash.substring(0, max).replace("0x", "");
 }

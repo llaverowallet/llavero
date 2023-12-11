@@ -1,10 +1,11 @@
-import { Fab, FormControl, InputLabel, Link, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
+import { Button, Card, CardContent, Chip, Collapse, Divider, Fab, FormControl, InputLabel, Link, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import { EnvVars } from '../../appPreload';
 import { useEffect, useState } from 'react';
 import Paper from '@mui/material/Paper';
 
 
 import * as React from 'react';
+import { blue, green } from '@mui/material/colors';
 
 interface Props {
     accessKeyId: string;
@@ -22,6 +23,8 @@ export function AwsInstall({ accessKeyId, secretAccessKey }: Props) {
     const [installation, setInstallation] = useState<InstallationType>("none");
     const [email, setEmail] = useState<string>('');
     const [siteUrl, setSiteUrl] = useState<string>('');
+    const [keysNumber, setKeysNumber] = useState<number>(1);
+    const [showAdvanced, setShowAdvanced] = useState(false);
 
     useEffect(() => {
         async function init(accessKeyId: string, secretAccessKey: string): Promise<void> {
@@ -53,16 +56,15 @@ export function AwsInstall({ accessKeyId, secretAccessKey }: Props) {
         await (window as any).setRegion(region);
     }
 
-    async function bootstrapCdk(account: string, region: string): Promise<void> {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any 
-        await (window as any).bootstrapCdk(account, region);
-    }
 
-    async function installWallet(email: string, region: string): Promise<string> {
+    async function installWallet(): Promise<string> {
         try {
+            enVars.EMAIL = email;
+            enVars.KEYS_NUMBER = keysNumber;
+            enVars.REGION = selectedRegion;
             // eslint-disable-next-line @typescript-eslint/no-explicit-any 
             const win = window as any;
-            const result = await win.installWallet(email, region, enVars.AWS_ACCOUNT_ID);
+            const result = await win.installWallet(enVars);
             return result;
         } catch (error) {
             console.error('error on installWallet', error);
@@ -86,7 +88,7 @@ export function AwsInstall({ accessKeyId, secretAccessKey }: Props) {
             //await bootstrapCdk(enVars.AWS_ACCOUNT_ID, selectedRegion);
             console.log('installing wallet', selectedRegion);
             console.log('email', email);
-            const url = await installWallet(email, selectedRegion);
+            const url = await installWallet();
             setSiteUrl(url.toString());
             //setInstalling(false);
             setInstallation('installed');
@@ -142,20 +144,40 @@ export function AwsInstall({ accessKeyId, secretAccessKey }: Props) {
                                 value={email} onChange={(e) => setEmail(e.target.value)}
                             /><br /><br />
 
-                            <InputLabel id="demo-simple-select-label">Required</InputLabel>
-                            <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                value={selectedRegion}
-                                label="Aws  Region"
-                                onChange={(event) => setSelectedRegion(event.target.value)}
-                            >
-                                {regions?.map((region) => (
-                                    <MenuItem key={region} value={region}>{region}</MenuItem>
-                                ))}
+                            <TextField
+                                sx={{ minWidth: 400 }}
+                                required
+                                id="keysField"
+                                label="KEYS NUMBER"
+                                defaultValue="1"
+                                type="number"
+                                helperText="AWS charges 1 USD per month for each key."
+                                value={keysNumber} onChange={(e) => setKeysNumber(parseInt(e.target.value))}
+                            />
+                            <InputLabel id="keysLabel"></InputLabel>
+                            <br />
 
-                            </Select>
-                            <InputLabel id="demo-simple-select-label">Required</InputLabel>
+
+                            <Divider orientation="horizontal" textAlign="left" variant="middle">
+                                <Button onClick={() => setShowAdvanced(!showAdvanced)} style={{ float: 'left' }}>
+                                    {showAdvanced ? '-' : '+'} Advanced
+                                </Button>
+                            </Divider>
+                            <br />
+                            <Collapse in={showAdvanced}>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    value={selectedRegion}
+                                    label="Aws Region"
+                                    onChange={(event) => setSelectedRegion(event.target.value)}
+                                >
+                                    {regions?.map((region) => (
+                                        <MenuItem key={region} value={region}>{region}</MenuItem>
+                                    ))}
+
+                                </Select>
+                            </Collapse>
 
                             <br /><br />
                             {installation !== "installed" && installation !== "installing" &&
@@ -163,17 +185,29 @@ export function AwsInstall({ accessKeyId, secretAccessKey }: Props) {
                                     Install
                                 </Fab>
                             }
-                            {installation === "installed" &&
-                                <div className='aws-install__content__item'>
-                                    <Typography>Llavero has been install successfully</Typography>
-                                    <Typography>Now visit and setup your user:</Typography>
-                                    <Typography>User: {email}</Typography>
-                                    <Typography>Temporary password: Llavero1234!</Typography>
-                                    <Typography>Site:</Typography>
-                                    <Link onClick={() => openBrowser(siteUrl)}>{siteUrl}</Link>
-                                </div>
+                            {installation === "installed" && <Card sx={{ bgcolor: green[500], color: '#fff', marginBottom: '1rem' }}>
+                                <CardContent>
+                                    <Typography variant="h5" component="div">
+                                        Installation has started successfully!
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        You will get an email with your temporary password and the URL of your own Llavero in the next 20 minutes.
+                                    </Typography>
+                                </CardContent>
+                            </Card>
                             }
-                            {installation === "installing" && <Typography>Installing... this will take long. So wait. Do not close the window.</Typography>}
+                            {installation === "installing" &&
+                                <Card sx={{ bgcolor: blue[500], color: '#fff', marginBottom: '1rem' }}>
+                                    <CardContent>
+                                        <Typography variant="h5" component="div">
+                                            Installation has started
+                                        </Typography>
+                                        <Typography variant="body2">
+                                            It will take some minutes. Please do not close the window.
+                                        </Typography>
+                                    </CardContent>
+                                </Card>
+                            }
                         </FormControl>
                     </form>
                 </div>

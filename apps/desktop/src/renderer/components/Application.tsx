@@ -92,31 +92,6 @@ const Application: React.FC = () => {
       <Grid xs={2}>
         <span>{/* empty */}</span>
       </Grid>
-      <Grid xs={10} style={{}}>
-        {showCard &&
-          <>
-            <Card sx={{ maxWidth: 600 }}>
-              <CardContent>
-                <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                  How to create AWS Credentials
-                </Typography>
-                <Typography variant="body2">
-                  <span>Follow the instructions to create your AWS Credentials </span>
-                  <Link onClick={() => openBrowser("https://sst.dev/chapters/create-an-iam-user.html")}>Instructions</Link>
-                </Typography>
-              </CardContent>
-            </Card>
-
-            <br />
-          </>
-        }
-      </Grid>
-      <Grid xs={0}>
-        <span>{/* empty */}</span>
-      </Grid>
-      <Grid xs={2}>
-        <span>{/* empty */}</span>
-      </Grid>
       <Grid xs={8}>
         {showCredentialsForm ? (
           <AwsCredentialsForm onSubmit={handleCredentialsSubmit} />

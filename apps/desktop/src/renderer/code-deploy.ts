@@ -8,7 +8,7 @@ import { Pipeline, Artifact } from 'aws-cdk-lib/aws-codepipeline';
 
 export class CodedeployStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: StackProps,
-    enviroment?: { region: string, account: string, email: string, numberOfKeys: number, cognitoUrlSuffix: string, awsAccessKeyId: string, awsSecretAccessKey: string }
+    enviroment?: { region: string, account: string, email: string, numberOfKeys: number, awsAccessKeyId: string, awsSecretAccessKey: string }
   ) {
     super(scope, id, props);
 
@@ -22,9 +22,6 @@ export class CodedeployStack extends cdk.Stack {
           },
           'NUMBER_OF_KEYS': {
             value: enviroment?.numberOfKeys.toString()
-          },
-          'COGNITO_URL_SUFFIX': {
-            value: enviroment?.cognitoUrlSuffix
           },
           "REGION": { value: enviroment?.region },
           "AWS_ACCESS_KEY_ID": { value: enviroment?.awsAccessKeyId }, //TODO improve for security. Use parameter store? 
@@ -61,10 +58,8 @@ export class CodedeployStack extends cdk.Stack {
           output: code,
           owner: 'elranu',
           repo: 'llavero',
-          //Hardcoded PAT because is the only way I found to clone a public repo
-          //The PAT only has access to public repo
-          //TODO: Try to send the PAT as a parameter
-          oauthToken: SecretValue.unsafePlainText("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"),
+          //TODO: get PAT from  url
+          oauthToken: SecretValue.unsafePlainText(""),
           trigger: GitHubTrigger.POLL,
         }),
       ],
