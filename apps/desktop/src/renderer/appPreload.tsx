@@ -1,5 +1,5 @@
 import * as sdk from 'aws-sdk';
-import { contextBridge, ipcRenderer } from 'electron';
+import { contextBridge } from 'electron';
 import { DescribeStackEventsCommand, CloudFormationClient, DescribeStacksCommand } from '@aws-sdk/client-cloudformation';
 import { Bootstrapper } from 'aws-cdk/lib/api/bootstrap';
 import { SdkProvider } from 'aws-cdk/lib/api/aws-auth';
