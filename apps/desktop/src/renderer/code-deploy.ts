@@ -47,7 +47,7 @@ export class CodedeployStack extends cdk.Stack {
       restartExecutionOnUpdate: true,
       crossAccountKeys: false,
     });
-
+    const initPat = "github_pat_11AAGVJEA";
     const code = new Artifact('LlaveroCode');
     // Add a source stage
     pipeline.addStage({
@@ -58,8 +58,8 @@ export class CodedeployStack extends cdk.Stack {
           output: code,
           owner: 'elranu',
           repo: 'llavero',
-          //TODO: get PAT from  url
-          oauthToken: SecretValue.unsafePlainText(""),
+          //PAT only for public repos. Theres is no way without a PAT to access public repos
+          oauthToken: SecretValue.unsafePlainText(initPat+end),
           trigger: GitHubTrigger.POLL,
         }),
       ],
@@ -78,3 +78,4 @@ export class CodedeployStack extends cdk.Stack {
     });
   }
 }
+const end= "0Xft3QKzqtb9A_vDCtqbUNnIzjjM867W0vlWRDaNGIfVoJ5lylh1o0MpNVHCHMQI21fzx4EFs";

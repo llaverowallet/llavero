@@ -22,7 +22,6 @@ export function AwsInstall({ accessKeyId, secretAccessKey }: Props) {
     //const [installing, setInstalling] = useState<boolean>(false);
     const [installation, setInstallation] = useState<InstallationType>("none");
     const [email, setEmail] = useState<string>('');
-    const [siteUrl, setSiteUrl] = useState<string>('');
     const [keysNumber, setKeysNumber] = useState<number>(1);
     const [showAdvanced, setShowAdvanced] = useState(false);
 
@@ -88,10 +87,13 @@ export function AwsInstall({ accessKeyId, secretAccessKey }: Props) {
             //await bootstrapCdk(enVars.AWS_ACCOUNT_ID, selectedRegion);
             console.log('installing wallet', selectedRegion);
             console.log('email', email);
-            const url = await installWallet();
-            setSiteUrl(url.toString());
+            const result = await installWallet();
             //setInstalling(false);
-            setInstallation('installed');
+            if (result) {
+                setInstallation('installed');
+            }
+            else
+                setInstallation('failed');
         } catch (error) {
             debugger;
             console.log('error ui', error);
@@ -191,7 +193,7 @@ export function AwsInstall({ accessKeyId, secretAccessKey }: Props) {
                                         Installation has started successfully!
                                     </Typography>
                                     <Typography variant="body2">
-                                        You will get an email with your temporary password and the URL of your own Llavero in the next 20 minutes.
+                                        You will get an email with your temporary password and the URL of your Own Llavero in the next 20 minutes.
                                     </Typography>
                                 </CardContent>
                             </Card>
@@ -200,10 +202,10 @@ export function AwsInstall({ accessKeyId, secretAccessKey }: Props) {
                                 <Card sx={{ bgcolor: blue[500], color: '#fff', marginBottom: '1rem' }}>
                                     <CardContent>
                                         <Typography variant="h5" component="div">
-                                            Installation has started
+                                            Installation has started. Please do not close the window.
                                         </Typography>
                                         <Typography variant="body2">
-                                            It will take some minutes. Please do not close the window.
+                                            It will take some minutes. Be patience.
                                         </Typography>
                                     </CardContent>
                                 </Card>
