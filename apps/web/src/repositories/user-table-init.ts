@@ -113,7 +113,7 @@ async function updateParameterStoreValue(
   value: string,
   region: string,
 ): Promise<void> {
-  const ssmClient = new SSMClient({ region: region }); // Replace REGION with your AWS region
+  const ssmClient = new SSMClient({ region: region });
   const command = new PutParameterCommand({
     Name: name,
     Value: value,

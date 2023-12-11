@@ -1,4 +1,4 @@
-import { FormControl, TextField } from '@mui/material';
+import { Card, CardContent, FormControl, Link, TextField, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import Fab from '@mui/material/Fab';
 import NavigationIcon from '@mui/icons-material/Navigation';
@@ -20,6 +20,18 @@ export function AwsCredentialsForm({ onSubmit }: Props) {
     return (
         <form onSubmit={handleSubmit}>
             <FormControl fullWidth>
+            <Card>
+              <CardContent>
+                <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                  How to create AWS Credentials
+                </Typography>
+                <Typography variant="body2">
+                  <span>Follow the instructions to create your AWS Credentials </span>
+                  <Link onClick={() => (window as any).openBrowser("https://sst.dev/chapters/create-an-iam-user.html")}>Instructions</Link>
+                </Typography>
+              </CardContent>
+            </Card>
+            <br /><br />
                 <TextField
                     sx={{ minWidth: 400 }}
                     required
@@ -27,7 +39,7 @@ export function AwsCredentialsForm({ onSubmit }: Props) {
                     label="AWS Access Key ID"
                     defaultValue="uiuwiuiw"
                     value={accessKeyId} onChange={(e) => setAccessKeyId(e.target.value)}
-                /><br /><br />
+                /><br />
                 <TextField
                     sx={{ minWidth: 400 }}
                     required

@@ -1,32 +1,9 @@
 // Forge Configuration
 const path = require('path');
 const rootDir = process.cwd();
-const fsExtra = require('fs-extra');
+
 
 module.exports = {
-  hooks: {
-    generateAssets: (forgeConfig, platform, arch) => {
-      fsExtra.removeSync(".wallet");
-      fsExtra.copySync("../web", ".wallet", { filter: filterFunc }, (err) => {
-        if (err) {
-          console.error('An error occurred while copying the folder.');
-          console.error(err);
-        } else {
-          console.log('Folder copied successfully.');
-        }
-      });
-      fsExtra.removeSync(".wallet/next.config.js", (err) => console.log(err));
-      fsExtra.renameSync(".wallet/next.config-deploy.js", ".wallet/next.config.js");
-    },
-    packageAfterCopy: async (config, buildPath, electronVersion, platform, arch) => {
-      var src = path.join(rootDir, '.wallet');
-      console.log("src: ", src);
-      var dst = buildPath;
-      console.log("dst: ", dst);
-      fsExtra.removeSync(dst + '/.wallet');
-      fsExtra.copySync(src, dst + '/.wallet');
-    }
-  },
   // Packager Config
   packagerConfig: {
     // Create asar archive for main, renderer process files
