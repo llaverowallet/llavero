@@ -21,13 +21,13 @@ jobs:
           node-version: 20
       - if: runner.os == 'Windows'
         run: |
-          echo set NODE_OPTIONS=--max-old-space-size=4096 >> $GITHUB_ENV
+          set NODE_OPTIONS=--max-old-space-size=4096
       - if: runner.os == 'Linux'
         run: |
-          echo "NODE_OPTIONS=--max-old-space-size=4096 >> $GITHUB_ENV
+          NODE_OPTIONS=--max-old-space-size=4096
       - if: runner.os == 'macOS'
         run: |
-          echo "NODE_OPTIONS=--max-old-space-size=4096 >> $GITHUB_ENV
+          NODE_OPTIONS=--max-old-space-size=4096 
       - name: Run install
         uses: borales/actions-yarn@v4
         with:
