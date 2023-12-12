@@ -19,13 +19,15 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
-      - name: Set NODE_OPTIONS environment variable
+      - if: runner.os == 'Windows'
         run: |
-          if [ "$RUNNER_OS" == "Windows" ]; then
-            echo "NODE_OPTIONS=--max-old-space-size=4096 >> $GITHUB_ENV
-          else
-            echo "NODE_OPTIONS=--max-old-space-size=4096 >> $GITHUB_ENV
-          fi
+          echo set NODE_OPTIONS=--max-old-space-size=4096 >> $GITHUB_ENV
+      - if: runner.os == 'Linux'
+        run: |
+          echo "NODE_OPTIONS=--max-old-space-size=4096 >> $GITHUB_ENV
+      - if: runner.os == 'macOS'
+        run: |
+          echo "NODE_OPTIONS=--max-old-space-size=4096 >> $GITHUB_ENV
       - name: Run install
         uses: borales/actions-yarn@v4
         with:
