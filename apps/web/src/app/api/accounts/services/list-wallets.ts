@@ -16,6 +16,7 @@ export default async function listWallets(
   network?: string | null,
 ): Promise<WalletInfo[]> {
   try {
+    console.log("entro listWallets");
     const userRepo = new UserRepository();
     const user = await userRepo.getUser(username);
     if (!user) return [];

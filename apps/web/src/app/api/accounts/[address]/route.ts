@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import createLogger from '@/shared/utils/logger';
 import getWallet from '../services/get-wallet';
 import { updateWalletName } from '../services/update-wallet';
-const logger = createLogger('account-endpoint');
+const logger = createLogger('account-endpoint-address');
 
 export async function GET(request: NextRequest, { params }: { params: { address: string } }) {
   try {

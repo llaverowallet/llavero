@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 import createLogger from '@/shared/utils/logger';
 import { addActivity } from '../../services/activity';
-const logger = createLogger('account-endpoint');
+const logger = createLogger('account-endpoint-activity');
 
 export async function POST(request: NextRequest, { params }: { params: { address: string } }) {
   try {
