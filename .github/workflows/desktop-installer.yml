@@ -23,6 +23,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
+      - name: Set NODE_OPTIONS environment variable
+        run: |
+          if [[ "${{ matrix.os.name }}" == "windows" ]]; then
+            set NODE_OPTIONS=--max-old-space-size=4096
+          else
+            export NODE_OPTIONS=--max-old-space-size=4096
+          fi
       - name: Run install
         uses: borales/actions-yarn@v4
         with:
