@@ -10,12 +10,8 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ 
-        { name: 'linux', image: 'ubuntu-latest' },
-        { name: 'windows', image: 'windows-latest' },
-        { name: 'macos', image: 'macos-latest' },
-          ]
-    runs-on: ${{ matrix.os.image }}
+        os: [windows-latest, ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Github checkout
         uses: actions/checkout@v3
@@ -25,10 +21,10 @@ jobs:
           node-version: 20
       - name: Set NODE_OPTIONS environment variable
         run: |
-          if [[ "${{ matrix.os.name }}" == "windows" ]]; then
-            set NODE_OPTIONS=--max-old-space-size=4096
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            echo "NODE_OPTIONS=--max-old-space-size=4096 >> $GITHUB_ENV
           else
-            export NODE_OPTIONS=--max-old-space-size=4096
+            echo "NODE_OPTIONS=--max-old-space-size=4096 >> $GITHUB_ENV
           fi
       - name: Run install
         uses: borales/actions-yarn@v4
