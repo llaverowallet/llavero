@@ -177,7 +177,7 @@ async function createCdkStack(vars: EnvVars) {
     const app = new cdk.App();
     const stack = new CodedeployStack(app, 'CodedeployStack', {
       env: { account: vars.AWS_ACCOUNT_ID, region: vars.REGION }, },
-      { region: vars.REGION, account: vars.AWS_ACCOUNT_ID, email: vars.EMAIL, numberOfKeys: 2, 
+      { region: vars.REGION, account: vars.AWS_ACCOUNT_ID, email: vars.EMAIL, numberOfKeys: vars.KEYS_NUMBER, 
         awsAccessKeyId: vars.AWS_ACCESS_KEY_ID, awsSecretAccessKey: vars.AWS_SECRET_ACCESS_KEY, 
       }
     );
