@@ -1,4 +1,4 @@
-name: Desktop Installer builder
+name: MacOS Installer builder
 on:
   workflow_dispatch:
 
@@ -8,10 +8,7 @@ env:
   NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
 jobs:
   build:
-    strategy:
-      matrix:
-        os: [windows-latest, ubuntu-latest]
-    runs-on: ${{ matrix.os }}
+    runs-on: macos-latest
     steps:
       - name: Github checkout
         uses: actions/checkout@v3
@@ -19,13 +16,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
-      - if: runner.os == 'Windows'
-        run: |
-          set NODE_OPTIONS=--max-old-space-size=4096
-      - if: runner.os == 'Linux'
-        run: |
-          NODE_OPTIONS=--max-old-space-size=4096
-      - if: runner.os == 'macOS'
+      - name: set veriables
         run: |
           NODE_OPTIONS=--max-old-space-size=4096 
       - name: Run install
