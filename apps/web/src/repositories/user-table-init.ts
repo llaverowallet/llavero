@@ -75,11 +75,16 @@ async function createCognitoUser(cognitoPoolId: string, email: string, password:
         UserPoolId: cognitoPoolId,
         Username: email,
         DesiredDeliveryMediums: ["EMAIL"],
+
         UserAttributes: [
             {
                 Name: "email",
                 Value: email
             },
+            {
+              Name: "email_verified",
+              Value: "true"
+          },
         ]
     });
 

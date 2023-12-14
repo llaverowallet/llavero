@@ -1,4 +1,4 @@
-import { Button, Card, CardContent, Chip, Collapse, Divider, Fab, FormControl, InputLabel, Link, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
+import { Button, Card, CardContent, Chip, Collapse, Divider, Fab, FormControl, InputLabel, LinearProgress, Link, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import { EnvVars } from '../../appPreload';
 import { useEffect, useState } from 'react';
 import Paper from '@mui/material/Paper';
@@ -79,16 +79,10 @@ export function AwsInstall({ accessKeyId, secretAccessKey }: Props) {
         event.preventDefault();
         try {
             event.preventDefault();
-            //setInstalling(true);
             setInstallation('installing');
             console.log('installing...', selectedRegion);
             setRegion(selectedRegion);
-            console.log('bootstraping CDK', selectedRegion);
-            //await bootstrapCdk(enVars.AWS_ACCOUNT_ID, selectedRegion);
-            console.log('installing wallet', selectedRegion);
-            console.log('email', email);
             const result = await installWallet();
-            //setInstalling(false);
             if (result) {
                 setInstallation('installed');
             }
@@ -97,7 +91,6 @@ export function AwsInstall({ accessKeyId, secretAccessKey }: Props) {
         } catch (error) {
             debugger;
             console.log('error ui', error);
-            //setInstalling(false);
             setInstallation('failed');
         }
     }
@@ -201,6 +194,7 @@ export function AwsInstall({ accessKeyId, secretAccessKey }: Props) {
                             {installation === "installing" &&
                                 <Card sx={{ bgcolor: blue[500], color: '#fff', marginBottom: '1rem' }}>
                                     <CardContent>
+                                    <LinearProgress />
                                         <Typography variant="h5" component="div">
                                             Installation has started. Please do not close the window.
                                         </Typography>
