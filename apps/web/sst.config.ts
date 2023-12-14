@@ -5,11 +5,12 @@ import createLogGroup, { LogGroupSST } from './sst/cloudwatch-construct';
 import createKeys from './sst/key-builder';
 import { check } from '@/shared/utils/general';
 import { Duration, RemovalPolicy } from 'aws-cdk-lib';
-import { AccountRecovery, Mfa, OAuthScope } from 'aws-cdk-lib/aws-cognito';
+import { AccountRecovery, AdvancedSecurityMode, Mfa, OAuthScope } from 'aws-cdk-lib/aws-cognito';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { KMS } from './sst/kms-construct';
 import crypto from 'crypto';
 import { getParameterPath } from 'sst/constructs/util/functionBinding.js';
+import { Topic } from 'aws-cdk-lib/aws-sns';
 
 process.setMaxListeners(Infinity); //TODO remove this
 const localhostUrl = 'http://localhost:3000';
@@ -19,7 +20,7 @@ const installationConfig = {
   phoneNumber: process.env.PHONE_NUMBER,
   region: check<string>(process.env.REGION, "REGION"),
   suffix: getDeterministicRandomString(check<string>(process.env.EMAIL, "EMAIL")),
-  numberOfKeys: process.env.NUMBER_OF_KEYS ? parseInt(process.env.NUMBER_OF_KEYS) : 2,
+  numberOfKeys: process.env.NUMBER_OF_KEYS ? parseInt(process.env.NUMBER_OF_KEYS) : 1,
 };
 
 const name = 'llavero'+installationConfig.suffix;
@@ -43,6 +44,7 @@ let keys: Array<KMS>;
 let auth: Cognito;
 let site: NextjsSite;
 let SITE_URL: Config.Parameter;
+let topic: Topic;
 
 export function llaveroStack({ stack, app }: StackContext) {
   keys = createKeys(stack, installationConfig.numberOfKeys);
@@ -68,6 +70,7 @@ export function llaveroStack({ stack, app }: StackContext) {
         selfSignUpEnabled: false,
         signInAliases: { email: true },
         accountRecovery: AccountRecovery.EMAIL_ONLY,
+        advancedSecurityMode: AdvancedSecurityMode.ENFORCED,
         removalPolicy: RemovalPolicy.DESTROY,
         mfa: Mfa.OPTIONAL,
         mfaSecondFactor: { otp: true, sms: true },
@@ -75,23 +78,30 @@ export function llaveroStack({ stack, app }: StackContext) {
           email: { required: true, mutable: true },
           phoneNumber: { required: true, mutable: true },
         },
+        enableSmsRole: true,
+        snsRegion: installationConfig.region,
         passwordPolicy: {
           minLength: 8,
           requireDigits: true,
           requireLowercase: true,
           requireSymbols: true,
           requireUppercase: true,
-          tempPasswordValidity: Duration.days(3),
+          tempPasswordValidity: Duration.days(3)
         },
       },
       userPoolClient: {
         generateSecret: true,
         authFlows: {
           userPassword: true,
+          userSrp: true,
         },
         oAuth: {
           callbackUrls: [localhostUrl + '/api/auth/callback/cognito'],
           scopes: [OAuthScope.EMAIL, OAuthScope.OPENID], //["openid", "profile", "email", "phone", "aws.cognito.signin.user.admin"],
+          flows: {
+            authorizationCodeGrant: true,
+            implicitCodeGrant: true,
+          },
         },
       },
     },
@@ -140,6 +150,7 @@ export function llaveroStack({ stack, app }: StackContext) {
     }),
   ]);
 
+
   stack.addOutputs({
     SiteUrl: site.url,
     UserPoolId: auth.userPoolId,
@@ -161,7 +172,7 @@ export function initLlavero({ stack, app }: StackContext) {
       UserPoolClientId: auth.userPoolClientId,
       config: installationConfig,
       arnSiteParameter: getParameterPath(SITE_URL, 'value'),
-      siteUrl: site.url ?? localhostUrl,
+      siteUrl: site.url ?? localhostUrl
     },
   });
   script.bind([userTable, logGroup, auth, SITE_URL, ...keys]);

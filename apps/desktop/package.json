@@ -76,7 +76,6 @@
   "dependencies": {
     "@aws-cdk/cloudformation-diff": "2.79.1",
     "@aws-cdk/cx-api": "2.79.1",
-    "@electron-forge/maker-rpm": "^6.4.2",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.16",

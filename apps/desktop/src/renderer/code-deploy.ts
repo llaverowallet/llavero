@@ -1,7 +1,7 @@
 
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { StackProps, SecretValue } from 'aws-cdk-lib';
+import { StackProps, SecretValue, aws_events, aws_events_targets } from 'aws-cdk-lib';
 import { Project, BuildSpec, LinuxBuildImage } from 'aws-cdk-lib/aws-codebuild';
 import { GitHubSourceAction, CodeBuildAction, GitHubTrigger } from 'aws-cdk-lib/aws-codepipeline-actions';
 import { Pipeline, Artifact } from 'aws-cdk-lib/aws-codepipeline';
@@ -13,7 +13,7 @@ export class CodedeployStack extends cdk.Stack {
     super(scope, id, props);
 
     // Define a new CodeBuild project
-    const buildProject = new Project(this, 'LlaveroBuildProject', {
+    const llaveroBuildProject = new Project(this, 'LlaveroBuildProject', {
       environment: {
         buildImage: LinuxBuildImage.STANDARD_7_0,
         environmentVariables: {
@@ -40,6 +40,23 @@ export class CodedeployStack extends cdk.Stack {
         },
       }),
     });
+
+    const rule = new aws_events.Rule(this, 'Rule', {
+      eventPattern: {
+        source: ['aws.codebuild'],
+        detailType: ['CodeBuild Project State Change'],
+        detail: {
+          'project-name': [
+            llaveroBuildProject.projectName,
+          ],
+          'build-status': [
+            'IN_PROGRESS',
+          ],
+        },
+      },
+    });
+    
+    rule.addTarget(new aws_events_targets.CodeBuildProject(llaveroBuildProject));
 
     // Define a new CodePipeline
     const pipeline = new Pipeline(this, 'LlaveroPipeline', {
@@ -71,7 +88,7 @@ export class CodedeployStack extends cdk.Stack {
       actions: [
         new CodeBuildAction({
           actionName: 'CodeBuild',
-          project: buildProject,
+          project: llaveroBuildProject,
           input: code
         }),
       ],
