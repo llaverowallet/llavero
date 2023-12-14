@@ -1,6 +1,6 @@
 import { LOG_GROUP_NAME } from '@/shared/utils/constants';
 import { SSTConfig } from 'sst';
-import { Cognito, Config, NextjsSite, Script, Table, StackContext } from 'sst/constructs';
+import { Cognito, Config, NextjsSite, Script, Table, StackContext, dependsOn } from 'sst/constructs';
 import createLogGroup, { LogGroupSST } from './sst/cloudwatch-construct';
 import createKeys from './sst/key-builder';
 import { check } from '@/shared/utils/general';
@@ -132,7 +132,7 @@ export function llaveroStack({ stack, app }: StackContext) {
     },
   });
 
-  //TODO horrible workaround. this is beacuse I can't set enviroment variables of NextjsSite directly and because I cant get the site url before
+  //TODO horrible workaround. this is because I can't set environment variables of NextjsSite directly and because I cant get the site url before
   const arnParameter = `arn:aws:ssm:${app.region}:${app.account}:parameter${getParameterPath(
     SITE_URL,
     'value',
@@ -163,6 +163,7 @@ export function llaveroStack({ stack, app }: StackContext) {
 export function initLlavero({ stack, app }: StackContext) {
   const arnParameter = `arn:aws:ssm:${app.region}:${app.account}:parameter${getParameterPath(SITE_URL, "value")}`;
   const basePath = process.cwd() + "/";
+  dependsOn(llaveroStack);
   const script = new Script(stack, "AfterDeploy", {
     onCreate: basePath + "src/repositories/user-table-init.main",
     params: {

@@ -29,6 +29,7 @@ export interface EnvVars {
   REGION: string;
   EMAIL: string;
 }
+export type InstallationResult = 'installing' | 'updating' | 'failed';
 const setCredentials = async (accessKeyId: string, secretAccessKey: string) => {
   if (!accessKeyId || !secretAccessKey) {
     throw new Error('Access Key ID and Secret Access Key are required');
@@ -44,7 +45,7 @@ const setCredentials = async (accessKeyId: string, secretAccessKey: string) => {
     //process.env['AWS_SECRET_ACCESS_KEY'] = secretAccessKey;
     sdk.config.update({ accessKeyId, secretAccessKey });
     const stsClient = new sdk.STS();
-    
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     stsClient.getCallerIdentity((err: unknown, data: any) => {
       if (err) {
@@ -176,9 +177,11 @@ async function createCdkStack(vars: EnvVars) {
   try {
     const app = new cdk.App();
     const stack = new CodedeployStack(app, 'CodedeployStack', {
-      env: { account: vars.AWS_ACCOUNT_ID, region: vars.REGION }, },
-      { region: vars.REGION, account: vars.AWS_ACCOUNT_ID, email: vars.EMAIL, numberOfKeys: vars.KEYS_NUMBER, 
-        awsAccessKeyId: vars.AWS_ACCESS_KEY_ID, awsSecretAccessKey: vars.AWS_SECRET_ACCESS_KEY, 
+      env: { account: vars.AWS_ACCOUNT_ID, region: vars.REGION },
+    },
+      {
+        region: vars.REGION, account: vars.AWS_ACCOUNT_ID, email: vars.EMAIL, numberOfKeys: vars.KEYS_NUMBER,
+        awsAccessKeyId: vars.AWS_ACCESS_KEY_ID, awsSecretAccessKey: vars.AWS_SECRET_ACCESS_KEY,
       }
     );
     const stackArtifact = getStackArtifact(app, stack);
@@ -205,23 +208,78 @@ async function createCdkStack(vars: EnvVars) {
 }
 
 //installWallet
-async function installWallet(envVars: EnvVars): Promise<boolean> {
+async function installWallet(envVars: EnvVars): Promise<InstallationResult> {
   try {
     checkInputs(envVars);
     console.log('envVars bootstrapCdk: ', envVars);
     setCredentials(envVars.AWS_ACCESS_KEY_ID, envVars.AWS_SECRET_ACCESS_KEY);
+
+    const exists = await checkIfPipelineExists('LlaveroPipeline', envVars.REGION);
     await bootstrapCdk(envVars);
     console.log('envVars createCdkStack: ', envVars);
     await createCdkStack(envVars);
-
-    return true;
+    if (exists) {
+      await startPipelineAndWait('LlaveroPipeline', envVars.REGION);
+      return 'updating';
+    }
+    return 'installing';
   } catch (error) {
     debugger;
     console.log('installWallet error: ', error);
-    return false;
+    return  'failed';
   }
 }
-contextBridge.exposeInMainWorld('installWallet', async (envVars: EnvVars): Promise<boolean> => await installWallet(envVars));
+contextBridge.exposeInMainWorld('installWallet', async (envVars: EnvVars): Promise<InstallationResult> => await installWallet(envVars));
+
+
+
+async function checkIfPipelineExists(pipelineName: string, region: string): Promise<boolean> {
+  const codepipeline = new sdk.CodePipeline({ region: region });
+
+  try {
+    await codepipeline.getPipeline({ name: pipelineName }).promise();
+    return true;
+  } catch (error) {
+    if (error.code === 'PipelineNotFoundException') {
+      return false;
+    } else {
+      throw error;
+    }
+  }
+}
+
+async function startPipelineAndWait(pipelineName: string, region: string): Promise<void> {
+  const codepipeline = new sdk.CodePipeline({ region: region });
+
+  try {
+    await codepipeline.startPipelineExecution({ name: pipelineName }).promise();
+    console.log(`Pipeline ${pipelineName} started successfully.`);
+
+    let pipelineRunning = false;
+    let attempts = 0;
+    while (!pipelineRunning && attempts < 12) { // check every 5 seconds for 1 minute
+      const pipelineState = await codepipeline.getPipelineState({ name: pipelineName }).promise();
+      const currentStage = pipelineState.stageStates?.[0]; // assuming the first stage is the one we want to check
+
+      if (currentStage?.latestExecution?.status === 'InProgress') {
+        pipelineRunning = true;
+      } else {
+        console.log('Waiting for pipeline to start running...');
+        await new Promise(resolve => setTimeout(resolve, 5000)); // wait for 5 seconds before checking again
+        attempts++;
+      }
+    }
+
+    if (!pipelineRunning) {
+      throw new Error('Pipeline did not start running within 1 minute.');
+    }
+
+    console.log('Pipeline started running.');
+  } catch (error) {
+    console.error(`Error starting pipeline ${pipelineName}:`, error);
+    throw error;
+  }
+}
 
 function openInBrowser(url: string) {
   require('electron').shell.openExternal(url);
