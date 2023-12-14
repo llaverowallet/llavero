@@ -166,6 +166,7 @@ export function initLlavero({ stack, app }: StackContext) {
   dependsOn(llaveroStack);
   const script = new Script(stack, "AfterDeploy", {
     onCreate: basePath + "src/repositories/user-table-init.main",
+    onUpdate: basePath + "src/repositories/user-table-init.main",
     params: {
       tableName: userTable.tableName,
       keys: keys.map((k) => ({ keyArn: k.keyArn })),
