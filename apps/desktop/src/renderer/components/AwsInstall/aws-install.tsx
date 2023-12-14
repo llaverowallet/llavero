@@ -1,5 +1,5 @@
 import { Button, Card, CardContent, Chip, Collapse, Divider, Fab, FormControl, InputLabel, LinearProgress, Link, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
-import { EnvVars } from '../../appPreload';
+import { EnvVars, InstallationResult } from '../../appPreload';
 import { useEffect, useState } from 'react';
 import Paper from '@mui/material/Paper';
 
@@ -12,7 +12,7 @@ interface Props {
     secretAccessKey: string;
 }
 
-type InstallationType = 'none' | 'installing' | 'installed' | 'failed';
+type InstallationType = 'none' | 'updated' | 'installing' | 'installed' | 'failed';
 
 export function AwsInstall({ accessKeyId, secretAccessKey }: Props) {
     const [enVars, setEnVars] = useState<EnvVars>();
@@ -56,7 +56,7 @@ export function AwsInstall({ accessKeyId, secretAccessKey }: Props) {
     }
 
 
-    async function installWallet(): Promise<string> {
+    async function installWallet(): Promise<InstallationResult> {
         try {
             enVars.EMAIL = email;
             enVars.KEYS_NUMBER = keysNumber;
@@ -83,11 +83,21 @@ export function AwsInstall({ accessKeyId, secretAccessKey }: Props) {
             console.log('installing...', selectedRegion);
             setRegion(selectedRegion);
             const result = await installWallet();
-            if (result) {
-                setInstallation('installed');
+            debugger;
+            switch (result) {
+                case 'installing':
+                    setInstallation('installed');
+                    break;
+                case 'updating':
+                    setInstallation('updated');
+                    break;
+                case 'failed':
+                    setInstallation('failed');
+                    break;
+                default:
+                    setInstallation('failed');
+                    break;
             }
-            else
-                setInstallation('failed');
         } catch (error) {
             debugger;
             console.log('error ui', error);
@@ -175,7 +185,7 @@ export function AwsInstall({ accessKeyId, secretAccessKey }: Props) {
                             </Collapse>
 
                             <br /><br />
-                            {installation !== "installed" && installation !== "installing" &&
+                            {(installation === "none" || installation === "failed") &&
                                 <Fab variant="extended" size="small" color="primary" type="submit">
                                     Install
                                 </Fab>
@@ -191,15 +201,38 @@ export function AwsInstall({ accessKeyId, secretAccessKey }: Props) {
                                 </CardContent>
                             </Card>
                             }
+                            {installation === "updated" && <Card sx={{ bgcolor: green[500], color: '#fff', marginBottom: '1rem' }}>
+                                <CardContent>
+                                    <Typography variant="h5" component="div">
+                                        Updating has started successfully!
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        Your service will be interrupted for a few minutes.
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                            }
                             {installation === "installing" &&
                                 <Card sx={{ bgcolor: blue[500], color: '#fff', marginBottom: '1rem' }}>
                                     <CardContent>
-                                    <LinearProgress />
+                                        <LinearProgress />
                                         <Typography variant="h5" component="div">
                                             Installation has started. Please do not close the window.
                                         </Typography>
                                         <Typography variant="body2">
                                             It will take some minutes. Be patience.
+                                        </Typography>
+                                    </CardContent>
+                                </Card>
+                            }
+                            {installation === "failed" &&
+                                <Card sx={{ bgcolor: 'red', color: '#fff', marginBottom: '1rem' }}>
+                                    <CardContent>
+                                        <Typography variant="h5" component="div">
+                                            Installation has failed!
+                                        </Typography>
+                                        <Typography variant="body2">
+                                            Please try again.
                                         </Typography>
                                     </CardContent>
                                 </Card>
