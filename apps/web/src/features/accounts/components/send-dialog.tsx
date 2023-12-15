@@ -15,13 +15,50 @@ import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
 import { useNetwork } from '@/shared/hooks/use-network';
 import { formatBalance } from '@/shared/utils/crypto';
-import { parseEther } from 'ethers';
+import { JsonRpcProvider, formatEther, formatUnits, parseEther } from 'ethers';
+import { BigNumberish } from 'ethers/utils';
 import { Send } from 'lucide-react';
 import { FormEvent, useState } from 'react';
 import { setTxHash } from '../utils/transactions';
+import BigNumber from 'bignumber.js';
+
+//TODO: estimateMaxTransfer
+async function estimateMaxTransfer({ provider, balance }: any) {
+  try {
+    // Convert the number to a BigNumber
+    const bigNumberBalance = new BigNumber(balance);
+    console.log({ bigNumberBalance });
+
+    // Estimate gas price
+    const feeData = await provider.getFeeData();
+    const gasPrice = new BigNumber(feeData.gasPrice);
+
+    console.log({ feeData, gasPrice });
+
+    // Calculate the maximum amount that can be transferred, considering gas fees
+    const maxTransferAmount = bigNumberBalance.minus(gasPrice.times(21000)); // Assuming a standard Ethereum transfer with 21,000 gas limit
+
+    console.log({ maxTransferAmount });
+
+    // Convert the balance and gas price from Wei to Ether
+    const balanceInEther = formatEther(bigNumberBalance.toString());
+    console.log({ balanceInEther });
+    const gasPriceInGwei = formatUnits(gasPrice.toString(), 'gwei');
+    console.log({ gasPriceInGwei });
+    const maxTransferAmountInEther = formatEther(maxTransferAmount.toString());
+    console.log({ maxTransferAmountInEther });
+
+    console.log(`Current balance of the address: ${balanceInEther} ETH`);
+    console.log(`Gas price: ${gasPriceInGwei} Gwei`);
+    console.log(`Estimated maximum transferable amount: ${maxTransferAmountInEther} ETH`);
+  } catch (error: unknown) {
+    console.error('Error:', error);
+  }
+}
 
 const SendDialog = ({ account }: { account: WalletInfo | null }) => {
   const { network } = useNetwork();
+  const provider = new JsonRpcProvider(network.rpc);
   const eip155Address = `${network.namespace}:${network.chainId}`;
   const { address } = account || {};
   const [isOpen, setIsOpen] = useState(false);
@@ -29,6 +66,8 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
   const TX_CHAIN_ID = `${network.chainId}`;
   const CHAIN_ID = eip155Address;
   const SEND_TX_URL = `/api/wallet/${address}/eth-send-transaction`;
+
+  estimateMaxTransfer({ provider, balance: account?.balance || 0 });
 
   const handleSend = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
