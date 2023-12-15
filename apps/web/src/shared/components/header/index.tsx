@@ -34,8 +34,7 @@ import { useNetwork } from '@/shared/hooks/use-network';
 const links = [
   { href: '/accounts', label: 'Accounts', disabled: false },
   { href: '/dashboard', label: 'Dashboard', disabled: false },
-  { href: '#', label: 'Change Password', disabled: true },
-  { href: '#', label: 'My Settings', disabled: true },
+  { href: '/settings', label: 'My Settings', disabled: false },
 ];
 
 const REDIRECT_AFTER_LOGOUT_URL = '/';
