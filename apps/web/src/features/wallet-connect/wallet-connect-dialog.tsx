@@ -61,7 +61,11 @@ const WalletConnectDialog = () => {
             </div>
 
             <DialogFooter className='mt-4'>
-              <Button type='submit'> {isLoading ? 'Loading...' : 'Connect'}</Button>
+              {/* <Button type='submit'> {isLoading ? 'Loading...' : 'Connect'}</Button> */}
+              <Button type='submit' disabled>
+                {' '}
+                Coming soon...
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>
