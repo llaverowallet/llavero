@@ -49,8 +49,8 @@ const WalletConnectDialog = () => {
         </DialogTrigger>
         <DialogContent className='max-w-[360px] sm:max-w-[425px]'>
           <DialogHeader>
-            <DialogTitle>{"Use Google's location service?"}</DialogTitle>
-            <DialogDescription>or use walletconnect uri</DialogDescription>
+            <DialogTitle>WalletConnect</DialogTitle>
+            <DialogDescription>Use WalletConnect uri</DialogDescription>
           </DialogHeader>
 
           <form onSubmit={handleConnect}>
