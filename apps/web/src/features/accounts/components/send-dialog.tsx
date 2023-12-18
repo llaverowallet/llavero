@@ -57,6 +57,7 @@ async function estimateMaxTransfer({ provider, balance }: any) {
 }
 
 const SendDialog = ({ account }: { account: WalletInfo | null }) => {
+  const [balance, setBalance] = useState('0');
   const { network } = useNetwork();
   const provider = new JsonRpcProvider(network.rpc);
   const eip155Address = `${network.namespace}:${network.chainId}`;
@@ -67,7 +68,18 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
   const CHAIN_ID = eip155Address;
   const SEND_TX_URL = `/api/wallet/${address}/eth-send-transaction`;
 
-  estimateMaxTransfer({ provider, balance: account?.balance || 0 });
+  // estimateMaxTransfer({ provider, balance: account?.balance || 0 });
+
+  const handleSetMaxBalance = () => {
+    // TODO: estimateMaxTransfer
+    setBalance(account?.balance || '0');
+  };
+
+  const handleSetBalance = (value: string) => {
+    if (!value) setBalance('0');
+
+    setBalance(value);
+  };
 
   const handleSend = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -141,8 +153,18 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
               <Input name='to' className='w-full' />
             </div>
             <div>
-              <Label htmlFor='amount'>Amount:</Label>
-              <Input name='amount' className='w-full' />
+              <div className='flex justify-between items-center mb-2'>
+                <Label htmlFor='amount'>Amount:</Label>
+                <Button variant='secondary' size='sm' onClick={handleSetMaxBalance}>
+                  Max
+                </Button>
+              </div>
+              <Input
+                name='amount'
+                className='w-full'
+                value={balance}
+                onChange={(e) => handleSetBalance(e.target.value)}
+              />
             </div>
           </div>
 
