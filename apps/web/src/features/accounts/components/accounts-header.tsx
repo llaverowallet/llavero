@@ -35,7 +35,7 @@ const AccountsHeader = ({
         <Button className='mx-auto w-fit flex gap-4'>
           <div className='flex gap-2 items-center'>
             <Avatar className='w-6 h-6'>
-              <AvatarFallback className='text-black'>
+              <AvatarFallback className='text-secondary-foreground'>
                 {selectedAccount?.name.toString().toUpperCase().slice(0, 1)}
               </AvatarFallback>
             </Avatar>
