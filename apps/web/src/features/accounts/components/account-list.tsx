@@ -43,11 +43,11 @@ const AccountListItem = ({
 }) => {
   const { network } = useNetwork();
 
-  const selectedStyles = isSelected ? 'bg-blue-100 border-l-2 border-primary' : '';
+  const selectedStyles = isSelected ? 'bg-muted/50 border-l-2 border-primary' : '';
 
   return (
     <div
-      className={`flex gap-4 cursor-pointer hover:bg-blue-100 p-3 ${selectedStyles}`}
+      className={`flex gap-4 cursor-pointer hover:bg-muted/50 p-3 ${selectedStyles}`}
       onClick={onClick}
     >
       <div className='flex gap-2'>

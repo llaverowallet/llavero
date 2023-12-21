@@ -49,8 +49,8 @@ const WalletConnectDialog = () => {
         </DialogTrigger>
         <DialogContent className='max-w-[360px] sm:max-w-[425px]'>
           <DialogHeader>
-            <DialogTitle>{"Use Google's location service?"}</DialogTitle>
-            <DialogDescription>or use walletconnect uri</DialogDescription>
+            <DialogTitle>WalletConnect</DialogTitle>
+            <DialogDescription>Use WalletConnect uri</DialogDescription>
           </DialogHeader>
 
           <form onSubmit={handleConnect}>
@@ -61,7 +61,10 @@ const WalletConnectDialog = () => {
             </div>
 
             <DialogFooter className='mt-4'>
-              <Button type='submit'> {isLoading ? 'Loading...' : 'Connect'}</Button>
+              {/* <Button type='submit'> {isLoading ? 'Loading...' : 'Connect'}</Button> */}
+              <Button type='submit' disabled>
+                Coming soon...
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>

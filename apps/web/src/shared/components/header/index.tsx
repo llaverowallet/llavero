@@ -34,8 +34,7 @@ import { useNetwork } from '@/shared/hooks/use-network';
 const links = [
   { href: '/accounts', label: 'Accounts', disabled: false },
   { href: '/dashboard', label: 'Dashboard', disabled: false },
-  { href: '#', label: 'Change Password', disabled: true },
-  { href: '#', label: 'My Settings', disabled: true },
+  { href: '/settings', label: 'My Settings', disabled: false },
 ];
 
 const REDIRECT_AFTER_LOGOUT_URL = '/';
@@ -52,7 +51,7 @@ const Header = () => {
   };
 
   return (
-    <header className='px-4 xl:px-0 sm:flex sm:justify-between py-3 border-b shadow-md sticky top-0 bg-white z-50'>
+    <header className='px-4 xl:px-0 sm:flex sm:justify-between py-3 border-b shadow-md sticky top-0 bg-background z-50 border-border'>
       <Container>
         <div className='flex h-12 items-center justify-between w-full '>
           <div className='flex items-center justify-between w-full'>

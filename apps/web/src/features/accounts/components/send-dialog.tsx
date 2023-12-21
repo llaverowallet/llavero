@@ -15,13 +15,47 @@ import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
 import { useNetwork } from '@/shared/hooks/use-network';
 import { formatBalance } from '@/shared/utils/crypto';
-import { parseEther } from 'ethers';
+import { JsonRpcProvider, formatUnits, parseEther } from 'ethers';
 import { Send } from 'lucide-react';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { setTxHash } from '../utils/transactions';
+import BigNumber from 'bignumber.js';
+import { useDebounce } from 'use-debounce';
+
+async function estimateMaxTransfer({ provider, amount }: any) {
+  try {
+    // Convert the number to a BigNumber
+    const bigNumberAmount = new BigNumber(amount);
+
+    // Estimate gas price
+    const feeData = await provider.getFeeData();
+    const gasPrice = feeData.gasPrice;
+
+    // Convert the gas price from Wei to Gwei or Ether for better readability
+    const gasPriceInEth = formatUnits(gasPrice, 'ether');
+    const gasPriceInGwei = formatUnits(gasPrice, 'gwei');
+    const gasPriceInWei = formatUnits(gasPrice, 'wei');
+
+    // console.log({ gasPrice, gasPriceInEth, gasPriceInGwei, gasPriceInWei });
+
+    const maxTransferAmount = bigNumberAmount.minus(new BigNumber(gasPriceInEth));
+    // console.log({ currentAmount: amount, maxTransferAmount: maxTransferAmount.toString() });
+
+    return {
+      maxTransferAmount: maxTransferAmount.toString(),
+      estimatedGasPrice: Number(amount) ? gasPriceInEth : '0',
+    };
+  } catch (error: unknown) {
+    console.error('Error:', error);
+  }
+}
 
 const SendDialog = ({ account }: { account: WalletInfo | null }) => {
+  const [balance, setBalance] = useState('0');
+  const [debouncedBalance] = useDebounce(balance, 500);
+  const [estimatedGas, setEstimatedGas] = useState('0');
   const { network } = useNetwork();
+  const provider = useMemo(() => new JsonRpcProvider(network.rpc), [network.rpc]);
   const eip155Address = `${network.namespace}:${network.chainId}`;
   const { address } = account || {};
   const [isOpen, setIsOpen] = useState(false);
@@ -29,6 +63,24 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
   const TX_CHAIN_ID = `${network.chainId}`;
   const CHAIN_ID = eip155Address;
   const SEND_TX_URL = `/api/wallet/${address}/eth-send-transaction`;
+
+  const handleSetMaxBalance = async () => {
+    const transferData = await estimateMaxTransfer({
+      provider,
+      amount: account?.balance || 0,
+    });
+
+    setBalance(transferData?.maxTransferAmount || '0');
+  };
+
+  const handleSetBalance = async (value: string) => {
+    if (!value) {
+      setBalance('0');
+      setEstimatedGas('0');
+    }
+
+    setBalance(value);
+  };
 
   const handleSend = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -72,6 +124,21 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
     }
   };
 
+  useEffect(() => {
+    const calculateFee = async () => {
+      if (!debouncedBalance) return;
+
+      const transferData = await estimateMaxTransfer({
+        provider,
+        amount: debouncedBalance || 0,
+      });
+
+      setEstimatedGas(transferData?.estimatedGasPrice || '0');
+    };
+
+    calculateFee();
+  }, [debouncedBalance, provider]);
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
       <DialogTrigger asChild>
@@ -102,8 +169,23 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
               <Input name='to' className='w-full' />
             </div>
             <div>
-              <Label htmlFor='amount'>Amount:</Label>
-              <Input name='amount' className='w-full' />
+              <div className='flex justify-between items-center mb-2'>
+                <Label htmlFor='amount'>Amount:</Label>
+                <Button variant='secondary' size='sm' onClick={handleSetMaxBalance}>
+                  Max
+                </Button>
+              </div>
+              <Input
+                name='amount'
+                className='w-full mb-1'
+                value={balance}
+                onChange={(e) => handleSetBalance(e.target.value)}
+              />
+              <div className='flex justify-end'>
+                <span className='text-xs text-gray-500'>
+                  Estimated gas fee: {estimatedGas} {network.symbol}
+                </span>
+              </div>
             </div>
           </div>
 

@@ -171,7 +171,7 @@ const AccountActivityItemInMemory = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <div className='flex gap-4 items-center p-2 border-b px-4 hover:bg-blue-200 cursor-pointer hover:border-b-blue-500'>
+        <div className='flex gap-4 items-center p-2 border-b border-border px-4 hover:bg-muted/50 cursor-pointer hover:border-b-border'>
           <div>
             <div className='rounded-full bg-primary w-8 h-8 flex items-center justify-center'>
               <Send className='text-white w-4 h-4' />
@@ -305,7 +305,7 @@ const AccountActivityItem = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <div className='flex gap-4 items-center p-2 border-b px-4 hover:bg-blue-200 cursor-pointer hover:border-b-blue-500'>
+        <div className='flex gap-4 items-center p-2 border-b border-border px-4 hover:bg-muted/50 cursor-pointer hover:border-b-border'>
           <div>
             <div className='rounded-full bg-primary w-8 h-8 flex items-center justify-center'>
               <Send className='text-white w-4 h-4' />

@@ -56,7 +56,7 @@ const Dashboard = () => {
                 {accounts?.length > 0 && (
                   <Table>
                     <TableHeader>
-                      <TableRow>
+                      <TableRow className='border-border'>
                         <TableHead className='w-fit'>Name</TableHead>
                         <TableHead className='w-fit'>Address</TableHead>
                         <TableHead className='w-fit'>Balance</TableHead>
@@ -66,7 +66,7 @@ const Dashboard = () => {
                     <TableBody>
                       <>
                         {accounts.map((account, index) => (
-                          <TableRow key={account.address}>
+                          <TableRow key={account.address} className='border-border'>
                             <TableCell className='font-medium py-4'>
                               <div className='flex items-center text-xs'>
                                 <KeyRound className='h-4 w-4 mr-1 text-primary' /> {account.name}
