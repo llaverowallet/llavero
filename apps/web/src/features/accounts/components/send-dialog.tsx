@@ -15,42 +15,36 @@ import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
 import { useNetwork } from '@/shared/hooks/use-network';
 import { formatBalance } from '@/shared/utils/crypto';
-import { JsonRpcProvider, formatEther, formatUnits, parseEther } from 'ethers';
-import { BigNumberish } from 'ethers/utils';
+import { JsonRpcProvider, formatUnits, parseEther } from 'ethers';
 import { Send } from 'lucide-react';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { setTxHash } from '../utils/transactions';
 import BigNumber from 'bignumber.js';
+import { useDebounce } from 'use-debounce';
 
-//TODO: estimateMaxTransfer
-async function estimateMaxTransfer({ provider, balance }: any) {
+async function estimateMaxTransfer({ provider, amount }: any) {
   try {
     // Convert the number to a BigNumber
-    const bigNumberBalance = new BigNumber(balance);
-    console.log({ bigNumberBalance });
+    const bigNumberAmount = new BigNumber(amount);
 
     // Estimate gas price
     const feeData = await provider.getFeeData();
-    const gasPrice = new BigNumber(feeData.gasPrice);
+    const gasPrice = feeData.gasPrice;
 
-    console.log({ feeData, gasPrice });
+    // Convert the gas price from Wei to Gwei or Ether for better readability
+    const gasPriceInEth = formatUnits(gasPrice, 'ether');
+    const gasPriceInGwei = formatUnits(gasPrice, 'gwei');
+    const gasPriceInWei = formatUnits(gasPrice, 'wei');
 
-    // Calculate the maximum amount that can be transferred, considering gas fees
-    const maxTransferAmount = bigNumberBalance.minus(gasPrice.times(21000)); // Assuming a standard Ethereum transfer with 21,000 gas limit
+    // console.log({ gasPrice, gasPriceInEth, gasPriceInGwei, gasPriceInWei });
 
-    console.log({ maxTransferAmount });
+    const maxTransferAmount = bigNumberAmount.minus(new BigNumber(gasPriceInEth));
+    // console.log({ currentAmount: amount, maxTransferAmount: maxTransferAmount.toString() });
 
-    // Convert the balance and gas price from Wei to Ether
-    const balanceInEther = formatEther(bigNumberBalance.toString());
-    console.log({ balanceInEther });
-    const gasPriceInGwei = formatUnits(gasPrice.toString(), 'gwei');
-    console.log({ gasPriceInGwei });
-    const maxTransferAmountInEther = formatEther(maxTransferAmount.toString());
-    console.log({ maxTransferAmountInEther });
-
-    console.log(`Current balance of the address: ${balanceInEther} ETH`);
-    console.log(`Gas price: ${gasPriceInGwei} Gwei`);
-    console.log(`Estimated maximum transferable amount: ${maxTransferAmountInEther} ETH`);
+    return {
+      maxTransferAmount: maxTransferAmount.toString(),
+      estimatedGasPrice: Number(amount) ? gasPriceInEth : '0',
+    };
   } catch (error: unknown) {
     console.error('Error:', error);
   }
@@ -58,8 +52,10 @@ async function estimateMaxTransfer({ provider, balance }: any) {
 
 const SendDialog = ({ account }: { account: WalletInfo | null }) => {
   const [balance, setBalance] = useState('0');
+  const [debouncedBalance] = useDebounce(balance, 500);
+  const [estimatedGas, setEstimatedGas] = useState('0');
   const { network } = useNetwork();
-  const provider = new JsonRpcProvider(network.rpc);
+  const provider = useMemo(() => new JsonRpcProvider(network.rpc), [network.rpc]);
   const eip155Address = `${network.namespace}:${network.chainId}`;
   const { address } = account || {};
   const [isOpen, setIsOpen] = useState(false);
@@ -68,15 +64,20 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
   const CHAIN_ID = eip155Address;
   const SEND_TX_URL = `/api/wallet/${address}/eth-send-transaction`;
 
-  // estimateMaxTransfer({ provider, balance: account?.balance || 0 });
+  const handleSetMaxBalance = async () => {
+    const transferData = await estimateMaxTransfer({
+      provider,
+      amount: account?.balance || 0,
+    });
 
-  const handleSetMaxBalance = () => {
-    // TODO: estimateMaxTransfer
-    setBalance(account?.balance || '0');
+    setBalance(transferData?.maxTransferAmount || '0');
   };
 
-  const handleSetBalance = (value: string) => {
-    if (!value) setBalance('0');
+  const handleSetBalance = async (value: string) => {
+    if (!value) {
+      setBalance('0');
+      setEstimatedGas('0');
+    }
 
     setBalance(value);
   };
@@ -123,6 +124,21 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
     }
   };
 
+  useEffect(() => {
+    const calculateFee = async () => {
+      if (!debouncedBalance) return;
+
+      const transferData = await estimateMaxTransfer({
+        provider,
+        amount: debouncedBalance || 0,
+      });
+
+      setEstimatedGas(transferData?.estimatedGasPrice || '0');
+    };
+
+    calculateFee();
+  }, [debouncedBalance, provider]);
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
       <DialogTrigger asChild>
@@ -161,10 +177,15 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
               </div>
               <Input
                 name='amount'
-                className='w-full'
+                className='w-full mb-1'
                 value={balance}
                 onChange={(e) => handleSetBalance(e.target.value)}
               />
+              <div className='flex justify-end'>
+                <span className='text-xs text-gray-500'>
+                  Estimated gas fee: {estimatedGas} {network.symbol}
+                </span>
+              </div>
             </div>
           </div>
 
