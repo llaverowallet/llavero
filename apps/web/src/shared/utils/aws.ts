@@ -18,15 +18,15 @@ export async function getParameterValue(name: string): Promise<string> {
 }
 
 
-export async function updateUserPoolClientCallbackUrl(clientId: string, userPoolId: string, callbackUrl: string): Promise<void> {
+export async function updateUserPoolClientCallbackUrl(clientId: string, userPoolId: string, callbackUrl: string, logoutURL: string): Promise<void> {
     const cognitoClient = new CognitoIdentityProviderClient({ region: process.env.REGION });
 
     const command = new UpdateUserPoolClientCommand({
         ClientId: clientId,
         UserPoolId: userPoolId,
         CallbackURLs: [callbackUrl],
-        LogoutURLs: [callbackUrl],
-        AllowedOAuthScopes: ['email', 'openid'],
+        LogoutURLs: [logoutURL],
+        AllowedOAuthScopes: ['email', 'openid', 'profile', 'aws.cognito.signin.user.admin'],
         AllowedOAuthFlows: ['code'],
         SupportedIdentityProviders: ['COGNITO'],
         AllowedOAuthFlowsUserPoolClient: true

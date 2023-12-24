@@ -26,7 +26,7 @@ export default async function ethSendTransaction(
 
     const keyClient = new kmsClient.KMSClient();
     const rpc = getChainRpc(chainId);
-    const provider = new JsonRpcProvider(rpc); //TODO get from an endpoint
+    const provider = new JsonRpcProvider(rpc);
     const signer = new AwsKmsSigner(getKeyId(key.keyArn), keyClient, provider);
     console.log('transaction: ', transaction);
     const response = await signer.sendTransaction(transaction as TransactionLike);

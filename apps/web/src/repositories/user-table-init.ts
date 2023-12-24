@@ -24,7 +24,7 @@ export async function main(event: { params: ICloudWalletInitParams }) {
     await updateParameterStoreValue(event.params.arnSiteParameter, event.params.siteUrl, event.params.config.region);
     if (event.params.siteUrl.indexOf("localhost") <= -1) {
         await updateUserPoolClientCallbackUrl(event.params.UserPoolClientId ?? "empty", event.params.cognitoPoolId ?? "empty",
-            event.params.siteUrl + "/api/auth/callback/cognito");
+            event.params.siteUrl + "/api/auth/callback/cognito", event.params.siteUrl + "/api/auth/signout");
     }
     await updateInviteMessageTemplate(event.params.siteUrl, event.params.cognitoPoolId);
     const cognitoUser = await createCognitoUser(event.params.cognitoPoolId,
@@ -75,7 +75,6 @@ async function createCognitoUser(cognitoPoolId: string, email: string, password:
         UserPoolId: cognitoPoolId,
         Username: email,
         DesiredDeliveryMediums: ["EMAIL"],
-
         UserAttributes: [
             {
                 Name: "email",

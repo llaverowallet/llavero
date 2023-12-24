@@ -11,6 +11,9 @@ import {
 } from '@/shared/components/ui/dropdown-menu';
 import { Button } from '@/shared/components/ui/button';
 import { MoonIcon, SunIcon } from 'lucide-react';
+import { MFADialog } from './components/mfa-dialog';
+
+
 
 const Settings = () => {
   const { setTheme } = useTheme();
@@ -42,6 +45,18 @@ const Settings = () => {
             </div>
           </CardContent>
         </Card>
+
+        <Card className='w-full mx-auto'>
+          <CardHeader>
+            <CardTitle className='text-2xl'>MFA</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className='flex gap-4 items-center'>
+              <MFADialog />
+            </div>
+          </CardContent>
+        </Card>
+
       </div>
     </Container>
   );
