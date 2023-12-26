@@ -12,7 +12,7 @@ import {
 import { Button } from '@/shared/components/ui/button';
 import MFA from './mfa';
 import { useSession } from 'next-auth/react';
-import { isMFARegistered } from './mfa-actions';
+import { isMFARegistered } from "@/shared/utils/mfa-actions";
 
 
 export const MFADialog = () => {

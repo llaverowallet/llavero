@@ -43,15 +43,17 @@ export const setEnableMFA = async (accessToken: string) => {
 };
 
 export const verifySoftwareToken = async (code: string, accessToken?: string, session?: string) => {
-    const client = new CognitoIdentityProviderClient({ region: process.env.NEXT_PUBLIC_REGION });
-
-    const command = new VerifySoftwareTokenCommand({
-        AccessToken: accessToken,
-        Session: session,
-        UserCode: code,
-    });
-
     try {
+        if(!code || code.length !== 6) throw new Error("Invalid code: code must be 6 digits");
+        console.log("code", code);
+        const client = new CognitoIdentityProviderClient({ region: process.env.NEXT_PUBLIC_REGION });
+
+        const command = new VerifySoftwareTokenCommand({
+            AccessToken: accessToken,
+            Session: session,
+            UserCode: code,
+        });
+
         const response = await client.send(command);
         if (response.Status !== "SUCCESS") {
             throw new Error("Error verifying software token");
@@ -73,7 +75,6 @@ export const isMFARegistered = async (accessToken: string) => {
 
     try {
         const response = await client.send(command);
-        debugger;
         const isRegistered = response.UserMFASettingList?.some((mfa) => mfa === "SOFTWARE_TOKEN_MFA");
         return isRegistered || false;
     } catch (error) {

@@ -17,10 +17,12 @@ import { useNetwork } from '@/shared/hooks/use-network';
 import { formatBalance } from '@/shared/utils/crypto';
 import { JsonRpcProvider, formatUnits, parseEther } from 'ethers';
 import { Send } from 'lucide-react';
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { FormEvent, use, useEffect, useMemo, useState } from 'react';
 import { setTxHash } from '../utils/transactions';
 import BigNumber from 'bignumber.js';
 import { useDebounce } from 'use-debounce';
+import { isMFARegistered } from '@/shared/utils/mfa-actions';
+import { useSession } from 'next-auth/react';
 
 async function estimateMaxTransfer({ provider, amount }: any) {
   try {
@@ -33,13 +35,11 @@ async function estimateMaxTransfer({ provider, amount }: any) {
 
     // Convert the gas price from Wei to Gwei or Ether for better readability
     const gasPriceInEth = formatUnits(gasPrice, 'ether');
-    const gasPriceInGwei = formatUnits(gasPrice, 'gwei');
-    const gasPriceInWei = formatUnits(gasPrice, 'wei');
-
-    // console.log({ gasPrice, gasPriceInEth, gasPriceInGwei, gasPriceInWei });
+    //const gasPriceInGwei = formatUnits(gasPrice, 'gwei');
+    //const gasPriceInWei = formatUnits(gasPrice, 'wei');
 
     const maxTransferAmount = bigNumberAmount.minus(new BigNumber(gasPriceInEth));
-    // console.log({ currentAmount: amount, maxTransferAmount: maxTransferAmount.toString() });
+
 
     return {
       maxTransferAmount: maxTransferAmount.toString(),
@@ -54,6 +54,8 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
   const [balance, setBalance] = useState('0');
   const [debouncedBalance] = useDebounce(balance, 500);
   const [estimatedGas, setEstimatedGas] = useState('0');
+  const [mfaRegistered, setMFARegistered] = useState<boolean>(false);
+  const [mfaCode, setMfaCode] = useState('');
   const { network } = useNetwork();
   const provider = useMemo(() => new JsonRpcProvider(network.rpc), [network.rpc]);
   const eip155Address = `${network.namespace}:${network.chainId}`;
@@ -63,6 +65,7 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
   const TX_CHAIN_ID = `${network.chainId}`;
   const CHAIN_ID = eip155Address;
   const SEND_TX_URL = `/api/wallet/${address}/eth-send-transaction`;
+  const { data } = useSession();
 
   const handleSetMaxBalance = async () => {
     const transferData = await estimateMaxTransfer({
@@ -101,9 +104,10 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
             to,
             value: parseEther(amount),
             from: address,
-            chainId: TX_CHAIN_ID,
+            chainId: TX_CHAIN_ID, 
           },
           chainId: CHAIN_ID,
+          mfaCode: mfaCode,
         }),
       });
 
@@ -137,7 +141,15 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
     };
 
     calculateFee();
-  }, [debouncedBalance, provider]);
+  }, [debouncedBalance, provider, data, data?.user?.email]);
+
+  useEffect(() => {
+    const checkMFA = async () => {
+      const token = (data as any).accessToken;
+      setMFARegistered(await isMFARegistered(token));
+    };
+    checkMFA();
+  }, [data, data?.user?.email]);
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
@@ -187,6 +199,17 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
                 </span>
               </div>
             </div>
+            {mfaRegistered &&
+            <div>
+                 <Label htmlFor='mfaCode'>MFA Code:</Label>
+                <Input
+                  name='mfaCode'
+                  className='w-full mb-1'
+                  value={mfaCode}
+                  onChange={(e) => setMfaCode(e.target.value)}
+                />
+              </div>
+              }
           </div>
 
           <DialogFooter className='mt-4'>

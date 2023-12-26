@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { Input } from '@/shared/components/ui/input';
 import { useSession } from 'next-auth/react';
 import QRCode from 'react-qr-code';
-import { associateSoftwareToken, setEnableMFA, verifySoftwareToken } from './mfa-actions';
+import { associateSoftwareToken, setEnableMFA, verifySoftwareToken } from '@/shared/utils/mfa-actions';
+
 
 
 const MFA = () => {
