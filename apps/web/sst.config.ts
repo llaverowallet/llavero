@@ -97,7 +97,8 @@ export function llaveroStack({ stack, app }: StackContext) {
         },
         oAuth: {
           callbackUrls: [localhostUrl + '/api/auth/callback/cognito'],
-          scopes: [OAuthScope.EMAIL, OAuthScope.OPENID], //["openid", "profile", "email", "phone", "aws.cognito.signin.user.admin"],
+          logoutUrls: [localhostUrl + '/api/auth/signout'],
+          scopes: [OAuthScope.EMAIL, OAuthScope.OPENID, OAuthScope.custom("aws.cognito.signin.user.admin"), OAuthScope.PROFILE ], //["openid", "profile", "email", "phone", "aws.cognito.signin.user.admin"],
           flows: {
             authorizationCodeGrant: true,
             implicitCodeGrant: true,
@@ -129,6 +130,10 @@ export function llaveroStack({ stack, app }: StackContext) {
       NEXTAUTH_SECRET: randomString(16), //TODO config input, should be saved or query
       SITEURL_PARAM_NAME: getParameterPath(SITE_URL, 'value'), //TODO horrible workaround. I should be able to set the variable on the env directly
       REGION: installationConfig.region,
+      NEXT_PUBLIC_REGION: installationConfig.region,
+      NEXT_PUBLIC_USER_POOL_CLIENT_ID: auth.userPoolClientId,
+      NEXT_PUBLIC_USER_POOL_ID: auth.userPoolId,
+      NEXT_PUBLIC_COGNITO_POOL_ID: auth.cognitoIdentityPoolId ?? 'empty',
     },
   });
 
