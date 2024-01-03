@@ -23,6 +23,7 @@ import BigNumber from 'bignumber.js';
 import { useDebounce } from 'use-debounce';
 import { isMFARegistered } from '@/shared/utils/mfa-actions';
 import { useSession } from 'next-auth/react';
+import { toast } from '@/shared/hooks/use-toast';
 
 async function estimateMaxTransfer({ provider, amount }: any) {
   try {
@@ -87,8 +88,6 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
   const handleSend = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    console.log('handleSend');
-
     const target = e.currentTarget;
     const formData = new FormData(target);
     const { to, amount } = Object.fromEntries(formData) as { to: string; amount: string };
@@ -123,6 +122,11 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
       setIsOpen(false);
     } catch (error) {
       console.error(error);
+      toast({
+        title: 'Error',
+        description: 'Your transaction could not be send',
+        variant: 'destructive',
+      });
     } finally {
       target.reset();
       setIsLoading(false);
@@ -149,6 +153,7 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
       const token = (data as any).accessToken;
       setMFARegistered(await isMFARegistered(token));
     };
+
     checkMFA();
   }, [data, data?.user?.email]);
 
