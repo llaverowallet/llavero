@@ -1,6 +1,6 @@
 import createLogger from '@/shared/utils/logger';
 const logger = createLogger('ListWallets');
-import { KmsKey, UserRepository } from '@/repositories/user-repository';
+import { UserRepository } from '@/repositories/user-repository';
 import { JsonRpcProvider, formatEther } from 'ethers';
 import { WalletInfo } from '@/models/interfaces';
 
@@ -16,7 +16,7 @@ export default async function listWallets(
   network?: string | null,
 ): Promise<WalletInfo[]> {
   try {
-    console.log("entro listWallets");
+    console.log('entro listWallets');
     const userRepo = new UserRepository();
     const user = await userRepo.getUser(username);
     if (!user) return [];

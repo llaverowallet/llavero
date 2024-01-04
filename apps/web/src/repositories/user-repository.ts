@@ -86,7 +86,7 @@ export class UserRepository {
       if (!selectedUser) throw new Error('User not found');
       let promises = new Array<Promise<KmsKey>>();
       keys.forEach((key, idx) => {
-        const name = key.name || 'key' + idx;
+        const name = key.name || `key${idx}`;
         console.log('Creating key name: ', name, key.address);
         promises.push(
           this.keysModel.upsert({
@@ -139,7 +139,7 @@ export class UserRepository {
           this.keysModel.upsert({
             keyArn: key.keyArn,
             username: username,
-            name: 'key' + idx,
+            name: `key${idx}`,
             userId: selectedUser?.userId,
           }),
         );

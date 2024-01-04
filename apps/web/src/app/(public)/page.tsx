@@ -20,16 +20,16 @@ const HomePage = () => {
   };
 
   return (
-    <main className='flex-1 flex flex-col'>
+    <main className="flex-1 flex flex-col">
       <Container>
-        <Card className='w-[350px] mx-auto'>
+        <Card className="w-[350px] mx-auto">
           <CardHeader>
             <CardTitle>Welcome</CardTitle>
             <CardDescription>Please login</CardDescription>
           </CardHeader>
           <CardContent></CardContent>
-          <CardFooter className='flex justify-between'>
-            <Button className='w-full' onClick={handleLogin}>
+          <CardFooter className="flex justify-between">
+            <Button className="w-full" onClick={handleLogin}>
               Log in
             </Button>
           </CardFooter>

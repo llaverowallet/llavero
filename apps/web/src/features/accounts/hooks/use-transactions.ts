@@ -1,7 +1,7 @@
 import { useSnapshot } from 'valtio';
 import TransactionsStore from '../../../store/transactionsStore';
 import { useNetwork } from '@/shared/hooks/use-network';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { WalletInfo } from '@/models/interfaces';
 import { useQuery } from '@tanstack/react-query';
 

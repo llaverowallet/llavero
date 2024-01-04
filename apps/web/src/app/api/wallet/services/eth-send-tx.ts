@@ -36,8 +36,3 @@ export default async function ethSendTransaction(
     throw new AggregateError([new Error('Error in list Wallet'), error]);
   }
 }
-
-// if (sendTransaction) {
-//     const response = await signer.sendTransaction(transaction as TransactionLike);
-//     return { address: key.address, response, transaction };
-// } else {
