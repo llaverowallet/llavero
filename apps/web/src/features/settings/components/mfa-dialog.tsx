@@ -1,10 +1,8 @@
-import { FormEvent, useEffect, useState } from 'react';
-import { web3wallet } from '@/shared/utils/walletConnectUtil';
+import { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -12,14 +10,12 @@ import {
 import { Button } from '@/shared/components/ui/button';
 import MFA from './mfa';
 import { useSession } from 'next-auth/react';
-import { isMFARegistered } from "@/shared/utils/mfa-actions";
-
+import { isMFARegistered } from '@/shared/utils/mfa-actions';
 
 export const MFADialog = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { data } = useSession();
   const [mfaRegistered, setMFARegistered] = useState<boolean>(false);
-
 
   useEffect(() => {
     const checkMFA = async () => {
@@ -29,21 +25,22 @@ export const MFADialog = () => {
     checkMFA();
   }, [data, data?.user?.email]);
 
-
   return (
     <>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
-          <Button>
-            {mfaRegistered ? 'Replace MFA' : 'Setup MFA'}
-          </Button>
+          <div>
+            <Button aria-label="Multi-Factor Authentication">
+              {mfaRegistered ? 'Replace MFA' : 'Setup MFA'}
+            </Button>
+          </div>
         </DialogTrigger>
-        <DialogContent className='max-w-[360px] sm:max-w-[600px]'>
+        <DialogContent className="max-w-[360px] sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle>MFA SETUP</DialogTitle>
-            <DialogDescription>Google Authenticator or Authy</DialogDescription>
+            <DialogTitle>Multi-Factor Authentication Setup</DialogTitle>
+            <DialogDescription>Use Google Authenticator or Authy app</DialogDescription>
           </DialogHeader>
-            <MFA />
+          <MFA />
         </DialogContent>
       </Dialog>
     </>
