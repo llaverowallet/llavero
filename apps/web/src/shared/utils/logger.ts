@@ -10,6 +10,7 @@ class CloudWatchLogger {
   private static lastLogStreamName = '';
   private cloudwatchLogs: CloudWatchLogsClient;
   private readonly LOG_GROUP_NAME;
+  // eslint-disable-next-line no-unused-vars
   private constructor(private name = 'default') {
     this.cloudwatchLogs = new CloudWatchLogsClient({ region: process.env.REGION });
     this.LOG_GROUP_NAME = process.env.LOG_GROUP_NAME ?? 'noGroupName-error-check-env-variables';
@@ -25,7 +26,7 @@ class CloudWatchLogger {
   public async log(message: string) {
     const logStreamName = this.getLogStreamName();
     const logEvent = {
-      message: this.name + ' - ' + message,
+      message: `${this.name} - ${message}`,
       timestamp: new Date().getTime(),
     };
     const params = {
@@ -80,6 +81,7 @@ class CloudWatchLogger {
       logEvents: logEvents,
     });
     try {
+      // eslint-disable-next-line no-unused-vars
       const data = await this.cloudwatchLogs.send(paramsPutLog);
       // console.log("Logged to CloudWatch:", data);
       CloudWatchLogger.lastLogStreamName = logStreamName;
@@ -144,6 +146,6 @@ export const authLogger = {
   },
   debug(code: any, metadata: any) {
     console.log(`[next-auth][debug][${code}]`, metadata);
-    aLogger.log(`[next-auth][debug][${code}]` + JSON.stringify(metadata));
+    aLogger.log(`[next-auth][debug][${code}]${JSON.stringify(metadata)}`);
   },
 };

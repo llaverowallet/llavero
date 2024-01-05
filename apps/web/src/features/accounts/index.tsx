@@ -50,34 +50,34 @@ const Accounts = () => {
 
   return (
     <Container>
-      <div className='px-4 xl:px-0'>
+      <div className="px-4 xl:px-0">
         {isPending ? (
           <AccountsSkeleton />
         ) : (
           <Card>
-            <div className='shadow-md py-2 px-4 mb-6 relative'>
+            <div className="shadow-md py-2 px-4 mb-6 relative">
               <AccountsHeader
                 accounts={accounts || []}
                 selectedAccount={selectedAccount}
                 onSelectAccount={handleSelectAccount}
               />
-              <div className='absolute top-1/2 right-4 transform -translate-y-1/2'>
+              <div className="absolute top-1/2 right-4 transform -translate-y-1/2">
                 <AccountMenu selectedAccount={selectedAccount} />
               </div>
             </div>
 
             <CardContent>
-              <div className='flex flex-col gap-2 items-center mb-4'>
+              <div className="flex flex-col gap-2 items-center mb-4">
                 <CopyToClipboard textToCopy={accountAddress || ''}>
-                  <Badge variant='outline' className='flex gap-2 py-2 cursor-pointer'>
-                    {getShortWalletAddress(accountAddress || '')} <Copy className='w-4 h-4' />
+                  <Badge variant="outline" className="flex gap-2 py-2 cursor-pointer">
+                    {getShortWalletAddress(accountAddress || '')} <Copy className="w-4 h-4" />
                   </Badge>
                 </CopyToClipboard>
 
-                <div className='text-3xl mb-4 mt-2'>
+                <div className="text-3xl mb-4 mt-2">
                   {formatBalance(accountBalance || 0)} {network.symbol}
                 </div>
-                <div className='flex gap-4'>
+                <div className="flex gap-4">
                   <div>
                     <ReceiveDialog account={selectedAccount} />
                   </div>
@@ -86,7 +86,7 @@ const Accounts = () => {
                   </div>
                 </div>
               </div>
-              <Separator className='mb-4' />
+              <Separator className="mb-4" />
               <AccountSections account={selectedAccount} />
             </CardContent>
           </Card>

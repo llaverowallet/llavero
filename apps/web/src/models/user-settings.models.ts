@@ -1,5 +1,4 @@
-
-export interface MFAAssociateResponse { 
-    SecretCode?: string, 
-    Session?: string 
+export interface MFAAssociateResponse {
+  SecretCode?: string;
+  Session?: string;
 }

@@ -34,6 +34,7 @@ const CopyToClipboard = ({ children, textToCopy }: Props) => {
   }, [isOpen]);
 
   return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div onClick={() => handleCopyToClipboard(textToCopy)}>
       <TooltipProvider>
         <Tooltip open={isOpen}>

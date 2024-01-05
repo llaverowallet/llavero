@@ -51,26 +51,26 @@ const Header = () => {
   };
 
   return (
-    <header className='px-4 xl:px-0 sm:flex sm:justify-between py-3 border-b shadow-md sticky top-0 bg-background z-50 border-border'>
+    <header className="px-4 xl:px-0 sm:flex sm:justify-between py-3 border-b shadow-md sticky top-0 bg-background z-50 border-border">
       <Container>
-        <div className='flex h-12 items-center justify-between w-full '>
-          <div className='flex items-center justify-between w-full'>
+        <div className="flex h-12 items-center justify-between w-full ">
+          <div className="flex items-center justify-between w-full">
             <div>
-              <Link href='/'>
-                <div className='flex gap-2 items-center'>
-                  <Image src={Logo} alt='Llavero CloudWallet' width={35} height={35} />
-                  <span className='hidden sm:block'>
-                    <span className='font-semibold'>Llavero</span> CloudWallet
+              <Link href="/">
+                <div className="flex gap-2 items-center">
+                  <Image src={Logo} alt="Llavero CloudWallet" width={35} height={35} />
+                  <span className="hidden sm:block">
+                    <span className="font-semibold">Llavero</span> CloudWallet
                   </span>
                 </div>
               </Link>
             </div>
 
             {session && (
-              <div className='flex gap-2 md:gap-4 items-center'>
+              <div className="flex gap-2 md:gap-4 items-center">
                 <WalletConnectDialog />
 
-                <div className='min-w-[125px]'>
+                <div className="min-w-[125px]">
                   <Select
                     value={eip155Address}
                     onValueChange={(eip155Address) => {
@@ -78,8 +78,8 @@ const Header = () => {
                     }}
                   >
                     <SelectTrigger>
-                      <Waypoints className='h-4 w-4 mr-2' />
-                      <SelectValue placeholder='Select a network' />
+                      <Waypoints className="h-4 w-4 mr-2" />
+                      <SelectValue placeholder="Select a network" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
@@ -111,20 +111,20 @@ const Header = () => {
 
                 {email && (
                   <DropdownMenu>
-                    <DropdownMenuTrigger asChild className='min-w-fit md:min-w-[200px]'>
-                      <Button variant='outline'>
-                        <UserCircle className='h-4 w-4' />
-                        <DropdownMenuLabel className='hidden md:inline'>{email}</DropdownMenuLabel>
+                    <DropdownMenuTrigger asChild className="min-w-fit md:min-w-[200px]">
+                      <Button variant="outline">
+                        <UserCircle className="h-4 w-4" />
+                        <DropdownMenuLabel className="hidden md:inline">{email}</DropdownMenuLabel>
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className='min-w-fit md:min-w-[200px] mr-4 md:mr-auto'>
+                    <DropdownMenuContent className="min-w-fit md:min-w-[200px] mr-4 md:mr-auto">
                       {links.map(({ href, label, disabled }) => (
                         <Link key={label} href={href}>
                           <DropdownMenuItem disabled={disabled}>{label}</DropdownMenuItem>
                         </Link>
                       ))}
                       <DropdownMenuSeparator />
-                      <Button variant='destructive' className='w-full' onClick={handleLogout}>
+                      <Button variant="destructive" className="w-full" onClick={handleLogout}>
                         Log out
                       </Button>
                     </DropdownMenuContent>

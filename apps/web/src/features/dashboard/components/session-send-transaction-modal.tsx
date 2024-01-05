@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import ModalStore from '@/store/modalStore';
 import { approveEIP155Request, rejectEIP155Request } from '@/shared/utils/EIP155RequestHandlerUtil';
 import { web3wallet } from '@/shared/utils/walletConnectUtil';
@@ -15,8 +15,6 @@ import {
 import { Button } from '@/shared/components/ui/button';
 
 export default function SessionSendTransactionModal() {
-  const [loading, setLoading] = useState(false);
-
   // Get request and wallet data from store
   const requestEvent = ModalStore.state.data?.requestEvent;
   const requestSession = ModalStore.state.data?.requestSession;
@@ -41,16 +39,14 @@ export default function SessionSendTransactionModal() {
   // Get required proposal data
 
   const { topic, params } = requestEvent;
-  const { request, chainId } = params;
+  const { request } = params;
   const transaction = request.params[0];
 
   // Handle approve action
   async function onApprove() {
     if (requestEvent) {
-      setLoading(true);
       try {
         const response = await approveEIP155Request(requestEvent);
-        debugger;
         await web3wallet.respondSessionRequest({
           topic,
           response,
@@ -85,29 +81,29 @@ export default function SessionSendTransactionModal() {
   return (
     <>
       <Dialog open={open}>
-        <DialogContent className='max-w-[360px] sm:max-w-[425px]'>
+        <DialogContent className="max-w-[360px] sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Sign Transaction</DialogTitle>
             <DialogDescription>Request a signature by:</DialogDescription>
           </DialogHeader>
 
-          <div className='flex flex-col gap-2'>
+          <div className="flex flex-col gap-2">
             <div>
-              <span className='font-semibold'>Name: </span> {requestSession.peer.metadata.name}
+              <span className="font-semibold">Name: </span> {requestSession.peer.metadata.name}
             </div>
             <div>
-              <span className='font-semibold'>Description:</span>
+              <span className="font-semibold">Description:</span>
               {requestSession.peer.metadata.description}
             </div>
             <div>
-              <span className='font-semibold'>URL:</span> {requestSession.peer.metadata.url}
+              <span className="font-semibold">URL:</span> {requestSession.peer.metadata.url}
             </div>
             <div>
               <Textarea value={JSON.stringify(transaction, null, 2)} />
             </div>
           </div>
 
-          <DialogFooter className='mt-4'>
+          <DialogFooter className="mt-4">
             <Button onClick={onReject}>Cancel</Button>
             <Button onClick={onApprove}>Accept</Button>
           </DialogFooter>

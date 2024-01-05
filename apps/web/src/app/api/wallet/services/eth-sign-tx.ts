@@ -41,8 +41,3 @@ export default async function ethSignTransaction(
     throw new AggregateError([new Error('Error ethSignTransaction'), error]);
   }
 }
-
-// if (sendTransaction) {
-//     const response = await signer.sendTransaction(transaction as TransactionLike);
-//     return { address: key.address, response, transaction };
-// } else {

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { buildApprovedNamespaces, getSdkError } from '@walletconnect/utils';
 
 import ModalStore from '@/store/modalStore';
@@ -90,24 +90,24 @@ export default function SessionProposalModal() {
   }, [proposal, supportedChains]);
   console.log('notSupportedChains', notSupportedChains);
 
-  const getAddress = useCallback((namespace?: string) => {
-    if (!namespace) return 'N/A';
-    switch (namespace) {
-      case 'eip155':
-        return SettingsStore.state.eip155Address;
-    }
-  }, []);
+  // const getAddress = useCallback((namespace?: string) => {
+  //   if (!namespace) return 'N/A';
+  //   switch (namespace) {
+  //     case 'eip155':
+  //       return SettingsStore.state.eip155Address;
+  //   }
+  // }, []);
 
-  const approveButtonColor: any = useMemo(() => {
-    switch (proposal?.verifyContext.verified.validation) {
-      case 'INVALID':
-        return 'error';
-      case 'UNKNOWN':
-        return 'warning';
-      default:
-        return 'success';
-    }
-  }, [proposal]);
+  // const approveButtonColor: any = useMemo(() => {
+  //   switch (proposal?.verifyContext.verified.validation) {
+  //     case 'INVALID':
+  //       return 'error';
+  //     case 'UNKNOWN':
+  //       return 'warning';
+  //     default:
+  //       return 'success';
+  //   }
+  // }, [proposal]);
 
   // Ensure proposal is defined
   if (!proposal) {
@@ -116,7 +116,7 @@ export default function SessionProposalModal() {
 
   // Get required proposal data
   const { id, params } = proposal;
-  const { proposer, relays } = params;
+  const { relays } = params; //, proposer
 
   // Hanlde approve action, construct session namespace
   async function onApprove() {
@@ -162,26 +162,26 @@ export default function SessionProposalModal() {
 
   return (
     <Dialog open={open}>
-      <DialogContent className='max-w-[360px] sm:max-w-[425px]'>
+      <DialogContent className="max-w-[360px] sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Subscribe</DialogTitle>
           <DialogDescription>Permission session</DialogDescription>
         </DialogHeader>
 
-        <div className='flex flex-col gap-2'>
+        <div className="flex flex-col gap-2">
           <div>
-            <span className='font-semibold'>Name: </span> {proposal.params.proposer.metadata.name}
+            <span className="font-semibold">Name: </span> {proposal.params.proposer.metadata.name}
           </div>
           <div>
-            <span className='font-semibold'>Description:</span>
+            <span className="font-semibold">Description:</span>
             {proposal.params.proposer.metadata.description}
           </div>
           <div>
-            <span className='font-semibold'>URL:</span> {proposal.params.proposer.metadata.url}
+            <span className="font-semibold">URL:</span> {proposal.params.proposer.metadata.url}
           </div>
         </div>
 
-        <DialogFooter className='mt-4'>
+        <DialogFooter className="mt-4">
           <Button onClick={onReject}>Cancel</Button>
           <Button onClick={onApprove}>Accept</Button>
         </DialogFooter>
