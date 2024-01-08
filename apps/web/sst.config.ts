@@ -166,10 +166,15 @@ export function llaveroStack({ stack, app }: StackContext) {
       resources: [auth.userPoolArn],
     }),
     new PolicyStatement({
-      actions: ['sns:CreateSMSSandboxPhoneNumber', 'sns:VerifySMSSandboxPhoneNumber', 'sns:ListSMSSandboxPhoneNumbers', 'sns:DeleteSMSSandboxPhoneNumber'],
+      actions: [
+        'sns:CreateSMSSandboxPhoneNumber',
+        'sns:VerifySMSSandboxPhoneNumber',
+        'sns:ListSMSSandboxPhoneNumbers',
+        'sns:DeleteSMSSandboxPhoneNumber',
+      ],
       effect: Effect.ALLOW,
-      resources: ['*'], 
-    })
+      resources: ['*'],
+    }),
   ]);
 
   stack.addOutputs({

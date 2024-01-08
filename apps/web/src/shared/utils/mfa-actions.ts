@@ -8,6 +8,7 @@ import {
   UpdateUserAttributesCommand,
   GetUserAttributeVerificationCodeCommand,
   VerifyUserAttributeCommand,
+  AdminUpdateUserAttributesCommand,
 } from '@aws-sdk/client-cognito-identity-provider';
 import {
   SNSClient,
@@ -15,6 +16,7 @@ import {
   VerifySMSSandboxPhoneNumberCommand,
   ListSMSSandboxPhoneNumbersCommand,
   SMSSandboxPhoneNumberVerificationStatus,
+  SMSSandboxPhoneNumber,
 } from '@aws-sdk/client-sns';
 
 export const associateSoftwareToken = async (
@@ -33,7 +35,7 @@ export const associateSoftwareToken = async (
     return response;
   } catch (error) {
     console.error('Error associating software token:', error);
-    return {}; //SecretCode: "", Session: ""
+    return {};
   }
 };
 
@@ -67,11 +69,11 @@ export const setEnableSMS = async (accessToken: string) => {
     AccessToken: accessToken,
     SMSMfaSettings: {
       Enabled: true,
-      PreferredMfa: false,
+      PreferredMfa: true,
     },
     SoftwareTokenMfaSettings: {
       Enabled: true,
-      PreferredMfa: true,
+      PreferredMfa: false,
     },
   });
 
@@ -83,29 +85,13 @@ export const setEnableSMS = async (accessToken: string) => {
   }
 };
 
-// export const setEnableSMS = async (accessToken: string) => {
-//   const client = new CognitoIdentityProviderClient({ region: process.env.NEXT_PUBLIC_REGION });
-
-//   const command = new SetUserMFAPreferenceCommand({
-//     AccessToken: accessToken,
-//     SMSMfaSettings: {
-//       Enabled: true,
-//       PreferredMfa: false,
-//     },
-//     SoftwareTokenMfaSettings: {
-//       Enabled: true,
-//       PreferredMfa: true,
-//     },
-//   });
-
-//   try {
-//     const response = await client.send(command);
-//     console.log('User MFA preference set successfully:', response);
-//   } catch (error) {
-//     console.error('Error setting user MFA preference:', error);
-//   }
-// };
-
+/**
+ * Verify software token for MFA TOTP
+ * @param code - 6 digits code
+ * @param accessToken - Cognito access token
+ * @param session - Cognito session
+ * @returns true if success, false if error
+ */
 export const verifySoftwareToken = async (code: string, accessToken?: string, session?: string) => {
   try {
     if (!code || code.length !== 6) throw new Error('Invalid code: code must be 6 digits');
@@ -129,7 +115,12 @@ export const verifySoftwareToken = async (code: string, accessToken?: string, se
   }
 };
 
-export const isMFARegistered = async (accessToken: string) => {
+/**
+ * Check if user has registered MFA TOTP
+ * @param accessToken - Cognito access token
+ * @returns true if registered, false if not
+ */
+export const isTOTPRegistered = async (accessToken: string) => {
   const client = new CognitoIdentityProviderClient({ region: process.env.NEXT_PUBLIC_REGION });
 
   const command = new GetUserCommand({
@@ -138,7 +129,6 @@ export const isMFARegistered = async (accessToken: string) => {
 
   try {
     const response = await client.send(command);
-    debugger;
     const isRegistered = response.UserMFASettingList?.some((mfa) => mfa === 'SOFTWARE_TOKEN_MFA');
     return isRegistered || false;
   } catch (error) {
@@ -147,6 +137,11 @@ export const isMFARegistered = async (accessToken: string) => {
   }
 };
 
+/**
+ * Add SMS to Cognito user
+ * @param accessToken - Cognito access token
+ * @param phoneNumber - phone number to add
+ */
 export const addSMSToUser = async (accessToken: string, phoneNumber: string) => {
   const client = new CognitoIdentityProviderClient({ region: process.env.NEXT_PUBLIC_REGION });
 
@@ -174,7 +169,115 @@ export const addSMSToUser = async (accessToken: string, phoneNumber: string) => 
   }
 };
 
+export const getUserAttributes = async (accessToken: string) => {
+  const client = new CognitoIdentityProviderClient({ region: process.env.NEXT_PUBLIC_REGION });
+
+  const command = new GetUserCommand({
+    AccessToken: accessToken,
+  });
+
+  try {
+    const response = await client.send(command);
+    return response.UserAttributes || [];
+  } catch (error) {
+    console.error(`Error getting user attributes:`, error);
+    return [];
+  }
+};
+
+/**
+ * Get MFA options for user
+ * @param accessToken - Cognito access token
+ * crap enums I have to put eslint disable here
+ */
+export enum MfaOption {
+  // eslint-disable-next-line no-unused-vars
+  SMSOnly = 1,
+  // eslint-disable-next-line no-unused-vars
+  AuthenticatorAppOnly = 2,
+  // eslint-disable-next-line no-unused-vars
+  SMSIfAvailable = 3,
+  // eslint-disable-next-line no-unused-vars
+  AuthenticatorAppIfAvailable = 4,
+  // eslint-disable-next-line no-unused-vars
+  ChoosePreferredDeliveryMethod = 5,
+}
+
+export const getMFaOptions = async (accessToken: string): Promise<MfaOption | undefined> => {
+  const client = new CognitoIdentityProviderClient({ region: process.env.NEXT_PUBLIC_REGION });
+
+  const command = new GetUserCommand({
+    AccessToken: accessToken,
+  });
+  try {
+    const response = await client.send(command);
+    const sms = response.UserMFASettingList?.some((mfa) => mfa === 'SMS_MFA');
+    const totp = response.UserMFASettingList?.some((mfa) => mfa === 'SOFTWARE_TOKEN_MFA');
+    if (sms && totp && !response.PreferredMfaSetting)
+      return MfaOption.ChoosePreferredDeliveryMethod;
+    if (sms && (!response.PreferredMfaSetting || response.UserMFASettingList?.length === 1))
+      return MfaOption.SMSOnly;
+    if (totp && (!response.PreferredMfaSetting || response.UserMFASettingList?.length === 1))
+      return MfaOption.AuthenticatorAppOnly;
+    if (sms && response.PreferredMfaSetting === 'SMS_MFA') return MfaOption.SMSIfAvailable;
+    if (totp && response.PreferredMfaSetting === 'SOFTWARE_TOKEN_MFA')
+      return MfaOption.AuthenticatorAppIfAvailable;
+
+    return undefined;
+  } catch (error) {
+    console.error(`Error getting user attributes:`, error);
+    throw error;
+  }
+};
+
+export const setMFaOption = async (accessToken: string, option: MfaOption) => {
+  const client = new CognitoIdentityProviderClient({ region: process.env.NEXT_PUBLIC_REGION });
+
+  const command = new SetUserMFAPreferenceCommand({
+    AccessToken: accessToken,
+    SMSMfaSettings: {
+      Enabled:
+        option === MfaOption.SMSIfAvailable ||
+        option === MfaOption.SMSOnly ||
+        option === MfaOption.AuthenticatorAppIfAvailable,
+      PreferredMfa: option === MfaOption.SMSOnly || option === MfaOption.SMSIfAvailable,
+    },
+    SoftwareTokenMfaSettings: {
+      Enabled:
+        option === MfaOption.AuthenticatorAppOnly ||
+        option === MfaOption.AuthenticatorAppIfAvailable ||
+        option === MfaOption.SMSIfAvailable,
+      PreferredMfa:
+        option === MfaOption.AuthenticatorAppOnly ||
+        option === MfaOption.AuthenticatorAppIfAvailable,
+    },
+  });
+
+  if (option === MfaOption.ChoosePreferredDeliveryMethod) {
+    command.input.SMSMfaSettings = {
+      Enabled: true,
+      PreferredMfa: false,
+    };
+    command.input.SoftwareTokenMfaSettings = {
+      Enabled: true,
+      PreferredMfa: false,
+    };
+  }
+  try {
+    const response = await client.send(command);
+    console.log('User MFA preference set successfully:', response);
+  } catch (error) {
+    console.error('Error setting user MFA preference:', error);
+  }
+};
+
 //server-side
+/**
+ * Add phone number to SNS sandbox
+ * @param phoneNumber - phone number to add
+ * @returns true if success
+ * @throws error if phone number is not valid
+ */
 export const createSMSPhone = async (phoneNumber: string) => {
   const snsClient = new SNSClient({ region: process.env.NEXT_PUBLIC_REGION });
   const command = new CreateSMSSandboxPhoneNumberCommand({
@@ -182,14 +285,19 @@ export const createSMSPhone = async (phoneNumber: string) => {
   });
 
   try {
-    const response = await snsClient.send(command);
-    console.log(`Phone number ${phoneNumber} added to SNS sandbox:`, response);
+    await snsClient.send(command);
+    return true;
   } catch (error) {
     console.error(`Error adding phone number ${phoneNumber} to SNS sandbox:`, error);
+    throw error;
   }
 };
 
 ///server-side
+/**
+ * List phone numbers in SNS sandbox
+ * @returns list of phone numbers
+ */
 export const listSandboxSMSPhoneNumbers = async () => {
   const snsClient = new SNSClient({ region: process.env.NEXT_PUBLIC_REGION });
   const command = new ListSMSSandboxPhoneNumbersCommand({});
@@ -205,6 +313,11 @@ export const listSandboxSMSPhoneNumbers = async () => {
 };
 
 ///server-side
+/**
+ * Verify phone number in SNS sandbox
+ * @param phoneNumber - phone number to verify
+ * @param code - verification code
+ */
 export const verifySMSSandbox = async (phoneNumber: string, code: string) => {
   const snsClient = new SNSClient({ region: process.env.NEXT_PUBLIC_REGION });
 
@@ -214,10 +327,11 @@ export const verifySMSSandbox = async (phoneNumber: string, code: string) => {
   });
 
   try {
-    const response = await snsClient.send(command);
-    console.log(`Phone number ${phoneNumber} added to SNS sandbox:`, response);
+    await snsClient.send(command);
+    return true;
   } catch (error) {
     console.error(`Error adding phone number ${phoneNumber} to SNS sandbox:`, error);
+    throw error;
   }
 };
 
@@ -236,11 +350,11 @@ export const sendCognitoConfirmationCode = async (accessToken: string) => {
   });
 
   try {
-    const getCodeResponse = await client.send(getCodeCommand);
-    console.log(`Verification code sent to user:`, getCodeResponse);
+    await client.send(getCodeCommand);
+    return true;
   } catch (error) {
     console.error(`Error sending verification code to user:`, error);
-    return;
+    throw error;
   }
 };
 
@@ -262,38 +376,70 @@ export const verifyPhoneNumber = async (accessToken: string, verificationCode: s
   try {
     const verifyResponse = await client.send(verifyCommand);
     console.log(`Phone number verified for user Cognito:`, verifyResponse);
+    return true;
   } catch (error) {
     console.error(`Error verifying phone number for user:`, error);
   }
+  return false;
 };
 
-export const getUserAttributes = async (accessToken: string) => {
+/**
+ * Marks the phone_number attribute as verified in Cognito
+ * @param accessToken - Cognito access token
+ * @returns true if successful
+ */
+export const markPhoneNumberVerified = async (accessToken: string): Promise<boolean> => {
   const client = new CognitoIdentityProviderClient({ region: process.env.NEXT_PUBLIC_REGION });
 
-  const command = new GetUserCommand({
-    AccessToken: accessToken,
+  const updateUserAttributesCommand = new AdminUpdateUserAttributesCommand({
+    UserPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID,
+    Username: accessToken,
+    UserAttributes: [
+      {
+        Name: 'phone_number_verified',
+        Value: 'true',
+      },
+    ],
   });
 
   try {
-    const response = await client.send(command);
-    return response.UserAttributes || [];
+    await client.send(updateUserAttributesCommand);
+    return true;
   } catch (error) {
-    console.error(`Error getting user attributes:`, error);
-    return [];
+    console.error(`Error marking phone number as verified:`, error);
+    throw error;
   }
 };
 
-///server-side
-export const isPhoneNumberVerified = async (accessToken: string): Promise<string> => {
+//server-side
+/**
+ * Check if phone number is verified
+ * @param accessToken - Cognito access token
+ * @returns { phoneNumber: string; verificationPhase: number}
+ * verificationPhase: 0 - not verified, 1 - verified in SNS sandbox, 2 - verified in Cognito
+ */
+export const isPhoneNumberVerified = async (
+  accessToken: string,
+): Promise<{ phoneNumber: string; verificationPhase: number }> => {
   const attributes = await getUserAttributes(accessToken);
-  const phone = attributes.findLast((attr) => attr.Name === 'phone_number'); //"phone_number_verified"
-  if (!phone || !phone.Value) return '';
-  const list = await listSandboxSMSPhoneNumbers();
-  const isVerified = list.some(
-    (item: { PhoneNumber: string | undefined; Status: any }) =>
+  const phone = attributes.findLast((attr) => attr.Name === 'phone_number');
+  if (!phone || !phone.Value) throw new Error('Phone number not found');
+
+  const listSmsSandbox = await listSandboxSMSPhoneNumbers();
+  const isVerified = listSmsSandbox.some(
+    (item: SMSSandboxPhoneNumber) =>
       item.PhoneNumber === phone?.Value &&
       item.Status === SMSSandboxPhoneNumberVerificationStatus.Verified,
   );
-  debugger;
-  return isVerified ? phone.Value : '';
+
+  if (!isVerified) return { phoneNumber: phone.Value, verificationPhase: 0 };
+
+  const isVerifiedCognito = attributes.findLast(
+    (attr: { Name: string | undefined }) => attr.Name === 'phone_number_verified',
+  );
+  console.log('isVerifiedCognito', isVerifiedCognito);
+  console.log('attributes', attributes);
+  return isVerifiedCognito?.Value === 'true'
+    ? { phoneNumber: phone.Value, verificationPhase: 2 }
+    : { phoneNumber: phone.Value, verificationPhase: 1 };
 };
