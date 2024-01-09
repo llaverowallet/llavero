@@ -13,7 +13,6 @@ import Link from 'next/link';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -37,26 +36,26 @@ function AccountMenu({ selectedAccount }: Props) {
     <Dialog>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant='outline' size='icon' className='px-0 border-0 w-6'>
-            <MoreVertical className='w-4 h-4' />
+          <Button variant="outline" size="icon" className="px-0 border-0 w-6">
+            <MoreVertical className="w-4 h-4" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className='min-w-fit md:min-w-[200px] mr-4 md:mr-auto'>
+        <DropdownMenuContent className="min-w-fit md:min-w-[200px] mr-4 md:mr-auto">
           <DropdownMenuItem>
-            <DialogTrigger className='flex gap-2 items-center'>
-              <Blocks className='w-4 h-4' /> Account details
+            <DialogTrigger className="flex gap-2 items-center">
+              <Blocks className="w-4 h-4" /> Account details
             </DialogTrigger>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link href={explorerAddressURL} target='_blank' className='flex gap-2 items-center'>
-              <ExternalLink className='w-4 h-4' /> View on explorer
+            <Link href={explorerAddressURL} target="_blank" className="flex gap-2 items-center">
+              <ExternalLink className="w-4 h-4" /> View on explorer
             </Link>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
       <DialogContent
-        className='max-w-[360px] sm:max-w-[425px]'
+        className="max-w-[360px] sm:max-w-[425px]"
         onOpenAutoFocus={(e) => {
           e.preventDefault();
         }}
@@ -68,18 +67,18 @@ function AccountMenu({ selectedAccount }: Props) {
           accountName={accountName || ''}
           accountAddress={accountAddress || ''}
         />
-        <div className='mb-2'>
+        <div className="mb-2">
           <QRCode
             size={256}
-            className='w-full'
+            className="w-full"
             value={accountAddress || ''}
             viewBox={`0 0 256 256`}
           />
         </div>
-        <div className='mx-auto'>
+        <div className="mx-auto">
           <CopyToClipboard textToCopy={accountAddress || ''}>
-            <Badge variant='outline' className='flex gap-2 py-2 cursor-pointer break-all'>
-              {accountAddress || ''} <Copy className='w-4 h-4' />
+            <Badge variant="outline" className="flex gap-2 py-2 cursor-pointer break-all">
+              {accountAddress || ''} <Copy className="w-4 h-4" />
             </Badge>
           </CopyToClipboard>
         </div>

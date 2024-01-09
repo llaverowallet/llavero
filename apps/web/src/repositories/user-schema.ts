@@ -1,185 +1,184 @@
-const UserSchema  = 
-{
-    "format": "onetable:1.1.0",
-    "indexes": {
-        "primary": {
-            "hash": "pk",
-            "sort": "sk"
-        }
+const UserSchema = {
+  format: 'onetable:1.1.0',
+  indexes: {
+    primary: {
+      hash: 'pk',
+      sort: 'sk',
     },
-    "name": "Current",
-    "models": {
-        "Networks": {
-            "created": {
-                "type": Date
-            },
-            "sk": {
-                "type": String,
-                "value": "Networks#${networkId}",
-                "required": true
-            },
-            "name": {
-                "type": String,
-                "required": true,
-                "unique": false
-            },
-            "networkId": {
-                "type": String,
-                "generate": "uuid",
-                "required": true,
-                "unique": true
-            },
-            "pk": {
-                "type": String,
-                "value": "User#${userId}",
-                "required": true
-            },
-            "jsonRpc": {
-                "type": String,
-                "required": true,
-                "unique": false
-            },
-            "updated": {
-                "type": Date
-            },
-            "username": {
-                "type": String,
-                "required": true
-            }
-        },
-        "User": {
-            "mail": {
-                "type": String,
-                "required": true,
-                "unique": true
-            },
-            "created": {
-                "type": Date
-            },
-            "sk": {
-                "type": String,
-                "value": "User#{userId}",
-                "required": true,
-                "unique": true
-            },
-            "name": {
-                "type": String,
-                "required": true
-            },
-            "cellphone": {
-                "type": String,
-                "unique": true
-            },
-            "pk": {
-                "type": String,
-                "value": "User#${username}",
-                "required": true,
-                "unique": true
-            },
-            "updated": {
-                "type": Date
-            },
-            "userId": {
-                "type": String,
-                "required": true,
-                "unique": true
-            },
-            "username": {
-                "type": String,
-                "required": true,
-                "unique": true
-            }
-        },
-        "Keys": {
-            "keyArn": {
-                "type": String,
-                "required": true,
-                "unique": true
-            },
-            "address": {
-                "type": String,
-                "unique": true
-            },
-            "created": {
-                "type": Date
-            },
-            "sk": {
-                "type": String,
-                "value": "Keys#${address}",
-                "required": false,
-                "unique": true
-            },
-            "name": {
-                "type": String,
-                "required": true,
-                "unique": false
-            },
-            "description": {
-                "type": String,
-                "nulls": true
-            },
-            "pk": {
-                "type": String,
-                "value": "User#${userId}",
-                "required": true
-            },
-            "updated": {
-                "type": Date
-            },
-            "userId": {
-                "type": String,
-                "required": true,
-            },
-            "username": {
-                "type": String,
-                "required": true
-            }
-        },
-        "Activity": {
-            "created": {
-                "type": Date
-            },
-            "sk": {
-                "type": String,
-                "value": "Activity#${chainId}#${txHash}",
-                "required": true
-            },
-            "address": {
-                "type": String,
-            },
-            "chainId": {
-                "type": String,
-            },
-            "txHash": {
-                "type": String,
-                "required": true
-            },
-            "pk": {
-                "type": String,
-                "value": "Address#${address}",
-                "required": true
-            },
-            "data": {
-                "type": String,
-                "required": true,
-            },
-            "userId": {
-                "type": String,
-                "required": true,
-            },
-            "updated": {
-                "type": Date
-            }
-        },
+  },
+  name: 'Current',
+  models: {
+    Networks: {
+      created: {
+        type: Date,
+      },
+      sk: {
+        type: String,
+        value: 'Networks#${networkId}',
+        required: true,
+      },
+      name: {
+        type: String,
+        required: true,
+        unique: false,
+      },
+      networkId: {
+        type: String,
+        generate: 'uuid',
+        required: true,
+        unique: true,
+      },
+      pk: {
+        type: String,
+        value: 'User#${userId}',
+        required: true,
+      },
+      jsonRpc: {
+        type: String,
+        required: true,
+        unique: false,
+      },
+      updated: {
+        type: Date,
+      },
+      username: {
+        type: String,
+        required: true,
+      },
     },
-    "params": {
-        "nulls": true,
-        "isoDates": true,
-        "timestamps": true,
-        "typeField": "_type"
+    User: {
+      mail: {
+        type: String,
+        required: true,
+        unique: true,
+      },
+      created: {
+        type: Date,
+      },
+      sk: {
+        type: String,
+        value: 'User#{userId}',
+        required: true,
+        unique: true,
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+      cellphone: {
+        type: String,
+        unique: true,
+      },
+      pk: {
+        type: String,
+        value: 'User#${username}',
+        required: true,
+        unique: true,
+      },
+      updated: {
+        type: Date,
+      },
+      userId: {
+        type: String,
+        required: true,
+        unique: true,
+      },
+      username: {
+        type: String,
+        required: true,
+        unique: true,
+      },
     },
-    "queries": {},
-    "version": "1.0.0"
+    Keys: {
+      keyArn: {
+        type: String,
+        required: true,
+        unique: true,
+      },
+      address: {
+        type: String,
+        unique: true,
+      },
+      created: {
+        type: Date,
+      },
+      sk: {
+        type: String,
+        value: 'Keys#${address}',
+        required: false,
+        unique: true,
+      },
+      name: {
+        type: String,
+        required: true,
+        unique: false,
+      },
+      description: {
+        type: String,
+        nulls: true,
+      },
+      pk: {
+        type: String,
+        value: 'User#${userId}',
+        required: true,
+      },
+      updated: {
+        type: Date,
+      },
+      userId: {
+        type: String,
+        required: true,
+      },
+      username: {
+        type: String,
+        required: true,
+      },
+    },
+    Activity: {
+      created: {
+        type: Date,
+      },
+      sk: {
+        type: String,
+        value: 'Activity#${chainId}#${txHash}',
+        required: true,
+      },
+      address: {
+        type: String,
+      },
+      chainId: {
+        type: String,
+      },
+      txHash: {
+        type: String,
+        required: true,
+      },
+      pk: {
+        type: String,
+        value: 'Address#${address}',
+        required: true,
+      },
+      data: {
+        type: String,
+        required: true,
+      },
+      userId: {
+        type: String,
+        required: true,
+      },
+      updated: {
+        type: Date,
+      },
+    },
+  },
+  params: {
+    nulls: true,
+    isoDates: true,
+    timestamps: true,
+    typeField: '_type',
+  },
+  queries: {},
+  version: '1.0.0',
 };
 
 export default UserSchema;

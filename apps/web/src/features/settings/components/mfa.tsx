@@ -62,8 +62,8 @@ const MFA = () => {
             {secretCode ? (
               <>
                 <QRCode size={256} className="w-full" value={qrUri || ''} viewBox={`0 0 256 256`} />
-                <div className="flex gap-4 justify-center items-center mt-4">
-                  <span>Secret Code: </span>
+                <div className="flex flex-col gap-1 mt-4">
+                  <div className="text-left text-sm text-gray-500">Secret Code:</div>
                   <CopyToClipboard textToCopy={secretCode || ''}>
                     <Badge variant="outline" className="flex gap-2 py-2 cursor-pointer">
                       {secretCode || ''} <Copy className="w-4 h-4" />
