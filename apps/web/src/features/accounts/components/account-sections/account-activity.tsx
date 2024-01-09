@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ArrowRightCircle, Copy, ExternalLink, Send } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { JsonRpcProvider, formatEther } from 'ethers';
 import { useNetwork } from '@/shared/hooks/use-network';
 import { WalletInfo } from '@/models/interfaces';
@@ -140,8 +140,14 @@ const AccountActivityItemInMemory = ({
   account: WalletInfo | null;
 }) => {
   const { network } = useNetwork();
+  const eip155Address = `${network.namespace}:${network.chainId}`;
   const { rpc } = network;
-  const { data: transaction, isPending } = useQuery({
+  const queryClient = useQueryClient();
+  const {
+    data: transaction,
+    isPending,
+    isSuccess,
+  } = useQuery({
     queryKey: ['getTransaction', rpc, txHash],
     queryFn: getTransaction({ network: rpc, txHash }),
   });
@@ -167,6 +173,14 @@ const AccountActivityItemInMemory = ({
     String(account?.address).toLowerCase() === String(transaction?.from).toLowerCase();
   const transactionType = isPending ? '-' : isTransactionFromAccount ? 'Sent' : 'Received';
   const transactionValueSymbol = isTransactionFromAccount ? '-' : '+';
+
+  useEffect(() => {
+    if (!isSuccess) return;
+
+    queryClient.invalidateQueries({
+      queryKey: ['getAccounts', eip155Address],
+    });
+  }, [queryClient, isSuccess, eip155Address]);
 
   return (
     <Dialog>

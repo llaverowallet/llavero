@@ -61,6 +61,7 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
   const eip155Address = `${network.namespace}:${network.chainId}`;
   const { address } = account || {};
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenMFA, setIsOpenMFA] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const TX_CHAIN_ID = `${network.chainId}`;
   const CHAIN_ID = eip155Address;
@@ -92,6 +93,9 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
     const formData = new FormData(target);
     const { to, amount } = Object.fromEntries(formData) as { to: string; amount: string };
 
+    if (mfaRegistered) {
+      if (!mfaCode) return;
+    }
     if (!to || !amount) return;
 
     try {
@@ -112,7 +116,9 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
       });
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error(
+          response.status === 401 ? 'Invalid MFA code' : 'Your transaction could not be send',
+        );
       }
 
       const data = await response.json();
@@ -122,13 +128,18 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
       setIsOpen(false);
     } catch (error) {
       console.error(error);
-      toast({
-        title: 'Error',
-        description: 'Your transaction could not be send',
-        variant: 'destructive',
-      });
+      if (error instanceof Error) {
+        toast({
+          title: 'Error',
+          description: error.message,
+          variant: 'destructive',
+        });
+      } else {
+        console.log('Unexpected error', error);
+      }
     } finally {
       target.reset();
+      setMfaCode('');
       setIsLoading(false);
     }
   };
@@ -158,74 +169,102 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
   }, [data, data?.user?.email]);
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
-      <DialogTrigger asChild>
-        <div className="flex flex-col gap-1 items-center">
-          <Button className="rounded-full w-9 h-9 p-0" aria-label="Send">
-            <Send className="w-4 h-4" />
-          </Button>
-          <span className="text-sm">Send</span>
-        </div>
-      </DialogTrigger>
-      <DialogContent className="max-w-[360px] sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Account {account?.name}</DialogTitle>
-          <DialogDescription>
-            Make a transfer from your wallet address:
-            <span className="block font-semibold break-all">{account?.address}</span>
-          </DialogDescription>
-        </DialogHeader>
-
-        <form onSubmit={handleSend}>
-          <div className="flex flex-col gap-4 py-4">
-            <div className="flex gap-2 items-center justify-end">
-              <Label>Balance:</Label> {formatBalance(account?.balance || 0)} {network.symbol}
-            </div>
-
-            <div>
-              <Label htmlFor="to">To:</Label>
-              <Input name="to" className="w-full" />
-            </div>
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <Label htmlFor="amount">Amount:</Label>
-                <Button variant="secondary" size="sm" onClick={handleSetMaxBalance} type="button">
-                  Max
-                </Button>
-              </div>
-              <Input
-                name="amount"
-                className="w-full mb-1"
-                value={balance}
-                onChange={(e) => handleSetBalance(e.target.value)}
-              />
-              <div className="flex justify-end">
-                <span className="text-xs text-gray-500">
-                  Estimated gas fee: {estimatedGas} {network.symbol}
-                </span>
-              </div>
-            </div>
-            {mfaRegistered && (
-              <div>
-                <Label htmlFor="mfaCode">MFA Code:</Label>
-                <Input
-                  name="mfaCode"
-                  className="w-full mb-1"
-                  value={mfaCode}
-                  onChange={(e) => setMfaCode(e.target.value)}
-                />
-              </div>
-            )}
+    <>
+      <Dialog open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
+        <DialogTrigger asChild>
+          <div className="flex flex-col gap-1 items-center">
+            <Button className="rounded-full w-9 h-9 p-0" aria-label="Send">
+              <Send className="w-4 h-4" />
+            </Button>
+            <span className="text-sm">Send</span>
           </div>
+        </DialogTrigger>
+        <DialogContent className="max-w-[360px] sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Account {account?.name}</DialogTitle>
+            <DialogDescription>
+              Make a transfer from your wallet address:
+              <span className="block font-semibold break-all">{account?.address}</span>
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleSend} id="send-form">
+            <div className="flex flex-col gap-4 py-4">
+              <div className="flex gap-2 items-center justify-end">
+                <Label>Balance:</Label> {formatBalance(account?.balance || 0)} {network.symbol}
+              </div>
+
+              <div>
+                <Label htmlFor="to">To:</Label>
+                <Input name="to" className="w-full" />
+              </div>
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <Label htmlFor="amount">Amount:</Label>
+                  <Button variant="secondary" size="sm" onClick={handleSetMaxBalance} type="button">
+                    Max
+                  </Button>
+                </div>
+                <Input
+                  name="amount"
+                  className="w-full mb-1"
+                  value={balance}
+                  onChange={(e) => handleSetBalance(e.target.value)}
+                />
+                <div className="flex justify-end">
+                  <span className="text-xs text-gray-500">
+                    Estimated gas fee: {estimatedGas} {network.symbol}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <DialogFooter className="mt-4">
+              {mfaRegistered ? (
+                <>
+                  <Button type="button" onClick={() => setIsOpenMFA(true)} disabled={isLoading}>
+                    {isLoading ? 'Sending...' : 'Send'}
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button type="submit" disabled={isLoading}>
+                    {isLoading ? 'Sending...' : 'Send'}
+                  </Button>
+                </>
+              )}
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isOpenMFA} onOpenChange={(open) => setIsOpenMFA(open)}>
+        <DialogContent className="max-w-[360px] sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Multi-Factor Authentication:</DialogTitle>
+            <DialogDescription>Insert you MFA Code</DialogDescription>
+          </DialogHeader>
+
+          {mfaRegistered && (
+            <div>
+              <Label htmlFor="mfaCode">MFA Code:</Label>
+              <Input
+                name="mfaCode"
+                className="w-full mb-1"
+                value={mfaCode}
+                onChange={(e) => setMfaCode(e.target.value)}
+              />
+            </div>
+          )}
 
           <DialogFooter className="mt-4">
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? 'Sending...' : 'Send'}
+            <Button type="submit" form="send-form" onClick={() => setIsOpenMFA(false)}>
+              Validate
             </Button>
           </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
