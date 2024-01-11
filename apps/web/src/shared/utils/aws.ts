@@ -59,8 +59,8 @@ export async function updateInviteMessageTemplate(url: string, userPoolId: strin
     UserPoolId: userPoolId,
     AccountRecoverySetting: {
       RecoveryMechanisms: [
-        { Name: 'verified_email', Priority: 1 },
-        { Name: 'verified_phone_number', Priority: 2 },
+        { Name: 'verified_phone_number', Priority: 1 },
+        { Name: 'verified_email', Priority: 2 },
       ],
     },
     AdminCreateUserConfig: {

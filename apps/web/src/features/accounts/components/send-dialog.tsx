@@ -21,7 +21,7 @@ import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { setTxHash } from '../utils/transactions';
 import BigNumber from 'bignumber.js';
 import { useDebounce } from 'use-debounce';
-import { isMFARegistered } from '@/shared/utils/mfa-actions';
+import { isTOTPRegistered } from '@/shared/utils/mfa-actions';
 import { useSession } from 'next-auth/react';
 import { toast } from '@/shared/hooks/use-toast';
 
@@ -162,7 +162,7 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
   useEffect(() => {
     const checkMFA = async () => {
       const token = (data as any).accessToken;
-      setMFARegistered(await isMFARegistered(token));
+      setMFARegistered(await isTOTPRegistered(token));
     };
 
     checkMFA();

@@ -12,7 +12,9 @@ import {
 import { Button } from '@/shared/components/ui/button';
 import { MoonIcon, SunIcon } from 'lucide-react';
 import { MFADialog } from './components/mfa-dialog';
+import SMS from './components/sms';
 import { Label } from '@/shared/components/ui/label';
+import MFASetup from './components/mfa-setup';
 
 const Settings = () => {
   const { setTheme } = useTheme();
@@ -45,9 +47,29 @@ const Settings = () => {
 
               <div className="flex gap-4 items-center">
                 <div className="flex gap-4 items-center">
-                  <Label>Multi-Factor Authentication:</Label> <MFADialog />
+                  <Label>Authenticator App:</Label> <MFADialog />
                 </div>
               </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="w-full mx-auto">
+          <CardHeader>
+            <CardTitle className="text-2xl">SMS</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-4 items-center">
+              <SMS />
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="w-full mx-auto">
+          <CardHeader>
+            <CardTitle className="text-2xl">MFA Configuration</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-4 items-center">
+              <MFASetup />
             </div>
           </CardContent>
         </Card>
