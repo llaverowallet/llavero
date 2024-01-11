@@ -15,9 +15,17 @@ import { MFADialog } from './components/mfa-dialog';
 import SMS from './components/sms';
 import { Label } from '@/shared/components/ui/label';
 import MFASetup from './components/mfa-setup';
+import { Separator } from '@/shared/components/ui/separator';
+import { useState } from 'react';
 
 const Settings = () => {
   const { setTheme } = useTheme();
+  const [isMFAActive, setIsMFAActive] = useState(false);
+
+  const handleMFAStatusChange = (status: boolean) => {
+    console.log('MFA Status changed');
+    setIsMFAActive(status);
+  };
 
   return (
     <Container>
@@ -45,31 +53,31 @@ const Settings = () => {
                 </DropdownMenu>
               </div>
 
-              <div className="flex gap-4 items-center">
-                <div className="flex gap-4 items-center">
-                  <Label>Authenticator App:</Label> <MFADialog />
+              <Separator />
+
+              <div>
+                <div className="text-xl font-semibold mb-0">MFA (Multi-factor authentication)</div>
+                <p className="text-sm text-gray-500">
+                  When TOTP is enabled is used on the login, and when executing a transaction as an
+                  extra security layer
+                </p>
+              </div>
+              <div className="flex gap-6 mb-2">
+                <div className="flex gap-4 flex-col">
+                  <Label>TOPT (time based one-time password)</Label>{' '}
+                  <MFADialog onMFAStatusChange={handleMFAStatusChange} />
+                </div>
+
+                <div className="flex gap-4 flex-col">
+                  <Label>or send one-time password in SMS messages</Label> <SMS />
                 </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="w-full mx-auto">
-          <CardHeader>
-            <CardTitle className="text-2xl">SMS</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-4 items-center">
-              <SMS />
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="w-full mx-auto">
-          <CardHeader>
-            <CardTitle className="text-2xl">MFA Configuration</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-4 items-center">
-              <MFASetup />
+              {isMFAActive && (
+                <>
+                  <div className="text-lg text-gray-600 font-semibold">MFA Settings</div>
+                  <MFASetup />
+                </>
+              )}
             </div>
           </CardContent>
         </Card>

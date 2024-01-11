@@ -1,5 +1,8 @@
 /* eslint-disable no-unused-vars */
 import { Button } from '@/shared/components/ui/button';
+import { Label } from '@/shared/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/shared/components/ui/radio-group';
+import { Switch } from '@/shared/components/ui/switch';
 import { MfaOption, getMFaOptions, setMFaOption } from '@/shared/utils/mfa-actions';
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
@@ -44,7 +47,7 @@ const getMfaOptions = (): MfaOption[] => {
 
 const MFASetup: React.FC = () => {
   const [mfaEnabled, setMfaEnabled] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<MfaOption | null>(null);
+  const [selectedOption, setSelectedOption] = useState(1);
   const [save, setSave] = useState(false);
   const { data } = useSession();
 
@@ -61,7 +64,8 @@ const MFASetup: React.FC = () => {
       setSave(false);
     };
     getMFAConfiguration();
-  }, [save]);
+  }, [save, data]);
+
   const handleMfaToggle = () => {
     setMfaEnabled(!mfaEnabled);
   };
@@ -77,35 +81,46 @@ const MFASetup: React.FC = () => {
 
   return (
     <div>
-      <label>
-        <input type="checkbox" checked={mfaEnabled} onChange={handleMfaToggle} />
-        Enable MFA
-      </label>
+      <div className="flex items-center space-x-2 mb-6">
+        <Switch id="enable-mfa-switch" checked={mfaEnabled} onCheckedChange={handleMfaToggle} />
+        <Label htmlFor="enable-mfa-switch">Enable MFA</Label>
+      </div>
 
       {mfaEnabled && (
         <div>
-          <h3>Select MFA Option:</h3>
-          <ul>
+          <div className=" mb-2">
+            <div className="text-lg text-gray-600 font-semibold ">MFA methods</div>
+            <p className="text-sm text-gray-500">
+              Choose how this user receives a One-Time-Password (OTP) when signing in with MFA
+            </p>
+          </div>
+
+          <RadioGroup
+            defaultValue={selectedOption.toString()}
+            onValueChange={(value) => {
+              handleOptionChange(+value);
+            }}
+            className="mb-6"
+          >
             {getMfaOptions().map((option) => {
               return (
-                <li key={option}>
-                  <label>
-                    <input
-                      type="radio"
-                      value={option}
-                      checked={selectedOption === option}
-                      onChange={() => handleOptionChange(option as MfaOption)}
-                    />
-                    {getMfaDescription(option as MfaOption).title}
-                  </label>
-                  <p>{getMfaDescription(option as MfaOption).description}</p>
-                </li>
+                <div className="flex items-center space-x-2" key={option}>
+                  <RadioGroupItem value={option.toString()} id={option.toString()} />
+                  <div>
+                    <Label htmlFor={option.toString()}>
+                      {getMfaDescription(option as MfaOption).title}
+                      <p className="text-sm text-gray-500">
+                        {getMfaDescription(option as MfaOption).description}
+                      </p>
+                    </Label>
+                  </div>
+                </div>
               );
             })}
-          </ul>
+          </RadioGroup>
         </div>
       )}
-      <Button onClick={handleSave}>Save</Button>
+      <Button onClick={handleSave}>Save Changes</Button>
     </div>
   );
 };
