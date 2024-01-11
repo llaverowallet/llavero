@@ -89,14 +89,14 @@ const SMS: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="w-full">
       {isVerified ? (
-        <div className="flex w-full max-w-sm items-center space-x-2">
+        <div className="flex gap-4 items-center">
           <div>{phoneNumber}</div>
           <Button onClick={handleModify}>Modify SMS</Button>
         </div>
       ) : (
-        <div className="flex w-full max-w-sm items-center space-x-2">
+        <div className="flex gap-4 items-center">
           <Label htmlFor="phone">Phone number</Label>
           <Input
             id="phone"
@@ -105,13 +105,14 @@ const SMS: React.FC = () => {
             value={phoneNumber}
             pattern="/^+91(7\d|8\d|9\d)\d{9}$/"
             onChange={(e) => setPhoneNumber(e.target.value)}
+            className="max-w-xs"
           />
           <Button onClick={handleSave}>Save</Button>
         </div>
       )}
 
       {showCode && (
-        <div className="flex w-full max-w-sm items-center space-x-2">
+        <div className="flex gap-4 items-center">
           <Label htmlFor="code">SMS Code</Label>
           <Input
             id="code"
@@ -119,6 +120,7 @@ const SMS: React.FC = () => {
             value={code}
             placeholder="Enter code"
             onChange={(e) => setCode(e.target.value)}
+            className="max-w-xs"
           />
           <Button onClick={handleVerify}>Verify</Button>
           <span> {getDescriptionVerification()}</span>

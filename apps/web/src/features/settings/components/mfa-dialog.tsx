@@ -12,7 +12,11 @@ import MFA from './mfa';
 import { useSession } from 'next-auth/react';
 import { isTOTPRegistered } from '@/shared/utils/mfa-actions';
 
-export const MFADialog = () => {
+type Props = {
+  onMFAStatusChange: (status: boolean) => void;
+};
+
+export const MFADialog = ({ onMFAStatusChange }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const { data } = useSession();
   const [mfaRegistered, setMFARegistered] = useState<boolean>(false);
@@ -21,9 +25,10 @@ export const MFADialog = () => {
     const checkMFA = async () => {
       const token = (data as any).accessToken;
       setMFARegistered(await isTOTPRegistered(token));
+      onMFAStatusChange(token ? true : false);
     };
     checkMFA();
-  }, [data, data?.user?.email]);
+  }, [data, data?.user?.email, onMFAStatusChange]);
 
   return (
     <>
