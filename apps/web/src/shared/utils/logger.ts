@@ -81,9 +81,8 @@ class CloudWatchLogger {
       logEvents: logEvents,
     });
     try {
-      // eslint-disable-next-line no-unused-vars
       const data = await this.cloudwatchLogs.send(paramsPutLog);
-      // console.log("Logged to CloudWatch:", data);
+      console.log('Logged to CloudWatch:', data);
       CloudWatchLogger.lastLogStreamName = logStreamName;
     } catch (err) {
       console.log('Error logging to CloudWatch:', err);
