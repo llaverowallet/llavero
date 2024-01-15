@@ -89,7 +89,7 @@ const SMS: React.FC = () => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full flex flex-col gap-4">
       {isVerified ? (
         <div className="flex gap-4 items-center">
           <div>{phoneNumber}</div>
@@ -123,7 +123,7 @@ const SMS: React.FC = () => {
             className="max-w-xs"
           />
           <Button onClick={handleVerify}>Verify</Button>
-          <span> {getDescriptionVerification()}</span>
+          <span className="text-gray-500 text-xs"> {getDescriptionVerification()}</span>
         </div>
       )}
 

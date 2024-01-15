@@ -9,7 +9,7 @@ import { AccountsSkeleton } from './components/accounts-skeleton';
 import { AccountsHeader } from './components/accounts-header';
 import { getShortWalletAddress, formatBalance } from '@/shared/utils/crypto';
 import { Badge } from '@/shared/components/ui/badge';
-import { Copy } from 'lucide-react';
+import { Copy, ExternalLink } from 'lucide-react';
 import { SendDialog } from './components/send-dialog';
 import { CopyToClipboard } from '@/shared/components/ui/copy-to-clipboard';
 import { useQuery } from '@tanstack/react-query';
@@ -20,12 +20,13 @@ import { Separator } from '@/shared/components/ui/separator';
 import { ReceiveDialog } from './components/receive-dialog';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getAccounts } from '@/shared/services/account';
+import Link from 'next/link';
+import { Button } from '@/shared/components/ui/button';
 
 const Accounts = () => {
   const router = useRouter();
   const queryParams = useSearchParams();
   const accountIndex = Number(queryParams.get('k')) || 0;
-
   const { network } = useNetwork();
   const eip155Address = `${network.namespace}:${network.chainId}`;
   const { rpc } = getChainByEip155Address(eip155Address);
@@ -35,6 +36,7 @@ const Accounts = () => {
   });
   const [selectedAccount, setSelectedAccount] = useState<WalletInfo | null>(null);
   const { balance: accountBalance, address: accountAddress } = selectedAccount || {};
+  const explorerAddressURL = `${network.explorer}/address/${accountAddress}`;
 
   useEffect(() => {
     if (!accounts) return;
@@ -83,6 +85,21 @@ const Accounts = () => {
                   </div>
                   <div>
                     <SendDialog account={selectedAccount} />
+                  </div>
+                  <div>
+                    <Link
+                      href={explorerAddressURL}
+                      target="_blank"
+                      className="rounded-full w-9 h-9 p-0"
+                      aria-label="Explorer"
+                    >
+                      <div className="flex flex-col items-center gap-1">
+                        <Button className="rounded-full w-9 h-9 p-2" aria-label="Explorer" asChild>
+                          <ExternalLink className="w-4 h-4" />
+                        </Button>
+                        <span className="text-sm">Explorer</span>
+                      </div>
+                    </Link>
                   </div>
                 </div>
               </div>
