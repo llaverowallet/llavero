@@ -97,7 +97,7 @@ const Accounts = () => {
                         <Button className="rounded-full w-9 h-9 p-2" aria-label="Explorer" asChild>
                           <ExternalLink className="w-4 h-4" />
                         </Button>
-                        <span className="text-sm">Explorer</span>
+                        <span className="text-sm">Explorer </span>
                       </div>
                     </Link>
                   </div>

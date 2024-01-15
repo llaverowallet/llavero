@@ -10,10 +10,13 @@ import {
   sendCode2,
 } from '@/shared/services/user.service';
 import { Label } from '@/shared/components/ui/label';
+import { isMobilePhone } from 'validator';
 
 const SMS: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [code, setCode] = useState('');
+  const [isSaveLoading, setIsSaveLoading] = useState(false);
+  const [isVerifyLoading, setIsVerifyLoading] = useState(false);
   const [showCode, setShowCode] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -47,25 +50,38 @@ const SMS: React.FC = () => {
 
   const handleSave = async () => {
     try {
-      if (phoneNumber.trim() === '') {
+      setIsSaveLoading(true);
+
+      if (!phoneNumber) {
         setErrorMessage('Phone number cannot be empty');
         return;
       }
+
+      if (!isMobilePhone(phoneNumber, undefined, { strictMode: true })) {
+        setErrorMessage('Phone number is not valid');
+        return;
+      }
+
       await createSmsSettings(phoneNumber);
       setIsVerified(false);
       setShowCode(true);
     } catch (error: any) {
       setErrorMessage(error.message);
       setIsVerified(false);
+    } finally {
+      setIsSaveLoading(false);
     }
   };
 
   const handleVerify = async () => {
     try {
+      setIsVerifyLoading(true);
+
       if (code.trim() === '') {
         setErrorMessage('Verification code cannot be empty');
         return;
       }
+
       if (!firstVerificationDone) {
         await verifySmsSettings(phoneNumber, code);
         verificationPhase.current = 1;
@@ -81,6 +97,8 @@ const SMS: React.FC = () => {
     } catch (error: any) {
       setErrorMessage(error.message);
       setIsVerified(false);
+    } finally {
+      setIsVerifyLoading(false);
     }
   };
 
@@ -101,13 +119,15 @@ const SMS: React.FC = () => {
           <Input
             id="phone"
             type="tel"
-            placeholder="+1 123 456 7891"
+            placeholder="+11234567891"
             value={phoneNumber}
             pattern="/^+91(7\d|8\d|9\d)\d{9}$/"
             onChange={(e) => setPhoneNumber(e.target.value)}
             className="max-w-xs"
           />
-          <Button onClick={handleSave}>Save</Button>
+          <Button onClick={handleSave} disabled={isSaveLoading}>
+            {isSaveLoading ? 'Saving' : 'Save'}
+          </Button>
         </div>
       )}
 
@@ -122,12 +142,14 @@ const SMS: React.FC = () => {
             onChange={(e) => setCode(e.target.value)}
             className="max-w-xs"
           />
-          <Button onClick={handleVerify}>Verify</Button>
+          <Button onClick={handleVerify} disabled={isVerifyLoading}>
+            {isVerifyLoading ? 'Verifying' : 'Verify'}
+          </Button>
           <span className="text-gray-500 text-xs"> {getDescriptionVerification()}</span>
         </div>
       )}
 
-      {errorMessage && <div>{errorMessage}</div>}
+      {errorMessage && <div className="text-sm text-red-500">{errorMessage}</div>}
     </div>
   );
 };
