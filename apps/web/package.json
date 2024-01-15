@@ -53,6 +53,7 @@
     "tailwindcss-animate": "^1.0.7",
     "use-debounce": "^10.0.0",
     "uuid": "^9.0.1",
+    "validator": "^13.11.0",
     "valtio": "^1.11.2"
   },
   "devDependencies": {
@@ -60,6 +61,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/uuid": "^9.0.6",
+    "@types/validator": "^13.11.8",
     "autoprefixer": "^10.0.1",
     "aws-cdk-lib": "2.95.1",
     "constructs": "10.2.69",
