@@ -84,7 +84,7 @@ export class UserRepository {
       if (!username && !user) throw new Error('Either username or user must be provided');
       const selectedUser = user || (await this.getUser(username ?? ''));
       if (!selectedUser) throw new Error('User not found');
-      let promises = new Array<Promise<KmsKey>>();
+      const promises = new Array<Promise<KmsKey>>();
       keys.forEach((key, idx) => {
         const name = key.name || `key${idx}`;
         console.log('Creating key name: ', name, key.address);
@@ -132,7 +132,7 @@ export class UserRepository {
       if (!username && !user) throw new Error('Either username or user must be provided');
       const selectedUser = user || (await this.getUser(username ?? ''));
       if (!selectedUser) throw new Error('User not found');
-      let promises = new Array<Promise<KmsKey>>();
+      const promises = new Array<Promise<KmsKey>>();
       keys.forEach((key, idx) => {
         console.log('Updating key idx: ', idx);
         promises.push(

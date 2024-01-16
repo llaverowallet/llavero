@@ -3,6 +3,7 @@ import { Button } from '@/shared/components/ui/button';
 import { Label } from '@/shared/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/shared/components/ui/radio-group';
 import { Switch } from '@/shared/components/ui/switch';
+import { getAccessToken } from '@/shared/utils/general';
 import { MfaOption, getMFaOptions, setMFaOption } from '@/shared/utils/mfa-actions';
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
@@ -53,7 +54,7 @@ const MFASetup: React.FC = () => {
 
   useEffect(() => {
     const getMFAConfiguration = async () => {
-      const token = (data as any).accessToken;
+      const token = getAccessToken(data);
       const option = await getMFaOptions(token);
       if (option) {
         setSelectedOption(option);
@@ -75,7 +76,7 @@ const MFASetup: React.FC = () => {
   };
 
   const handleSave = async () => {
-    await setMFaOption((data as any).accessToken, selectedOption as MfaOption);
+    await setMFaOption(getAccessToken(data), selectedOption as MfaOption);
     setSave(true);
   };
 

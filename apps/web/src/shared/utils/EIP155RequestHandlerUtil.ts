@@ -27,6 +27,7 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
         });
         const signedMessageJson = await signedMessageResponse.json();
         return formatJsonRpcResult(id, signedMessageJson.signed);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         console.error(error);
         alert(error.message);
@@ -43,6 +44,8 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
         // delete types.EIP712Domain
         // const signedData = await wallet._signTypedData(domain, types, data)
         // return formatJsonRpcResult(id, signedData)
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         console.error(error);
         alert(error.message);
@@ -66,6 +69,8 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
         // const connectedWallet = addr.connect(provider);
         // const { hash } = await connectedWallet.sendTransaction(sendTransaction);
         return formatJsonRpcResult(id, sendedTx.hash);
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         console.error(error);
         alert(error.message);
@@ -87,6 +92,8 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
         });
         const signedTxJson = await signedMessageResponse.json();
         return formatJsonRpcResult(id, signedTxJson.signed);
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         console.error(error);
         alert(error.message);

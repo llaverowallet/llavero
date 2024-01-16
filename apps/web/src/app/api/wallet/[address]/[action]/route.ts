@@ -6,6 +6,7 @@ import personalSign from '../../services/personal-sign';
 import ethSendTransaction from '../../services/eth-send-tx';
 import ethSignTransaction from '../../services/eth-sign-tx';
 import { verifySoftwareToken, isTOTPRegistered } from '@/shared/utils/mfa-actions';
+import { getAccessToken } from '@/shared/utils/general';
 
 const logger = createLogger('wallet-endpoint');
 
@@ -25,8 +26,11 @@ export async function POST(
       await request.json();
     const { transaction, chainId, message, mfaCode } = body || {};
 
-    const token = (session as any).accessToken;
+    const token = getAccessToken(session);
     if (await isTOTPRegistered(token)) {
+      if (!mfaCode) {
+        return NextResponse.json({ message: 'MFA code required' }, { status: 401 });
+      }
       if (!(await verifySoftwareToken(mfaCode, token))) {
         return NextResponse.json({ message: 'Invalid MFA code' }, { status: 401 });
       }

@@ -15,6 +15,7 @@ import { SignedTransaction } from '@/models/interfaces';
 export default async function ethSignTransaction(
   username: string,
   address: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   transaction: any,
   chainId: string,
 ): Promise<SignedTransaction> {

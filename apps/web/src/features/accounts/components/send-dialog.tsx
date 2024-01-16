@@ -24,8 +24,15 @@ import { useDebounce } from 'use-debounce';
 import { isTOTPRegistered } from '@/shared/utils/mfa-actions';
 import { useSession } from 'next-auth/react';
 import { toast } from '@/shared/hooks/use-toast';
+import { check, getAccessToken } from '@/shared/utils/general';
 
-async function estimateMaxTransfer({ provider, amount }: any) {
+async function estimateMaxTransfer({
+  provider,
+  amount,
+}: {
+  provider: JsonRpcProvider;
+  amount: string;
+}) {
   try {
     // Convert the number to a BigNumber
     const bigNumberAmount = new BigNumber(amount);
@@ -35,7 +42,7 @@ async function estimateMaxTransfer({ provider, amount }: any) {
     const gasPrice = feeData.gasPrice;
 
     // Convert the gas price from Wei to Gwei or Ether for better readability
-    const gasPriceInEth = formatUnits(gasPrice, 'ether');
+    const gasPriceInEth = formatUnits(check<bigint>(gasPrice, 'gasPrice'), 'ether');
     //const gasPriceInGwei = formatUnits(gasPrice, 'gwei');
     //const gasPriceInWei = formatUnits(gasPrice, 'wei');
 
@@ -46,7 +53,7 @@ async function estimateMaxTransfer({ provider, amount }: any) {
       estimatedGasPrice: Number(amount) ? gasPriceInEth : '0',
     };
   } catch (error: unknown) {
-    console.error('Error:', error);
+    console.error('estimateMaxTransfer Error:', error);
   }
 }
 
@@ -71,7 +78,7 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
   const handleSetMaxBalance = async () => {
     const transferData = await estimateMaxTransfer({
       provider,
-      amount: account?.balance || 0,
+      amount: check<string>(account?.balance || 0, 'Balance'),
     });
 
     setBalance(transferData?.maxTransferAmount || '0');
@@ -123,7 +130,7 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
 
       const data = await response.json();
       const { hash } = data;
-      setTxHash({ txHash: hash, network, address: address! });
+      setTxHash({ txHash: hash, network, address: check<string>(account?.address, 'Address') });
 
       setIsOpen(false);
     } catch (error) {
@@ -150,7 +157,7 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
 
       const transferData = await estimateMaxTransfer({
         provider,
-        amount: debouncedBalance || 0,
+        amount: check<string>(debouncedBalance || 0, 'debouncedBalance'),
       });
 
       setEstimatedGas(transferData?.estimatedGasPrice || '0');
@@ -161,7 +168,7 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
 
   useEffect(() => {
     const checkMFA = async () => {
-      const token = (data as any).accessToken;
+      const token = getAccessToken(data);
       setMFARegistered(await isTOTPRegistered(token));
     };
 

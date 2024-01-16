@@ -18,6 +18,7 @@ export interface ICloudWalletInitParams {
   keys: [{ keyArn: string }];
   cognitoPoolId: string;
   UserPoolClientId: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   config: any;
   arnSiteParameter: string;
   siteUrl: string;

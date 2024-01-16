@@ -10,6 +10,7 @@ import {
   verifyPhoneNumber,
   verifySMSSandbox,
 } from '@/shared/utils/mfa-actions';
+import { getAccessToken } from '@/shared/utils/general';
 
 const logger = createLogger('settings-endpoint');
 
@@ -28,7 +29,7 @@ export async function POST(
     const body: { smsSettings?: { phoneNumber: string; code: string } } = await request.json();
     const { smsSettings } = body || {};
 
-    const token = (session as any).accessToken;
+    const token = getAccessToken(session);
 
     switch (action) {
       case 'create-sms':

@@ -18,6 +18,7 @@ import Link from 'next/link';
 import { CopyToClipboard } from '@/shared/components/ui/copy-to-clipboard';
 import { removeTxHash } from '../../utils/transactions';
 import { AccountActivitySkeleton } from './account-activity-skeleton';
+import { check } from '@/shared/utils/general';
 
 const addActivity = async ({ data }: { data: TransactionData }) => {
   const { from: address, chainId, hash } = data;
@@ -59,7 +60,9 @@ const getTransaction = ({ network, txHash }: { network: string; txHash: string }
 
     if (!receipt && !transaction) return Promise.reject("Couldn't find transaction");
 
-    const block = await provider.getBlock(transaction?.blockNumber!);
+    const block = await provider.getBlock(
+      check<string>(transaction?.blockNumber?.toString(), 'TX BlockNumber'),
+    );
     const { status, gasUsed } = receipt || {};
     const { from, to, value, nonce, hash, chainId, gasLimit } = transaction || {};
     const { timestamp } = block || {};
@@ -90,7 +93,7 @@ const AccountActivity = ({ account }: Props) => {
     transactions = [],
     transactionsHashes = [],
     isPending,
-  } = useTransactions({ account: account! });
+  } = useTransactions({ account: check<WalletInfo>(account, 'WalletInfo') });
 
   const sortedTransactions = transactions.sort((a, b) => {
     const aTimestamp = JSON.parse(a.data).timestamp;
@@ -155,9 +158,9 @@ const AccountActivityItemInMemory = ({
     transaction || {};
 
   const explorerTransactionURL = `${network.explorer}/tx/${hash}`;
-  const datetime = timestamp ? new Date(timestamp! * 1000).toLocaleString('en') : null;
+  const datetime = timestamp ? new Date(timestamp * 1000).toLocaleString('en') : null;
   const date = timestamp
-    ? new Date(timestamp! * 1000).toLocaleString('en', {
+    ? new Date(timestamp * 1000).toLocaleString('en', {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
@@ -199,7 +202,7 @@ const AccountActivityItemInMemory = ({
             {!!value && (
               <div className="text-primary">
                 {transactionValueSymbol}
-                {formatEther(value!)} {network.symbol}
+                {formatEther(value)} {network.symbol}
               </div>
             )}
             <div className="text-sm text-gray-500">{date}</div>
@@ -297,13 +300,14 @@ const AccountActivityItem = ({
   account: WalletInfo | null;
 }) => {
   const { network } = useNetwork();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { status, value, from, to, nonce, gasLimit, gasUsed, hash, timestamp, chainId }: any =
     JSON.parse(transaction.data) || {};
 
   const explorerTransactionURL = `${network.explorer}/tx/${hash}`;
-  const datetime = timestamp ? new Date(timestamp! * 1000).toLocaleString('en') : null;
+  const datetime = timestamp ? new Date(timestamp * 1000).toLocaleString('en') : null;
   const date = timestamp
-    ? new Date(timestamp! * 1000).toLocaleString('en', {
+    ? new Date(timestamp * 1000).toLocaleString('en', {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
@@ -333,7 +337,7 @@ const AccountActivityItem = ({
             {!!value && (
               <div className="text-primary">
                 {transactionValueSymbol}
-                {formatEther(value!)} {network.symbol}
+                {formatEther(value)} {network.symbol}
               </div>
             )}
             <div className="text-sm text-gray-500">{date}</div>
@@ -395,7 +399,7 @@ const AccountActivityItem = ({
                 {!!value && (
                   <div className="font-semibold">
                     {transactionValueSymbol}
-                    {formatEther(value!)} {network.symbol}
+                    {formatEther(value)} {network.symbol}
                   </div>
                 )}
               </div>
