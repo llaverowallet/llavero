@@ -89,11 +89,7 @@ const getTransaction = ({ network, txHash }: { network: string; txHash: string }
 type Props = { account: WalletInfo | null };
 
 const AccountActivity = ({ account }: Props) => {
-  const {
-    transactions = [],
-    transactionsHashes = [],
-    isPending,
-  } = useTransactions({ account: check<WalletInfo>(account, 'WalletInfo') });
+  const { transactions = [], transactionsHashes = [], isPending } = useTransactions({ account });
 
   const sortedTransactions = transactions.sort((a, b) => {
     const aTimestamp = JSON.parse(a.data).timestamp;

@@ -16,6 +16,7 @@ import {
   DialogTitle,
 } from '@/shared/components/ui/dialog';
 import { Button } from '@/shared/components/ui/button';
+import { check } from '@/shared/utils/general';
 
 export default function SessionProposalModal() {
   const proposal = ModalStore.state.data?.proposal; // Get proposal data and wallet address from store
@@ -67,7 +68,7 @@ export default function SessionProposalModal() {
 
   // the chains that are supported by the wallet from the proposal
   const supportedChains = useMemo(
-    () => requestedChains.map((chain) => getChainData(chain!)),
+    () => requestedChains.map((chain) => getChainData(chain)),
     [requestedChains],
   );
 
@@ -85,7 +86,7 @@ export default function SessionProposalModal() {
         (chain) =>
           !supportedChains
             .map((supportedChain) => `${supportedChain?.namespace}:${supportedChain?.chainId}`)
-            .includes(chain!),
+            .includes(check<string>(chain, 'chain')),
       );
   }, [proposal, supportedChains]);
   console.log('notSupportedChains', notSupportedChains);

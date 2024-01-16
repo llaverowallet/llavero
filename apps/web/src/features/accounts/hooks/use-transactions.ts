@@ -15,8 +15,11 @@ export type ActivityItem = {
   userId: string;
 };
 
-const getActivity = ({ address, chainId }: { address: string; chainId: string }) => {
+const getActivity = ({ address, chainId }: { address?: string | null; chainId: string }) => {
   return async (): Promise<ActivityItem[]> => {
+    if (!address) {
+      return [];
+    }
     const response = await fetch(
       `api/accounts/${String(address).toLowerCase()}/activity/${chainId}`,
     );
@@ -29,7 +32,7 @@ const getActivity = ({ address, chainId }: { address: string; chainId: string })
   };
 };
 
-const useTransactions = ({ account }: { account: WalletInfo }) => {
+const useTransactions = ({ account }: { account: WalletInfo | null }) => {
   const { network } = useNetwork();
   const { address } = account || {};
   const { data: transactions, isPending } = useQuery({
