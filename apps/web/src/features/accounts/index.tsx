@@ -52,7 +52,6 @@ const Accounts = () => {
   }, [accountIndex, router]);
 
   const handleSelectAccount = (account: WalletInfo) => {
-    // To avoid re-rendering the whole page, we use the router to update the query params
     const index = accounts?.findIndex((a) => a.address === account.address || 0);
     router.replace(`/accounts?k=${index}`);
     window.localStorage.setItem('accountIndex', index?.toString() || '0');
