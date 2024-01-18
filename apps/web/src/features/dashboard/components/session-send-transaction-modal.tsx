@@ -1,9 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ModalStore from '@/store/modalStore';
 import { approveEIP155Request, rejectEIP155Request } from '@/shared/utils/EIP155RequestHandlerUtil';
 import { web3wallet } from '@/shared/utils/walletConnectUtil';
 import { useSnapshot } from 'valtio';
-import { Textarea } from '@/shared/components/ui/textarea';
+import { CodeBlock, dracula } from 'react-code-blocks';
 import {
   Dialog,
   DialogContent,
@@ -13,12 +13,15 @@ import {
   DialogTitle,
 } from '@/shared/components/ui/dialog';
 import { Button } from '@/shared/components/ui/button';
+import { MfaDialog } from '@/shared/components/business/mfa-dialog';
 
 export default function SessionSendTransactionModal() {
   // Get request and wallet data from store
   const requestEvent = ModalStore.state.data?.requestEvent;
   const requestSession = ModalStore.state.data?.requestSession;
   const { open } = useSnapshot(ModalStore.state);
+  const [openMFA, setOpenMFA] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const descriptionElementRef = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -43,19 +46,21 @@ export default function SessionSendTransactionModal() {
   const transaction = request.params[0];
 
   // Handle approve action
-  async function onApprove() {
+  async function onApprove(mfaCode: string) {
     if (requestEvent) {
+      setIsLoading(true);
       try {
-        const response = await approveEIP155Request(requestEvent);
+        const response = await approveEIP155Request(requestEvent, mfaCode);
         await web3wallet.respondSessionRequest({
           topic,
           response,
         });
       } catch (e) {
         console.error('onApprove', e);
-        return;
       } finally {
         ModalStore.close();
+        setOpenMFA(false);
+        setIsLoading(false);
       }
     }
   }
@@ -63,17 +68,19 @@ export default function SessionSendTransactionModal() {
   // Handle reject action
   async function onReject() {
     if (requestEvent) {
-      const response = rejectEIP155Request(requestEvent);
       try {
+        setIsLoading(true);
+        const response = rejectEIP155Request(requestEvent);
         await web3wallet.respondSessionRequest({
           topic,
           response,
         });
       } catch (e) {
         console.error('onReject', e);
-        return;
       } finally {
         ModalStore.close();
+        setIsLoading(false);
+        setOpenMFA(false);
       }
     }
   }
@@ -99,16 +106,28 @@ export default function SessionSendTransactionModal() {
               <span className="font-semibold">URL:</span> {requestSession.peer.metadata.url}
             </div>
             <div>
-              <Textarea value={JSON.stringify(transaction, null, 2)} />
+              <span className="font-semibold">Transaction:</span>
+              <CodeBlock
+                showLineNumbers={false}
+                text={JSON.stringify(transaction, null, 2)}
+                theme={dracula}
+                language="json"
+                wrapLongLines={true}
+              />
             </div>
           </div>
 
           <DialogFooter className="mt-4">
-            <Button onClick={onReject}>Cancel</Button>
-            <Button onClick={onApprove}>Accept</Button>
+            <Button onClick={onReject} disabled={isLoading}>
+              Cancel
+            </Button>
+            <Button onClick={() => setOpenMFA(true)} disabled={isLoading}>
+              {isLoading ? 'Signing...' : 'Accept'}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <MfaDialog open={openMFA} onSubmit={onApprove} />
     </>
   );
 }

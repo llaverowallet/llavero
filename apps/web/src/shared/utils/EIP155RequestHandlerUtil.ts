@@ -5,7 +5,8 @@ import { formatJsonRpcError, formatJsonRpcResult } from '@json-rpc-tools/utils';
 import { SignClientTypes } from '@walletconnect/types';
 import { getSdkError } from '@walletconnect/utils';
 type RequestEventArgs = Omit<SignClientTypes.EventArguments['session_request'], 'verifyContext'>;
-export async function approveEIP155Request(requestEvent: RequestEventArgs) {
+
+export async function approveEIP155Request(requestEvent: RequestEventArgs, mfaCode?: string) {
   const { params, id } = requestEvent;
   const { chainId, request } = params;
   const addr = getAddressFromParams([SettingsStore.state.eip155Address], params);
@@ -23,6 +24,7 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
           },
           body: JSON.stringify({
             message,
+            mfaCode,
           }),
         });
         const signedMessageJson = await signedMessageResponse.json();
@@ -63,6 +65,7 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
           body: JSON.stringify({
             transaction,
             chainId,
+            mfaCode,
           }),
         });
         const sendedTx = await signedMessageResponse.json();
@@ -88,6 +91,7 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
           body: JSON.stringify({
             transaction,
             chainId,
+            mfaCode,
           }),
         });
         const signedTxJson = await signedMessageResponse.json();

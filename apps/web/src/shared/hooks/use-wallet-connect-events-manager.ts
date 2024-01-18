@@ -5,7 +5,6 @@ import SettingsStore from '@/store/settingsStore';
 import { web3wallet } from '@/shared/utils/walletConnectUtil';
 import { SignClientTypes } from '@walletconnect/types';
 import { useCallback, useEffect } from 'react';
-import { ErrorResponse } from '@walletconnect/jsonrpc-types';
 
 export default function useWalletConnectEventsManager(initialized: boolean) {
   /******************************************************************************
@@ -36,8 +35,7 @@ export default function useWalletConnectEventsManager(initialized: boolean) {
       console.log('session_request', requestEvent);
       const { topic, params, verifyContext } = requestEvent;
       const { request } = params;
-      const requestSession = getRequestSession(topic);
-      // set the verify context so it can be displayed in the projectInfoCard
+      const requestSession = web3wallet.engine.signClient.session.get(topic);
       SettingsStore.setCurrentRequestVerifyContext(verifyContext);
       console.log('session_request_method', request.method);
       switch (request.method) {
@@ -61,20 +59,6 @@ export default function useWalletConnectEventsManager(initialized: boolean) {
     [],
   );
 
-  const getRequestSession = (topic: string) => {
-    try {
-      return web3wallet.engine.signClient.session.get(topic);
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      console.error(error);
-      web3wallet.engine.signClient.session.delete(topic, {
-        code: 0,
-        message: error.message,
-      } as ErrorResponse);
-    }
-  };
-
   /******************************************************************************
    * Set up WalletConnect event listeners
    *****************************************************************************/
@@ -88,7 +72,12 @@ export default function useWalletConnectEventsManager(initialized: boolean) {
       web3wallet.on('auth_request', onAuthRequest);
       // TODOs
       web3wallet.engine.signClient.events.on('session_ping', (data) => console.log('ping', data));
-      web3wallet.on('session_delete', (data) => console.log('delete', data));
+      web3wallet.on('session_delete', (data) => {
+        console.log('session_delete event received', data);
+        SettingsStore.setSessions(Object.values(web3wallet.getActiveSessions()));
+      });
+      // load sessions on init
+      SettingsStore.setSessions(Object.values(web3wallet.getActiveSessions()));
     }
   }, [initialized, onAuthRequest, onSessionProposal, onSessionRequest]);
 }
