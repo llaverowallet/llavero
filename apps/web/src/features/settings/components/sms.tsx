@@ -65,6 +65,7 @@ const SMS: React.FC = () => {
       await createSmsSettings(phoneNumber);
       setIsVerified(false);
       setShowCode(true);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       setErrorMessage(error.message);
       setIsVerified(false);
@@ -94,6 +95,7 @@ const SMS: React.FC = () => {
       }
       setErrorMessage('');
       setCode('');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       setErrorMessage(error.message);
       setIsVerified(false);

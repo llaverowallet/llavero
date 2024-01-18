@@ -17,7 +17,7 @@ const fontSans = FontSans({
 
 export const metadata = {
   title: 'Llavero',
-  description: 'Llavero CloudWallet is a non-custodial wallet that runs in your server',
+  description: 'Llavero CloudWallet is a non-custodial wallet that runs in your infrastructure',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

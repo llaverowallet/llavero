@@ -11,6 +11,7 @@ import { Button } from '@/shared/components/ui/button';
 import MFA from './mfa';
 import { useSession } from 'next-auth/react';
 import { isTOTPRegistered } from '@/shared/utils/mfa-actions';
+import { getAccessToken } from '@/shared/utils/general';
 
 type Props = {
   onMFAStatusChange: (status: boolean) => void;
@@ -23,7 +24,7 @@ export const MFADialog = ({ onMFAStatusChange }: Props) => {
 
   useEffect(() => {
     const checkMFA = async () => {
-      const token = (data as any).accessToken;
+      const token = getAccessToken(data);
       setMFARegistered(await isTOTPRegistered(token));
       onMFAStatusChange(token ? true : false);
     };

@@ -129,6 +129,7 @@ export const isTOTPRegistered = async (accessToken: string) => {
 
   try {
     const response = await client.send(command);
+    console.log('User MFA configuration:', response);
     const isRegistered = response.UserMFASettingList?.some((mfa) => mfa === 'SOFTWARE_TOKEN_MFA');
     return isRegistered || false;
   } catch (error) {
@@ -191,15 +192,10 @@ export const getUserAttributes = async (accessToken: string) => {
  * crap enums I have to put eslint disable here
  */
 export enum MfaOption {
-  // eslint-disable-next-line no-unused-vars
   SMSOnly = 1,
-  // eslint-disable-next-line no-unused-vars
   AuthenticatorAppOnly = 2,
-  // eslint-disable-next-line no-unused-vars
   SMSIfAvailable = 3,
-  // eslint-disable-next-line no-unused-vars
   AuthenticatorAppIfAvailable = 4,
-  // eslint-disable-next-line no-unused-vars
   ChoosePreferredDeliveryMethod = 5,
 }
 

@@ -7,6 +7,12 @@ const clientId = process.env.USER_POOL_CLIENT_ID ?? 'emptyCognitoClientId';
 export const AUTH_OPTIONS: AuthOptions = {
   debug: true,
   logger: authLogger,
+  session: {
+    // Set session expiration to 30 minutes
+    maxAge: 30 * 60,
+    // Update the session object every 10 minutes
+    updateAge: 10 * 60,
+  },
   providers: [
     CognitoProvider({
       issuer: issuer,
@@ -27,8 +33,7 @@ export const AUTH_OPTIONS: AuthOptions = {
     },
     async session({ session, token }) {
       // Send properties to the client, like an access_token from a provider.
-      const newSession: any = { ...session };
-      newSession.accessToken = token.access_token;
+      const newSession = { ...session, accessToken: token.access_token };
       return newSession;
     },
   },

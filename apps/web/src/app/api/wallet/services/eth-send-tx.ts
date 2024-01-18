@@ -14,6 +14,7 @@ import { getChainRpc, getKeyId } from '@/shared/utils/crypto';
 export default async function ethSendTransaction(
   username: string,
   address: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   transaction: any,
   chainId: string,
 ): Promise<TransactionResponse> {

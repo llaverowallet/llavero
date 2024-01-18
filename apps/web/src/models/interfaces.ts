@@ -2,11 +2,10 @@ import { TransactionRequest } from 'ethers';
 
 export interface IBrowserWallet {
   getAddress(): string;
-  // eslint-disable-next-line no-unused-vars
   signMessage(message: string): string;
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   signTransaction(transaction: TransactionRequest): any;
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   _signTypedData(domain: any, types: any, data: any): string;
 }
 
@@ -27,4 +26,8 @@ export interface SignedTransaction {
   address: string;
   signed: string;
   transaction: string;
+}
+
+export interface hasAccessToken {
+  accessToken: string;
 }

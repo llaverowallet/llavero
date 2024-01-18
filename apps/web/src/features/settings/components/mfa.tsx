@@ -12,6 +12,7 @@ import { Copy } from 'lucide-react';
 import { CopyToClipboard } from '@/shared/components/ui/copy-to-clipboard';
 import { Badge } from '@/shared/components/ui/badge';
 import { Skeleton } from '@/shared/components/ui/skeleton';
+import { getAccessToken } from '@/shared/utils/general';
 
 const MFA = () => {
   const [secretCode, setSecretCode] = useState('');
@@ -28,7 +29,7 @@ const MFA = () => {
 
   useEffect(() => {
     async function checkMFA() {
-      const token = (data as any).accessToken;
+      const token = getAccessToken(data);
       const isAssociated = await associateSoftwareToken(token);
       if (isAssociated.SecretCode) {
         setQrUri(getTotpCodeURL('Llavero', data?.user?.email || '', isAssociated.SecretCode || ''));
@@ -41,7 +42,7 @@ const MFA = () => {
   }, [data, data?.user?.email]);
 
   const handleVerifyMFA = async () => {
-    const token = (data as any).accessToken;
+    const token = getAccessToken(data);
     if (
       verificationCode.length === 6 &&
       (await verifySoftwareToken(verificationCode, token, session))

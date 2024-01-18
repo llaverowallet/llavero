@@ -7,6 +7,7 @@ import Loading from '../loading';
 import { WalletConnectMessages } from '@/features/wallet-connect';
 import { useStartWallet } from '@/shared/hooks/use-start-wallet';
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 BigInt.prototype.toJSON = function () {
   return this.toString();

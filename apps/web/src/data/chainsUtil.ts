@@ -14,7 +14,7 @@ export function getChainData(chainId?: string) {
 
 export const getMainnetChains = () => {
   const chains = [];
-  for (let key in EIP155_MAINNET_CHAINS) {
+  for (const key in EIP155_MAINNET_CHAINS) {
     chains.push(EIP155_MAINNET_CHAINS[key]);
   }
   return chains;
@@ -22,7 +22,7 @@ export const getMainnetChains = () => {
 
 export const getTestnetChains = () => {
   const chains = [];
-  for (let key in EIP155_TEST_CHAINS) {
+  for (const key in EIP155_TEST_CHAINS) {
     chains.push(EIP155_TEST_CHAINS[key]);
   }
   return chains;
