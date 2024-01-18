@@ -20,6 +20,7 @@ const AccountsHeader = ({
   accounts,
 }: {
   selectedAccount: WalletInfo | null;
+  // eslint-disable-next-line no-unused-vars
   onSelectAccount: (account: WalletInfo) => void;
   accounts: WalletInfo[];
 }) => {
@@ -32,10 +33,10 @@ const AccountsHeader = ({
   return (
     <Dialog open={isDialogOpen} onOpenChange={(open) => setIsDialogOpen(open)}>
       <DialogTrigger asChild>
-        <Button className='mx-auto w-fit flex gap-4'>
-          <div className='flex gap-2 items-center'>
-            <Avatar className='w-6 h-6'>
-              <AvatarFallback className='text-black'>
+        <Button className="mx-auto w-fit flex gap-4">
+          <div className="flex gap-2 items-center">
+            <Avatar className="w-6 h-6">
+              <AvatarFallback className="text-secondary-foreground">
                 {selectedAccount?.name.toString().toUpperCase().slice(0, 1)}
               </AvatarFallback>
             </Avatar>
@@ -44,8 +45,8 @@ const AccountsHeader = ({
           <ChevronDown />
         </Button>
       </DialogTrigger>
-      <DialogContent className='max-w-[360px] sm:max-w-[425px]'>
-        <DialogHeader className='mb-2'>
+      <DialogContent className="max-w-[360px] sm:max-w-[425px]">
+        <DialogHeader className="mb-2">
           <DialogTitle>Select an account</DialogTitle>
         </DialogHeader>
         <AccountList

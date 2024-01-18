@@ -64,6 +64,8 @@ export default function useWalletConnectEventsManager(initialized: boolean) {
   const getRequestSession = (topic: string) => {
     try {
       return web3wallet.engine.signClient.session.get(topic);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error(error);
       web3wallet.engine.signClient.session.delete(topic, {

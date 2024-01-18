@@ -1,6 +1,14 @@
 import { LOG_GROUP_NAME } from '@/shared/utils/constants';
 import { SSTConfig } from 'sst';
-import { Cognito, Config, NextjsSite, Script, Table, StackContext, dependsOn } from 'sst/constructs';
+import {
+  Cognito,
+  Config,
+  NextjsSite,
+  Script,
+  Table,
+  StackContext,
+  dependsOn,
+} from 'sst/constructs';
 import createLogGroup, { LogGroupSST } from './sst/cloudwatch-construct';
 import createKeys from './sst/key-builder';
 import { check } from '@/shared/utils/general';
@@ -10,22 +18,22 @@ import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { KMS } from './sst/kms-construct';
 import crypto from 'crypto';
 import { getParameterPath } from 'sst/constructs/util/functionBinding.js';
-import { Topic } from 'aws-cdk-lib/aws-sns';
 
 process.setMaxListeners(Infinity); //TODO remove this
 const localhostUrl = 'http://localhost:3000';
 
 const installationConfig = {
-  email: check<string>(process.env.EMAIL, "EMAIL"),
+  email: check<string>(process.env.EMAIL, 'EMAIL'),
   phoneNumber: process.env.PHONE_NUMBER,
-  region: check<string>(process.env.REGION, "REGION"),
-  suffix: getDeterministicRandomString(check<string>(process.env.EMAIL, "EMAIL")),
-  numberOfKeys: process.env.NUMBER_OF_KEYS ? parseInt(process.env.NUMBER_OF_KEYS) : 1,
+  region: check<string>(process.env.REGION, 'REGION'),
+  suffix: getDeterministicRandomString(check<string>(process.env.EMAIL, 'EMAIL')),
+  numberOfKeys: process.env.NUMBER_OF_KEYS ? parseInt(process.env.NUMBER_OF_KEYS, 10) : 1,
 };
 
-const name = 'llavero'+installationConfig.suffix;
+const name = `llavero${installationConfig.suffix}`;
 
 export default {
+  // eslint-disable-next-line no-unused-vars
   config(_input) {
     return {
       name: name,
@@ -44,11 +52,10 @@ let keys: Array<KMS>;
 let auth: Cognito;
 let site: NextjsSite;
 let SITE_URL: Config.Parameter;
-let topic: Topic;
 
 export function llaveroStack({ stack, app }: StackContext) {
   keys = createKeys(stack, installationConfig.numberOfKeys);
-  logGroup = createLogGroup(stack, LOG_GROUP_NAME + 'ID', { name: LOG_GROUP_NAME });
+  logGroup = createLogGroup(stack, `${LOG_GROUP_NAME}ID`, { name: LOG_GROUP_NAME });
 
   userTable = new Table(stack, 'UserData', {
     cdk: {
@@ -86,7 +93,7 @@ export function llaveroStack({ stack, app }: StackContext) {
           requireLowercase: true,
           requireSymbols: true,
           requireUppercase: true,
-          tempPasswordValidity: Duration.days(3)
+          tempPasswordValidity: Duration.days(3),
         },
       },
       userPoolClient: {
@@ -96,8 +103,14 @@ export function llaveroStack({ stack, app }: StackContext) {
           userSrp: true,
         },
         oAuth: {
-          callbackUrls: [localhostUrl + '/api/auth/callback/cognito'],
-          scopes: [OAuthScope.EMAIL, OAuthScope.OPENID], //["openid", "profile", "email", "phone", "aws.cognito.signin.user.admin"],
+          callbackUrls: [`${localhostUrl}/api/auth/callback/cognito`],
+          logoutUrls: [`${localhostUrl}/api/auth/signout`],
+          scopes: [
+            OAuthScope.EMAIL,
+            OAuthScope.OPENID,
+            OAuthScope.custom('aws.cognito.signin.user.admin'),
+            OAuthScope.PROFILE,
+          ], //["openid", "profile", "email", "phone", "aws.cognito.signin.user.admin"],
           flows: {
             authorizationCodeGrant: true,
             implicitCodeGrant: true,
@@ -129,6 +142,10 @@ export function llaveroStack({ stack, app }: StackContext) {
       NEXTAUTH_SECRET: randomString(16), //TODO config input, should be saved or query
       SITEURL_PARAM_NAME: getParameterPath(SITE_URL, 'value'), //TODO horrible workaround. I should be able to set the variable on the env directly
       REGION: installationConfig.region,
+      NEXT_PUBLIC_REGION: installationConfig.region,
+      NEXT_PUBLIC_USER_POOL_CLIENT_ID: auth.userPoolClientId,
+      NEXT_PUBLIC_USER_POOL_ID: auth.userPoolId,
+      NEXT_PUBLIC_COGNITO_POOL_ID: auth.cognitoIdentityPoolId ?? 'empty',
     },
   });
 
@@ -148,8 +165,17 @@ export function llaveroStack({ stack, app }: StackContext) {
       effect: Effect.ALLOW,
       resources: [auth.userPoolArn],
     }),
+    new PolicyStatement({
+      actions: [
+        'sns:CreateSMSSandboxPhoneNumber',
+        'sns:VerifySMSSandboxPhoneNumber',
+        'sns:ListSMSSandboxPhoneNumbers',
+        'sns:DeleteSMSSandboxPhoneNumber',
+      ],
+      effect: Effect.ALLOW,
+      resources: ['*'],
+    }),
   ]);
-
 
   stack.addOutputs({
     SiteUrl: site.url,
@@ -161,12 +187,15 @@ export function llaveroStack({ stack, app }: StackContext) {
 }
 
 export function initLlavero({ stack, app }: StackContext) {
-  const arnParameter = `arn:aws:ssm:${app.region}:${app.account}:parameter${getParameterPath(SITE_URL, "value")}`;
-  const basePath = process.cwd() + "/";
+  const arnParameter = `arn:aws:ssm:${app.region}:${app.account}:parameter${getParameterPath(
+    SITE_URL,
+    'value',
+  )}`;
+  const basePath = `${process.cwd()}/`;
   dependsOn(llaveroStack);
-  const script = new Script(stack, "AfterDeploy", {
-    onCreate: basePath + "src/repositories/user-table-init.main",
-    onUpdate: basePath + "src/repositories/user-table-init.main",
+  const script = new Script(stack, 'AfterDeploy', {
+    onCreate: `${basePath}src/repositories/user-table-init.main`,
+    onUpdate: `${basePath}src/repositories/user-table-init.main`,
     params: {
       tableName: userTable.tableName,
       keys: keys.map((k) => ({ keyArn: k.keyArn })),
@@ -174,7 +203,7 @@ export function initLlavero({ stack, app }: StackContext) {
       UserPoolClientId: auth.userPoolClientId,
       config: installationConfig,
       arnSiteParameter: getParameterPath(SITE_URL, 'value'),
-      siteUrl: site.url ?? localhostUrl
+      siteUrl: site.url ?? localhostUrl,
     },
   });
   script.bind([userTable, logGroup, auth, SITE_URL, ...keys]);
@@ -199,7 +228,7 @@ export function initLlavero({ stack, app }: StackContext) {
 
 function randomString(length: number, justChars = false): string {
   let chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  if (!justChars) chars = chars + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+~`|}{[]:;?><,./-=';
+  if (!justChars) chars = `${chars}ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+~\`|}{[]:;?><,./-=`;
   const charsLength = chars.length;
   let password = '';
 
@@ -211,11 +240,12 @@ function randomString(length: number, justChars = false): string {
   return password;
 }
 
-function getDeterministicRandomString(seed: string, max = 5,): string {
+function getDeterministicRandomString(seed: string, max = 5): string {
   // Create a deterministic hash from the seed
-  const hash = crypto.createHmac('sha256', seed.toLocaleLowerCase())
+  const hash = crypto
+    .createHmac('sha256', seed.toLocaleLowerCase())
     .update('deterministicSalt')
     .digest('hex');
 
-  return hash.substring(0, max).replace("0x", "");
+  return hash.substring(0, max).replace('0x', '');
 }

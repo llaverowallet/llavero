@@ -14,6 +14,7 @@ import { getChainRpc, getKeyId } from '@/shared/utils/crypto';
 export default async function ethSendTransaction(
   username: string,
   address: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   transaction: any,
   chainId: string,
 ): Promise<TransactionResponse> {
@@ -26,7 +27,7 @@ export default async function ethSendTransaction(
 
     const keyClient = new kmsClient.KMSClient();
     const rpc = getChainRpc(chainId);
-    const provider = new JsonRpcProvider(rpc); //TODO get from an endpoint
+    const provider = new JsonRpcProvider(rpc);
     const signer = new AwsKmsSigner(getKeyId(key.keyArn), keyClient, provider);
     console.log('transaction: ', transaction);
     const response = await signer.sendTransaction(transaction as TransactionLike);
@@ -36,8 +37,3 @@ export default async function ethSendTransaction(
     throw new AggregateError([new Error('Error in list Wallet'), error]);
   }
 }
-
-// if (sendTransaction) {
-//     const response = await signer.sendTransaction(transaction as TransactionLike);
-//     return { address: key.address, response, transaction };
-// } else {

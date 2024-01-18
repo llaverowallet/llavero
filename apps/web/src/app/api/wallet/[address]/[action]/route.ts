@@ -5,6 +5,8 @@ import { getServerSession } from 'next-auth';
 import personalSign from '../../services/personal-sign';
 import ethSendTransaction from '../../services/eth-send-tx';
 import ethSignTransaction from '../../services/eth-sign-tx';
+import { verifySoftwareToken, isTOTPRegistered } from '@/shared/utils/mfa-actions';
+import { getAccessToken } from '@/shared/utils/general';
 
 const logger = createLogger('wallet-endpoint');
 
@@ -20,8 +22,19 @@ export async function POST(
       return NextResponse.json({ message: 'Not authorized' }, { status: 401 });
 
     const { address, action } = params || {};
-    const body: { transaction: string; chainId: string; message: string } = await request.json();
-    const { transaction, chainId, message } = body || {};
+    const body: { transaction: string; chainId: string; message: string; mfaCode: string } =
+      await request.json();
+    const { transaction, chainId, message, mfaCode } = body || {};
+
+    const token = getAccessToken(session);
+    if (await isTOTPRegistered(token)) {
+      if (!mfaCode) {
+        return NextResponse.json({ message: 'MFA code required' }, { status: 401 });
+      }
+      if (!(await verifySoftwareToken(mfaCode, token))) {
+        return NextResponse.json({ message: 'Invalid MFA code' }, { status: 401 });
+      }
+    }
 
     switch (action) {
       case 'personal-sign':

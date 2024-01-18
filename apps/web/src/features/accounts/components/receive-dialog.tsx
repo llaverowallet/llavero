@@ -20,29 +20,29 @@ const ReceiveDialog = ({ account }: { account: WalletInfo | null }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <div className='flex flex-col gap-1 items-center'>
-          <Button className='rounded-full w-9 h-9 p-0' aria-label='Send'>
-            <ArrowDown className='w-4 h-4' />
+        <div className="flex flex-col gap-1 items-center">
+          <Button className="rounded-full w-9 h-9 p-0" aria-label="Send">
+            <ArrowDown className="w-4 h-4" />
           </Button>
-          <span className='text-sm'>Receive</span>
+          <span className="text-sm">Receive</span>
         </div>
       </DialogTrigger>
-      <DialogContent className='max-w-[360px] sm:max-w-[425px]'>
+      <DialogContent className="max-w-[360px] sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{accountName}</DialogTitle>
         </DialogHeader>
-        <div className='mb-2'>
+        <div className="mb-2">
           <QRCode
             size={256}
-            className='w-full'
+            className="w-full"
             value={accountAddress || ''}
             viewBox={`0 0 256 256`}
           />
         </div>
-        <div className='mx-auto'>
+        <div className="mx-auto">
           <CopyToClipboard textToCopy={accountAddress || ''}>
-            <Badge variant='outline' className='flex gap-2 py-2 cursor-pointer break-all'>
-              {accountAddress || ''} <Copy className='w-4 h-4' />
+            <Badge variant="outline" className="flex gap-2 py-2 cursor-pointer break-all">
+              {accountAddress || ''} <Copy className="w-4 h-4" />
             </Badge>
           </CopyToClipboard>
         </div>

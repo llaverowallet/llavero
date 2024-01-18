@@ -2,7 +2,7 @@ import React, { FormEvent, useState } from 'react';
 import { Button } from '@/shared/components/ui/button';
 import { Pencil } from 'lucide-react';
 import { Input } from '@/shared/components/ui/input';
-import { useMutation, useMutationState, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
 import { useToast } from '@/shared/hooks/use-toast';
 import { useNetwork } from '@/shared/hooks/use-network';
@@ -91,20 +91,20 @@ const AccountEditableName = ({ accountName, accountAddress }: Props) => {
   };
 
   return (
-    <form className='text-primary flex items-center gap-2 mx-auto' onSubmit={handleSubmit}>
+    <form className="text-primary flex items-center gap-2 mx-auto" onSubmit={handleSubmit}>
       <Input
-        name='name'
-        className='w-full border-0'
+        name="name"
+        className="w-full border-0"
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
       <Button
-        size='icon'
-        className='h-7 w-8'
-        type='submit'
+        size="icon"
+        className="h-7 w-8"
+        type="submit"
         disabled={isButtonDisabled || isPending}
       >
-        <Pencil className='h-4 w-4' />
+        <Pencil className="h-4 w-4" />
       </Button>
     </form>
   );
