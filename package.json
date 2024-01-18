@@ -22,15 +22,33 @@
     "cdk-synth": "npm run synth -w libs/cdk-deploy",
     "cdk-build": "npm run build -w libs/cdk-deploy",
     "cdk-bootstrap": "npm run bootstrap -w libs/cdk-deploy",
-    "install-sst": "yarn workspace installer install-sst"
+    "install-sst": "yarn workspace installer install-sst",
+    "prepare": "husky install"
   },
   "author": "Mariano Julio Vicario",
   "license": "Apache-2.0",
   "dependencies": {
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-prettier": "^5.1.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.1.1",
     "typescript": "^5.1.6"
   },
   "devDependencies": {
     "@types/node": "^20.4.4",
+    "@typescript-eslint/eslint-plugin": "^6.18.1",
+    "@typescript-eslint/parser": "^6.18.1",
     "eslint": "latest"
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx,jsx}": [
+      "eslint --quiet --fix"
+    ],
+    "*.{json,md,html,js,jsx,ts,tsx}": [
+      "prettier --write"
+    ]
   }
 }

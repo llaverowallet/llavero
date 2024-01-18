@@ -1,8 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-import { useEffect } from 'react';
-import { WalletInfo } from '@/models/interfaces';
 import { Container } from '@/shared/components/ui/container';
 import {
   Card,
@@ -19,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/shared/components/ui/table';
-import { Copy, Eye, Key, KeyRound } from 'lucide-react';
+import { Copy, Eye, KeyRound } from 'lucide-react';
 
 import { Skeleton } from '@/shared/components/ui/skeleton';
 import { getChainByEip155Address } from '@/data/chainsUtil';
@@ -42,8 +39,8 @@ const Dashboard = () => {
 
   return (
     <Container>
-      <div className='px-4 xl:px-0'>
-        <Card className='w-full mx-auto'>
+      <div className="px-4 xl:px-0">
+        <Card className="w-full mx-auto">
           <CardHeader>
             <CardTitle>Dashboard</CardTitle>
             <CardDescription>List of all yours accounts</CardDescription>
@@ -56,40 +53,40 @@ const Dashboard = () => {
                 {accounts?.length > 0 && (
                   <Table>
                     <TableHeader>
-                      <TableRow>
-                        <TableHead className='w-fit'>Name</TableHead>
-                        <TableHead className='w-fit'>Address</TableHead>
-                        <TableHead className='w-fit'>Balance</TableHead>
-                        <TableHead className='w-fit text-end'>Actions</TableHead>
+                      <TableRow className="border-border">
+                        <TableHead className="w-fit">Name</TableHead>
+                        <TableHead className="w-fit">Address</TableHead>
+                        <TableHead className="w-fit">Balance</TableHead>
+                        <TableHead className="w-fit text-end">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       <>
                         {accounts.map((account, index) => (
-                          <TableRow key={account.address}>
-                            <TableCell className='font-medium py-4'>
-                              <div className='flex items-center text-xs'>
-                                <KeyRound className='h-4 w-4 mr-1 text-primary' /> {account.name}
+                          <TableRow key={account.address} className="border-border">
+                            <TableCell className="font-medium py-4">
+                              <div className="flex items-center text-xs">
+                                <KeyRound className="h-4 w-4 mr-1 text-primary" /> {account.name}
                               </div>
                             </TableCell>
                             <TableCell>
                               <CopyToClipboard textToCopy={account.address || ''}>
-                                <div className='flex gap-2 items-center'>
+                                <div className="flex gap-2 items-center">
                                   {getShortWalletAddress(account.address || '')}
-                                  <Copy className='w-4 h-4' />
+                                  <Copy className="w-4 h-4" />
                                 </div>
                               </CopyToClipboard>
                             </TableCell>
                             <TableCell>
-                              <div className='font-semibold flex flex-wrap gap-2 items-center'>
+                              <div className="font-semibold flex flex-wrap gap-2 items-center">
                                 {formatBalance(account.balance.toString() || 0)}
-                                <span className='text-xs'>{network.symbol}</span>
+                                <span className="text-xs">{network.symbol}</span>
                               </div>
                             </TableCell>
-                            <TableCell className='text-end'>
-                              <Button size='icon' asChild>
+                            <TableCell className="text-end">
+                              <Button size="icon" asChild>
                                 <Link href={`/accounts?k=${index}`}>
-                                  <Eye className='w-4 h-4' />
+                                  <Eye className="w-4 h-4" />
                                 </Link>
                               </Button>
                             </TableCell>
@@ -110,10 +107,10 @@ const Dashboard = () => {
 
 const AccountsSkeleton = () => {
   return (
-    <div className='grid gap-2'>
-      <Skeleton className='h-[50px] w-full' />
-      <Skeleton className='h-[50px] w-full' />
-      <Skeleton className='h-[50px] w-full' />
+    <div className="grid gap-2">
+      <Skeleton className="h-[50px] w-full" />
+      <Skeleton className="h-[50px] w-full" />
+      <Skeleton className="h-[50px] w-full" />
     </div>
   );
 };

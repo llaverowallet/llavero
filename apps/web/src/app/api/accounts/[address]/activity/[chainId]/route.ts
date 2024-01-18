@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 import createLogger from '@/shared/utils/logger';
 import { getActivity } from '../../../services/activity';
-const logger = createLogger('account-endpoint');
+const logger = createLogger('account-endpoint-activity2');
 
 export async function GET(
   request: NextRequest,

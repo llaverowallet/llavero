@@ -15,7 +15,6 @@ module.exports = {
     // Set application icon
     icon: path.resolve('assets/images/appIcon.ico'),
     name: 'llavero',
-    extraResource: [".wallet"],
   },
   // Forge Makers
   makers: [

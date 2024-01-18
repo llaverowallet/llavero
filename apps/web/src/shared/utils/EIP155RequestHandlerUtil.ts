@@ -1,14 +1,9 @@
-import { EIP155_CHAINS, EIP155_SIGNING_METHODS, TEIP155Chain } from '@/data/EIP155Data';
+import { EIP155_SIGNING_METHODS } from '@/data/EIP155Data';
 import SettingsStore from '@/store/settingsStore';
-import {
-  getSignParamsMessage,
-  getSignTypedDataParamsData,
-  getAddressFromParams,
-} from '@/shared/utils/crypto';
+import { getSignParamsMessage, getAddressFromParams } from '@/shared/utils/crypto';
 import { formatJsonRpcError, formatJsonRpcResult } from '@json-rpc-tools/utils';
 import { SignClientTypes } from '@walletconnect/types';
 import { getSdkError } from '@walletconnect/utils';
-import { JsonRpcProvider } from 'ethers';
 type RequestEventArgs = Omit<SignClientTypes.EventArguments['session_request'], 'verifyContext'>;
 export async function approveEIP155Request(requestEvent: RequestEventArgs) {
   const { params, id } = requestEvent;
@@ -32,6 +27,7 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
         });
         const signedMessageJson = await signedMessageResponse.json();
         return formatJsonRpcResult(id, signedMessageJson.signed);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         console.error(error);
         alert(error.message);
@@ -48,6 +44,8 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
         // delete types.EIP712Domain
         // const signedData = await wallet._signTypedData(domain, types, data)
         // return formatJsonRpcResult(id, signedData)
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         console.error(error);
         alert(error.message);
@@ -57,7 +55,6 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
     case EIP155_SIGNING_METHODS.ETH_SEND_TRANSACTION:
       try {
         const transaction = request.params[0];
-        debugger;
         const signedMessageResponse = await fetch(`api/wallet/${addr}/eth-send-transaction`, {
           method: 'POST',
           headers: {
@@ -69,11 +66,11 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
           }),
         });
         const sendedTx = await signedMessageResponse.json();
-        debugger;
-
         // const connectedWallet = addr.connect(provider);
         // const { hash } = await connectedWallet.sendTransaction(sendTransaction);
         return formatJsonRpcResult(id, sendedTx.hash);
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         console.error(error);
         alert(error.message);
@@ -93,9 +90,10 @@ export async function approveEIP155Request(requestEvent: RequestEventArgs) {
             chainId,
           }),
         });
-        debugger;
         const signedTxJson = await signedMessageResponse.json();
         return formatJsonRpcResult(id, signedTxJson.signed);
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         console.error(error);
         alert(error.message);

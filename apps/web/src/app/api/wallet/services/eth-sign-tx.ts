@@ -15,6 +15,7 @@ import { SignedTransaction } from '@/models/interfaces';
 export default async function ethSignTransaction(
   username: string,
   address: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   transaction: any,
   chainId: string,
 ): Promise<SignedTransaction> {
@@ -41,8 +42,3 @@ export default async function ethSignTransaction(
     throw new AggregateError([new Error('Error ethSignTransaction'), error]);
   }
 }
-
-// if (sendTransaction) {
-//     const response = await signer.sendTransaction(transaction as TransactionLike);
-//     return { address: key.address, response, transaction };
-// } else {

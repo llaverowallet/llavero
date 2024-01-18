@@ -1,4 +1,4 @@
-import { getParameterValue, updateUserPoolClientCallbackUrl } from '@/shared/utils/aws';
+import { getParameterValue } from '@/shared/utils/aws';
 import createLogger from '@/shared/utils/logger';
 const logger = createLogger('Instrumentation');
 

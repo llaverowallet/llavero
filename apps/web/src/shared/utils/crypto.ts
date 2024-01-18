@@ -38,6 +38,7 @@ export function getSignTypedDataParamsData(params: string[]) {
  * Get our address from params checking if params string contains one
  * of our wallet addresses
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getAddressFromParams(addresses: string[], params: any) {
   const paramsString = JSON.stringify(params);
   let address = '';
@@ -66,7 +67,7 @@ export function getShortWalletAddress(address: string) {
   return `${address.slice(0, 7)}...${address.slice(-5)}`;
 }
 
-export function formatBalance(balance: string | number, decimals: number = 4) {
+export function formatBalance(balance: string | number, decimals = 4) {
   if (!balance) return 0;
 
   return parseFloat(String(balance)).toFixed(decimals);

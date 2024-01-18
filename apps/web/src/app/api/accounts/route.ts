@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { AUTH_OPTIONS } from '@/shared/utils/auth';
 import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';

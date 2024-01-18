@@ -15,7 +15,7 @@ import { QrCode } from 'lucide-react';
 
 const WalletConnectDialog = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [, setIsLoading] = useState(false);
 
   const handleConnect = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -44,24 +44,27 @@ const WalletConnectDialog = () => {
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
           <Button>
-            <QrCode className='h-4 w-4' />
+            <QrCode className="h-4 w-4" />
           </Button>
         </DialogTrigger>
-        <DialogContent className='max-w-[360px] sm:max-w-[425px]'>
+        <DialogContent className="max-w-[360px] sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>{"Use Google's location service?"}</DialogTitle>
-            <DialogDescription>or use walletconnect uri</DialogDescription>
+            <DialogTitle>WalletConnect</DialogTitle>
+            <DialogDescription>Use WalletConnect uri</DialogDescription>
           </DialogHeader>
 
           <form onSubmit={handleConnect}>
-            <div className='flex flex-col gap-4 py-4'>
+            <div className="flex flex-col gap-4 py-4">
               <div>
-                <Input name='uri' placeholder='e.g. wc:a281567bb3e4...' className='w-full' />
+                <Input name="uri" placeholder="e.g. wc:a281567bb3e4..." className="w-full" />
               </div>
             </div>
 
-            <DialogFooter className='mt-4'>
-              <Button type='submit'> {isLoading ? 'Loading...' : 'Connect'}</Button>
+            <DialogFooter className="mt-4">
+              {/* <Button type='submit'> {isLoading ? 'Loading...' : 'Connect'}</Button> */}
+              <Button type="submit" disabled>
+                Coming soon...
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>

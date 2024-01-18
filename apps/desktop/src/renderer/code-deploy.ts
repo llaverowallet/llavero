@@ -13,7 +13,7 @@ export class CodedeployStack extends cdk.Stack {
     super(scope, id, props);
 
     // Define a new CodeBuild project
-    const buildProject = new Project(this, 'LlaveroBuildProject', {
+    const llaveroBuildProject = new Project(this, 'LlaveroBuildProject', {
       environment: {
         buildImage: LinuxBuildImage.STANDARD_7_0,
         environmentVariables: {
@@ -32,7 +32,7 @@ export class CodedeployStack extends cdk.Stack {
         version: '0.2',
         phases: {
           install: {
-            commands: ['yarn install'],
+            commands: ['yarn workspace web install'],
           },
           build: {
             commands: ['yarn run deploy'],
@@ -71,7 +71,7 @@ export class CodedeployStack extends cdk.Stack {
       actions: [
         new CodeBuildAction({
           actionName: 'CodeBuild',
-          project: buildProject,
+          project: llaveroBuildProject,
           input: code
         }),
       ],

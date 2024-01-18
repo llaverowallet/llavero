@@ -10,6 +10,7 @@ class CloudWatchLogger {
   private static lastLogStreamName = '';
   private cloudwatchLogs: CloudWatchLogsClient;
   private readonly LOG_GROUP_NAME;
+  // eslint-disable-next-line no-unused-vars
   private constructor(private name = 'default') {
     this.cloudwatchLogs = new CloudWatchLogsClient({ region: process.env.REGION });
     this.LOG_GROUP_NAME = process.env.LOG_GROUP_NAME ?? 'noGroupName-error-check-env-variables';
@@ -25,7 +26,7 @@ class CloudWatchLogger {
   public async log(message: string) {
     const logStreamName = this.getLogStreamName();
     const logEvent = {
-      message: this.name + ' - ' + message,
+      message: `${this.name} - ${message}`,
       timestamp: new Date().getTime(),
     };
     const params = {
@@ -36,6 +37,7 @@ class CloudWatchLogger {
     await this.putLog(params);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async error(error: any, message = '') {
     const logStreamName = this.getLogStreamName();
     const errorMessage = `${this.name} - ERROR: ${message} - ${error.name}: ${error.message}\n${error.stack}`;
@@ -67,6 +69,7 @@ class CloudWatchLogger {
       });
       try {
         await this.cloudwatchLogs.send(paramsCreateStream);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         if (err.name !== 'ResourceAlreadyExistsException') {
           console.log('Error creating log stream:', err);
@@ -81,7 +84,7 @@ class CloudWatchLogger {
     });
     try {
       const data = await this.cloudwatchLogs.send(paramsPutLog);
-      // console.log("Logged to CloudWatch:", data);
+      console.log('Logged to CloudWatch:', data);
       CloudWatchLogger.lastLogStreamName = logStreamName;
     } catch (err) {
       console.log('Error logging to CloudWatch:', err);
@@ -107,6 +110,7 @@ export default CloudWatchLogger.getInstance;
 
 /////AUTH ERROR
 function hasErrorProperty(x: unknown): x is { error: Error; [key: string]: unknown } {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return !!(x as any)?.error;
 }
 function formatError(o: unknown): unknown {
@@ -123,6 +127,7 @@ function formatError(o: unknown): unknown {
 const aLogger = CloudWatchLogger.getInstance('Auth');
 
 export const authLogger = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   error(code: any, metadata: any) {
     metadata = formatError(metadata) as Error;
     console.error(
@@ -133,6 +138,7 @@ export const authLogger = {
     );
     aLogger.error(metadata, metadata.message);
   },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   warn(code: any) {
     console.warn(
       `[next-auth][warn][${code}]`,
@@ -142,8 +148,9 @@ export const authLogger = {
       `[next-auth][warn][${code}]` + `\nhttps://next-auth.js.org/warnings#${code.toLowerCase()}`,
     );
   },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   debug(code: any, metadata: any) {
     console.log(`[next-auth][debug][${code}]`, metadata);
-    aLogger.log(`[next-auth][debug][${code}]` + JSON.stringify(metadata));
+    aLogger.log(`[next-auth][debug][${code}]${JSON.stringify(metadata)}`);
   },
 };

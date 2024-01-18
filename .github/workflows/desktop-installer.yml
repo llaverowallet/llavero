@@ -10,12 +10,8 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ 
-        { name: 'linux', image: 'ubuntu-latest' },
-        { name: 'windows', image: 'windows-latest' },
-        { name: 'macos', image: 'macos-latest' },
-          ]
-    runs-on: ${{ matrix.os.image }}
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Github checkout
         uses: actions/checkout@v3
@@ -23,10 +19,19 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
+      - if: runner.os == 'Windows'
+        run: |
+          set NODE_OPTIONS=--max-old-space-size=4096
+      - if: runner.os == 'Linux'
+        run: |
+          NODE_OPTIONS=--max-old-space-size=4096
+      - if: runner.os == 'macOS'
+        run: |
+          NODE_OPTIONS=--max-old-space-size=4096 
       - name: Run install
         uses: borales/actions-yarn@v4
         with:
-          cmd: install --network-timeout 100000
+          cmd: workspace desktop install --network-timeout 100000
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
       - name: Publish
