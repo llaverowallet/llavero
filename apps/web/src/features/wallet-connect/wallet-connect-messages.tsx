@@ -3,6 +3,7 @@ import ModalStore from '@/store/modalStore';
 import SessionProposalModal from '../dashboard/components/session-proposal-modal';
 import SessionSignModal from '../dashboard/components/session-sign-modal';
 import SessionSendTransactionModal from '../dashboard/components/session-send-transaction-modal';
+import SessionSignTypedDataModal from '../dashboard/components/session-sign-typed-modal';
 
 function WalletConnectMessages() {
   const { view } = useSnapshot(ModalStore.state);
@@ -12,6 +13,7 @@ function WalletConnectMessages() {
       {view === 'SessionProposalModal' && <SessionProposalModal />}
       {view === 'SessionSignModal' && <SessionSignModal />}
       {view === 'SessionSendTransactionModal' && <SessionSendTransactionModal />}
+      {view === 'SessionSignTypedDataModal' && <SessionSignTypedDataModal />}
     </>
   );
 }

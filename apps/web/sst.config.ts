@@ -18,6 +18,7 @@ import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { KMS } from './sst/kms-construct';
 import crypto from 'crypto';
 import { getParameterPath } from 'sst/constructs/util/functionBinding.js';
+import { TableEncryption } from 'aws-cdk-lib/aws-dynamodb';
 
 process.setMaxListeners(Infinity); //TODO remove this
 const localhostUrl = 'http://localhost:3000';
@@ -61,6 +62,7 @@ export function llaveroStack({ stack, app }: StackContext) {
     cdk: {
       table: {
         removalPolicy: RemovalPolicy.DESTROY, //TODO think this could be SNAPSHOT
+        encryption: TableEncryption.AWS_MANAGED,
       },
     },
     fields: {
