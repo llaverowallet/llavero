@@ -1,6 +1,7 @@
 import { AwsKmsSigner } from '@dennisdang/ethers-aws-kms-signer';
 import { assert, ethers, Provider, TypedDataEncoder } from 'ethers';
 
+//Source: https://github.com/ethers-io/ethers.js/blob/a26ff77c210660e641455150ccea6c0530f02f61/src.ts/wallet/base-wallet.ts
 export async function signTypedDataFunc(
   _domain: ethers.TypedDataDomain,
   _types: Record<string, ethers.TypedDataField[]>,
