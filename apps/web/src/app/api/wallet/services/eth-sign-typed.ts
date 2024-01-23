@@ -6,6 +6,7 @@ import { AwsKmsSigner } from '@dennisdang/ethers-aws-kms-signer';
 import * as kmsClient from '@aws-sdk/client-kms';
 import { getChainRpc, getKeyId } from '@/shared/utils/crypto';
 import { SignedMessage, TypedData } from '@/models/interfaces';
+import { signTypedDataFunc } from './typed-util';
 
 /**
  * ETH_SEND_TRANSACTION
@@ -34,7 +35,13 @@ export default async function signTypedData(
     const signer = new AwsKmsSigner(getKeyId(key.keyArn), keyClient, provider);
     console.log('signed type2222: ', typedData.toString());
 
-    const signed = await signer.signTypedData(typedData.domain, typedData.types, typedData.data);
+    const signed = await signTypedDataFunc(
+      typedData.domain,
+      typedData.types,
+      typedData.data,
+      provider,
+      signer,
+    );
     return { address: address, signed, message: '' };
   } catch (error) {
     logger.error(error, 'Error in signTypedData');
