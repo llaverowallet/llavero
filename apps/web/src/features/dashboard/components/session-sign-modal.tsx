@@ -10,13 +10,17 @@ import {
 import ModalStore from '@/store/modalStore';
 import { approveEIP155Request, rejectEIP155Request } from '@/shared/utils/EIP155RequestHandlerUtil';
 import { web3wallet } from '@/shared/utils/walletConnectUtil';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSnapshot } from 'valtio';
+import { getSignParamsMessage } from '@/shared/utils/crypto';
+import { MfaDialog } from '@/shared/components/business/mfa-dialog';
 
 export default function SessionSignModal() {
   const requestEvent = ModalStore.state.data?.requestEvent; //// Get request and wallet data from store
   const requestSession = ModalStore.state.data?.requestSession;
   const { open } = useSnapshot(ModalStore.state);
+  const [openMFA, setOpenMFA] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const descriptionElementRef = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -34,16 +38,16 @@ export default function SessionSignModal() {
     return <></>;
   }
 
-  const { topic } = requestEvent; //, params
-  //const { request, chainId } = params;
-  //const transaction = request.params[0];
+  const { topic, params } = requestEvent; //, params
+  const { request, chainId } = params;
 
-  //const message = getSignParamsMessage(request.params); // Get message, convert it to UTF8 string if it is valid hex
+  const message = getSignParamsMessage(request.params); // Get message, convert it to UTF8 string if it is valid hex
 
   // Handle approve action (logic varies based on request method)
-  async function onApprove() {
+  async function onApprove(mfaCode?: string) {
     if (requestEvent) {
-      const response = await approveEIP155Request(requestEvent);
+      setIsLoading(true);
+      const response = await approveEIP155Request(requestEvent, mfaCode);
       try {
         await web3wallet.respondSessionRequest({
           topic,
@@ -51,9 +55,10 @@ export default function SessionSignModal() {
         });
       } catch (e) {
         console.error('onApprove', e);
-        return;
       } finally {
         ModalStore.close();
+        setOpenMFA(false);
+        setIsLoading(false);
       }
     }
   }
@@ -96,14 +101,25 @@ export default function SessionSignModal() {
             <div>
               <span className="font-semibold">URL:</span> {requestSession.peer.metadata.url}
             </div>
+            <div>
+              <span className="font-semibold">Chain:</span> {chainId}
+            </div>
+            <div>
+              <span className="font-semibold">Message:</span> {message}
+            </div>
           </div>
 
           <DialogFooter className="mt-4">
-            <Button onClick={onReject}>Cancel</Button>
-            <Button onClick={onApprove}>Accept</Button>
+            <Button onClick={onReject} disabled={isLoading}>
+              Cancel
+            </Button>
+            <Button onClick={() => setOpenMFA(true)} disabled={isLoading}>
+              {isLoading ? 'Signing...' : 'Accept'}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <MfaDialog open={openMFA} onSubmit={onApprove} />
     </>
   );
 }

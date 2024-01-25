@@ -2,12 +2,10 @@ import { useEffect } from 'react';
 import useInitWalletConnect from './use-init-wallet-connect';
 import useWalletConnectEventsManager from './use-wallet-connect-events-manager';
 import { web3wallet } from '@/shared/utils/walletConnectUtil';
-import { DefaultSession } from 'next-auth';
+import { Session } from 'next-auth';
 import { RELAYER_EVENTS } from '@walletconnect/core';
 
-const useStartWallet = (session: DefaultSession | null) => {
-  // TODO:RAOP refactor Wallet Connect functionality
-
+const useStartWalletConnect = (session: Session | null) => {
   const initialized = useInitWalletConnect(session); // Step 1 - Initialize wallets and wallet connect client
   useWalletConnectEventsManager(initialized); // Step 2 - Once initialized, set up wallet connect event manager
   useEffect(() => {
@@ -22,4 +20,4 @@ const useStartWallet = (session: DefaultSession | null) => {
   }, [initialized]);
 };
 
-export { useStartWallet };
+export { useStartWalletConnect };

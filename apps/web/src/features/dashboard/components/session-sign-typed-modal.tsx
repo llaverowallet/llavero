@@ -1,8 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
-import ModalStore from '@/store/modalStore';
 import { approveEIP155Request, rejectEIP155Request } from '@/shared/utils/EIP155RequestHandlerUtil';
-import { web3wallet } from '@/shared/utils/walletConnectUtil';
-import { useSnapshot } from 'valtio';
+import { getSignTypedDataParamsData } from '@/shared/utils/crypto';
+import ModalStore from '@/store/modalStore';
+import { useCallback, useState } from 'react';
 import { CodeBlock, dracula } from 'react-code-blocks';
 import {
   Dialog,
@@ -14,8 +13,10 @@ import {
 } from '@/shared/components/ui/dialog';
 import { Button } from '@/shared/components/ui/button';
 import { MfaDialog } from '@/shared/components/business/mfa-dialog';
+import { web3wallet } from '@/shared/utils/walletConnectUtil';
+import { useSnapshot } from 'valtio';
 
-export default function SessionSendTransactionModal() {
+export default function SessionSignTypedDataModal() {
   // Get request and wallet data from store
   const requestEvent = ModalStore.state.data?.requestEvent;
   const requestSession = ModalStore.state.data?.requestSession;
@@ -23,67 +24,60 @@ export default function SessionSendTransactionModal() {
   const [openMFA, setOpenMFA] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const descriptionElementRef = useRef<HTMLElement>(null);
-  useEffect(() => {
-    if (open) {
-      const { current: descriptionElement } = descriptionElementRef;
-      if (descriptionElement !== null) {
-        descriptionElement.focus();
-      }
-    }
-  }, [open]);
-
+  // Ensure request and wallet are defined
   if (!requestEvent || !requestSession) {
-    // Ensure request and wallet are defined
-    console.error('Request event or wallet is undefined');
-    return <></>;
+    throw new Error('Request event or wallet is undefined');
   }
 
-  // Get required proposal data
-
+  // Get required request data
   const { topic, params } = requestEvent;
   const { request } = params;
-  const transaction = request.params[0];
 
-  // Handle approve action
-  async function onApprove(mfaCode: string) {
-    if (requestEvent) {
-      setIsLoading(true);
-      try {
+  // Get data
+  const data = getSignTypedDataParamsData(request.params);
+
+  // Handle approve action (logic varies based on request method)
+  const onApprove = useCallback(
+    async (mfaCode: string) => {
+      if (requestEvent) {
+        setIsLoading(true);
         const response = await approveEIP155Request(requestEvent, mfaCode);
-        await web3wallet.respondSessionRequest({
-          topic,
-          response,
-        });
-      } catch (e) {
-        console.error('onApprove', e);
-      } finally {
-        ModalStore.close();
-        setOpenMFA(false);
-        setIsLoading(false);
+        try {
+          await web3wallet.respondSessionRequest({
+            topic,
+            response,
+          });
+        } catch (e) {
+          console.log((e as Error).message, 'error');
+        } finally {
+          ModalStore.close();
+          setOpenMFA(false);
+          setIsLoading(false);
+        }
       }
-    }
-  }
+    },
+    [requestEvent, topic],
+  );
 
   // Handle reject action
-  async function onReject() {
+  const onReject = useCallback(async () => {
     if (requestEvent) {
+      setIsLoading(true);
+      const response = rejectEIP155Request(requestEvent);
       try {
-        setIsLoading(true);
-        const response = rejectEIP155Request(requestEvent);
         await web3wallet.respondSessionRequest({
           topic,
           response,
         });
       } catch (e) {
-        console.error('onReject', e);
+        console.log((e as Error).message, 'error');
       } finally {
         ModalStore.close();
-        setIsLoading(false);
         setOpenMFA(false);
+        setIsLoading(false);
       }
     }
-  }
+  }, [requestEvent, topic]);
 
   return (
     <>
@@ -106,13 +100,21 @@ export default function SessionSendTransactionModal() {
               <span className="font-semibold">URL:</span> {requestSession.peer.metadata.url}
             </div>
             <div>
-              <span className="font-semibold">Transaction:</span>
+              <span className="font-semibold">Typed Data:</span>
               <CodeBlock
                 showLineNumbers={false}
-                text={JSON.stringify(transaction, null, 2)}
+                text={JSON.stringify(data, null, 2)}
                 theme={dracula}
                 language="json"
                 wrapLongLines={true}
+                customStyle={{
+                  height: '250px',
+                  overflowY: 'scroll',
+                  borderRadius: '5px',
+                  boxShadow: '1px 2px 3px rgba(0,0,0,0.35)',
+                  fontSize: '0.75rem',
+                  margin: '0px 0.75rem',
+                }}
               />
             </div>
           </div>

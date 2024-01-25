@@ -23,6 +23,7 @@ export class KMS extends Construct implements SSTConstruct {
       removalPolicy: cdk.RemovalPolicy.RETAIN_ON_UPDATE_OR_DELETE,
       alias: props.alias,
       description: props.description,
+      enableKeyRotation: false,
     });
     this.keyId = this.kms.keyId;
     this.id = id;
