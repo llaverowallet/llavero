@@ -1,4 +1,4 @@
-import { TransactionRequest } from 'ethers';
+import { TransactionRequest, TypedDataDomain, TypedDataField } from 'ethers';
 
 export interface IBrowserWallet {
   getAddress(): string;
@@ -30,4 +30,11 @@ export interface SignedTransaction {
 
 export interface hasAccessToken {
   accessToken: string;
+}
+
+export interface TypedData {
+  domain: TypedDataDomain;
+  types: Record<string, TypedDataField[]>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: Record<string, any>;
 }

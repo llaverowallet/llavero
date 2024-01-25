@@ -15,7 +15,7 @@ import { QrCode } from 'lucide-react';
 
 const WalletConnectDialog = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleConnect = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -28,7 +28,7 @@ const WalletConnectDialog = () => {
 
     try {
       setIsLoading(true);
-      await web3wallet.pair({ uri });
+      await web3wallet.pair({ uri, activatePairing: true });
       console.log('Connected to WalletConnect');
     } catch (error: unknown) {
       console.error((error as Error).message, 'error');
@@ -61,10 +61,7 @@ const WalletConnectDialog = () => {
             </div>
 
             <DialogFooter className="mt-4">
-              {/* <Button type='submit'> {isLoading ? 'Loading...' : 'Connect'}</Button> */}
-              <Button type="submit" disabled>
-                Coming soon...
-              </Button>
+              <Button type="submit"> {isLoading ? 'Loading...' : 'Connect'}</Button>
             </DialogFooter>
           </form>
         </DialogContent>

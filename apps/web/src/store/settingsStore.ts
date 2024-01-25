@@ -1,5 +1,5 @@
 import { Chain, EIP155_TEST_CHAINS } from '@/data/EIP155Data';
-import { Verify } from '@walletconnect/types';
+import { Verify, SessionTypes } from '@walletconnect/types';
 import { proxy } from 'valtio';
 
 /**
@@ -13,6 +13,7 @@ interface State {
   activeChainId: string;
   currentRequestVerifyContext?: Verify.Context;
   network: Chain;
+  sessions: SessionTypes.Struct[];
 }
 
 /**
@@ -25,6 +26,7 @@ const state = proxy<State>({
   eip155Address: '',
   relayerRegionURL: '',
   network: EIP155_TEST_CHAINS['eip155:80001'],
+  sessions: [],
 });
 
 /**
@@ -51,6 +53,9 @@ const SettingsStore = {
 
   setNetwork(chain: Chain) {
     state.network = chain;
+  },
+  setSessions(sessions: SessionTypes.Struct[]) {
+    state.sessions = sessions;
   },
 
   toggleTestNets() {

@@ -121,8 +121,8 @@ export const verifySoftwareToken = async (code: string, accessToken?: string, se
  * @returns true if registered, false if not
  */
 export const isTOTPRegistered = async (accessToken: string) => {
+  if (!accessToken) return false;
   const client = new CognitoIdentityProviderClient({ region: process.env.NEXT_PUBLIC_REGION });
-
   const command = new GetUserCommand({
     AccessToken: accessToken,
   });

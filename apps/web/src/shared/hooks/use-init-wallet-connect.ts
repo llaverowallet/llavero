@@ -2,9 +2,9 @@ import SettingsStore from '@/store/settingsStore';
 import { createWeb3Wallet, web3wallet } from '@/shared/utils/walletConnectUtil';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSnapshot } from 'valtio';
-import { DefaultSession } from 'next-auth';
+import { Session } from 'next-auth';
 
-export default function useInitWalletConnect(session: DefaultSession | null) {
+export default function useInitWalletConnect(session: Session | null) {
   const [initialized, setInitialized] = useState(false);
   const prevRelayerURLValue = useRef<string>('');
 
