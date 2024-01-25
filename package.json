@@ -27,7 +27,12 @@
   },
   "author": "Mariano Julio Vicario",
   "license": "Apache-2.0",
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^20.4.4",
+    "@typescript-eslint/eslint-plugin": "^6.18.1",
+    "@typescript-eslint/parser": "^6.18.1",
+    "eslint": "latest",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-jsx-a11y": "^6.8.0",
     "eslint-plugin-prettier": "^5.1.2",
@@ -36,12 +41,6 @@
     "lint-staged": "^15.2.0",
     "prettier": "^3.1.1",
     "typescript": "^5.1.6"
-  },
-  "devDependencies": {
-    "@types/node": "^20.4.4",
-    "@typescript-eslint/eslint-plugin": "^6.18.1",
-    "@typescript-eslint/parser": "^6.18.1",
-    "eslint": "latest"
   },
   "lint-staged": {
     "*.{js,ts,tsx,jsx}": [
