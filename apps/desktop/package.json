@@ -1,8 +1,8 @@
 {
   "name": "desktop",
   "productName": "Llavero Installer",
-  "version": "0.0.1",
-  "description": "llavero",
+  "version": "0.1.0",
+  "description": "Llavero Installer",
   "main": ".webpack/main",
   "scripts": {
     "start": "cross-env NODE_ENV=development electron-forge start",

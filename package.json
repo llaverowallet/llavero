@@ -1,7 +1,7 @@
 {
   "name": "llavero",
-  "version": "0.0.1",
-  "description": "",
+  "version": "0.1.0",
+  "description": "My Hardware Wallet as MY Service",
   "main": "index.js",
   "private": true,
   "workspaces": [

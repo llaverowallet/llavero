@@ -2,6 +2,7 @@
   "name": "web",
   "version": "0.1.0",
   "private": true,
+  "description": "Llavero Wallet - Self service",
   "scripts": {
     "dev": "sst bind next dev",
     "dev-next": "next dev",
