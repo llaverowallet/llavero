@@ -16,6 +16,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
+      - name: yarn
         uses: borales/actions-yarn@v4
         with:
           cmd: workspace desktop install --network-timeout 100000
