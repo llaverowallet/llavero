@@ -18,7 +18,7 @@ jobs:
           node-version: 20
       - name: set veriables
         run: |
-          NODE_OPTIONS=--max-old-space-size=4096 
+          export NODE_OPTIONS="--max_old_space_size=4096"
       - name: Run install
         uses: borales/actions-yarn@v4
         with:
