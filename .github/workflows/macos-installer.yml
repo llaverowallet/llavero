@@ -24,7 +24,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
       - name: set veriables
         run: |
-          export NODE_OPTIONS="--max-old-space-size=4096"
+          export NODE_OPTIONS="--max_old_space_size=4096"
       - name: Publish
         uses: borales/actions-yarn@v4
         with:
