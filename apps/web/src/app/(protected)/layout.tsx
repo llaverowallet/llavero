@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Loading from '../loading';
 import { WalletConnectMessages } from '@/features/wallet-connect';
-import { useStartWallet } from '@/shared/hooks/use-start-wallet';
+import { useStartWalletConnect } from '@/shared/hooks/use-start-wallet';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -29,9 +29,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     if (unAuthorized) {
       router.push('/');
     }
-  }, [loading, unAuthorized, sessionStatus, router]);
+  }, [loading, sessionStatus, router, unAuthorized]);
 
-  useStartWallet(sessionData);
+  useStartWalletConnect(sessionData);
 
   // if the user refreshed the page or somehow navigated to the protected page
   if (loading) {

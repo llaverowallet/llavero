@@ -33,9 +33,9 @@ const addActivity = async ({ data }: { data: TransactionData }) => {
   });
 
   removeTxHash({
-    txHash: hash!,
-    chainId: chainId!.toString(),
-    address: address!,
+    txHash: hash ?? '',
+    chainId: chainId?.toString() ?? '',
+    address: address ?? '',
   });
 };
 
@@ -260,7 +260,7 @@ const AccountActivityItemInMemory = ({
                 {!!value && (
                   <div className="font-semibold">
                     {transactionValueSymbol}
-                    {formatEther(value!)} {network.symbol}
+                    {formatEther(value)} {network.symbol}
                   </div>
                 )}
               </div>

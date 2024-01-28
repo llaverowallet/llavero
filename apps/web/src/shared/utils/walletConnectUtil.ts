@@ -13,10 +13,12 @@ export async function createWeb3Wallet(relayerRegionURL: string) {
     web3wallet = await Web3Wallet.init({
       core,
       metadata: {
-        name: 'Llavero - CloudWallet',
-        description: 'Llavero as MY Service',
+        name: 'Llavero',
+        description: 'Llavero my hardware wallet as MY Service',
         url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://localhost:3000',
-        icons: ['https://avatars.githubusercontent.com/u/37784886'], //todo: add logo
+        icons: [
+          'https://raw.githubusercontent.com/elranu/llavero/master/apps/desktop/assets/llavero-logo.png',
+        ],
       },
     });
 

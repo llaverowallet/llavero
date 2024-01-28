@@ -2,6 +2,7 @@
   "name": "web",
   "version": "0.1.0",
   "private": true,
+  "description": "Llavero Wallet - Self service",
   "scripts": {
     "dev": "sst bind next dev",
     "dev-next": "next dev",
@@ -45,6 +46,7 @@
     "next-auth": "^4.24.5",
     "next-themes": "^0.2.1",
     "react": "^18",
+    "react-code-blocks": "^0.1.5",
     "react-dom": "^18",
     "react-helmet-async": "^1.3.0",
     "react-qr-code": "^2.0.12",
