@@ -31,3 +31,4 @@ jobs:
           cmd: workspace desktop publish-app --auth-token=${{secrets.GITHUB_TOKEN }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
+          NODE_OPTIONS: --max-old-space-size=8192
