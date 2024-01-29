@@ -26,7 +26,8 @@ import { Button } from '@/shared/components/ui/button';
 const Accounts = () => {
   const router = useRouter();
   const queryParams = useSearchParams();
-  const accountIndex = Number(queryParams.get('k')) || 0;
+  const accountIndex =
+    Number(queryParams.get('k')) || Number(window.localStorage.getItem('accountIndex')) || 0;
   const { network } = useNetwork();
   const eip155Address = `${network.namespace}:${network.chainId}`;
   const { rpc } = getChainByEip155Address(eip155Address);
@@ -45,9 +46,15 @@ const Accounts = () => {
     setSelectedAccount(account);
   }, [accounts, accountIndex]);
 
+  useEffect(() => {
+    const index = accountIndex ? accountIndex.toString() : '0';
+    router.replace(`/accounts?k=${index}`);
+  }, [accountIndex, router]);
+
   const handleSelectAccount = (account: WalletInfo) => {
-    // To avoid re-rendering the whole page, we use the router to update the query params
-    router.replace(`/accounts?k=${accounts?.findIndex((a) => a.address === account.address)}`);
+    const index = accounts?.findIndex((a) => a.address === account.address || 0);
+    router.replace(`/accounts?k=${index}`);
+    window.localStorage.setItem('accountIndex', index?.toString() || '0');
   };
 
   return (
