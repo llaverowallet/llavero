@@ -1,6 +1,6 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
-  "cSpell.words": ["Llavero", "lucide", "tailwindcss"],
+  "cSpell.words": ["dont", "Llavero", "lucide", "tailwindcss"],
   "eslint.workingDirectories": [{ "mode": "auto" }],
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "always"
