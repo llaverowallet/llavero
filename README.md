@@ -1,6 +1,31 @@
 <img src="apps/desktop/assets/llavero-logo.png" width="200" >
 
+**Llavero: My hardware wallet as MY service.**
+
 Llavero means keyring in spanish. “LLa” is pronounced as “Ya” in Yatch
+
+## Table of Contents
+
+- [Introduction](#introduction)
+  - [TL;DR](#tldr)
+  - [KMS](#kms)
+  - [Software as MY Service (SaMS)](#software-as-my-service-sams)
+  - [Llavero's features](#llaveros-features)
+    - [Wallet comparisons](#wallet-comparisons)
+    - [Status \& contributions](#status--contributions)
+  - [Objectives](#objectives)
+    - [Why all this?](#why-all-this)
+    - [Philosophy](#philosophy)
+- [Installation](#installation)
+  - [Manual/Dev Installation](#manualdev-installation)
+  - [Desktop Installer](#desktop-installer)
+- [Develop](#develop)
+  - [To Dev:](#to-dev)
+    - [To emulate next.js prod on local env](#to-emulate-nextjs-prod-on-local-env)
+- [Roadmap and proposals](#roadmap-and-proposals)
+- [components and architecture](#components-and-architecture)
+  - [Installer](#installer)
+  - [Web](#web)
 
 # Introduction
 
@@ -18,7 +43,7 @@ HSMs can be thought of as cloud-based hardware wallets, such as Trezor or Ledger
 
 AWS KMS is a service where all private keys are securely stored. These keys, generated within the HSM, never leave it. All signing operations are executed within the KMS a concept also known as Cryptography as a Service.
 
-Prominent companies like [OpenZeppelin ©](https://www.openzeppelin.com/) leader in the security industry, use AWS KMS to store keys on [Defender](https://docs.openzeppelin.com/defender). [Defender](https://docs.openzeppelin.com/defender/v2/manage/relayers#security-considerations) assists Blockchain companies in signing and securing their crypto assets.
+Prominent companies like [OpenZeppelin©](https://www.openzeppelin.com/) leader in the security industry, use AWS KMS to store keys on [Defender](https://docs.openzeppelin.com/defender). [Defender](https://docs.openzeppelin.com/defender/v2/manage/relayers#security-considerations) assists Blockchain companies in signing and securing their crypto assets.
 
 ### Software as MY Service (SaMS)
 
@@ -33,7 +58,7 @@ We are used to the Software as a Service (SaaS) paradigm, where intermediate com
 - Full Privacy: Your infrastructure. Encryption at rest
 - Protect Transactions: Whitelist address, MFA, multi-signature approval.
 
-### Comparison with other Wallets
+### Wallet comparisons
 
 |                               | Custodial  | Software | Hardware | Llavero           |
 | ----------------------------- | ---------- | -------- | -------- | ----------------- |
@@ -43,29 +68,35 @@ We are used to the Software as a Service (SaaS) paradigm, where intermediate com
 | **Censorship Resistant**      | NO         | YES      | YES      | NO, but difficult |
 | **Protect any digital asset** | NO         | NO       | NO       | Yes               |
 
-# Objectives
+### Status & contributions
+
+## Objectives
 
 Can open source create an IaC solution for personal use – easy, secure, 100% private, cheap, and censorship-resistant?
 
 Why? For absolute privacy, security, ease of use, and resilience to secure my assets and personal verifiable credentials.
 
-A self-service should be designed to be for a single user. It user should have hardware isolation to maintain his full privacy. It should be designed to scale.
+A self-service should be designed to be for a single user. The user should have hardware isolation to maintain his full privacy. It should not be designed to scale, since is just for one user.
 
-It should be resilient, the end user should not have to waste time to maintain his services.
+It should be resilient; the end user should not have to spend time maintaining their services.
 
-Hardware agnostic, or cloud agnostic. The user should be able to migrate from one cloud to another, cheaply and in a few steps.
+It should be hardware-agnostic or cloud-agnostic. The user should be able to migrate from one cloud to another.
 
-Ideally censorship resistant. If the solution is multi-infrastructure, even if AWS closes your account you should be working and don't lose anything in another cloud or personal hardware.
+Ideally, it should be resistant to censorship. If the solution is multi-infrastructure, even if AWS closes your account, you should be able to continue working and not lose anything on another cloud or personal hardware.
 
-### Why all this crap?
+### Why all this?
 
-First, because we can :) and should be easy, cheap and fully private.
+First, because we can :) It should be easy, affordable, and fully private.
 
-Second, because, in the next years our digital identity will be compromised by AI. We need to think of new ways to deliver a technology solution for end-users, that is easy, secure, private and with full autonomy.
+Second, in the coming years, our digital identity will be compromised by AI. We need to think of new ways to deliver a technology solution for end users that is easy, secure, private, and fully autonomous.
+
+### Philosophy
+
+    Technology to the people. Provide the best technology as possible to end-users at an affordable cost.
 
 # Installation
 
-## Manual Installation
+## Manual/Dev Installation
 
 GA installation
 
