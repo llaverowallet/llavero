@@ -21,7 +21,9 @@ jobs:
         with:
           cmd: workspace desktop install --network-timeout 100000
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN  }} macos-alias
+      - name: install mac dependencies
+        run: yarn workspace desktop add macos-alias
       - name: set veriables
         run: |
           export NODE_OPTIONS=--max-old-space-size=8192
