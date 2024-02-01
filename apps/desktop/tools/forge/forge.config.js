@@ -26,12 +26,12 @@ module.exports = {
         name: 'Llavero',
       },
     },
-    {
+    //{
       // The Zip target builds basic .zip files containing your packaged application.
       // There are no platform specific dependencies for using this maker and it will run on any platform.
-      name: '@electron-forge/maker-zip',
-      platforms: ['darwin'],
-    },
+      //name: '@electron-forge/maker-zip',
+      //platforms: ['darwin'],
+    //},
     {
       // The deb target builds .deb packages, which are the standard package format for Debian-based
       // Linux distributions such as Ubuntu.

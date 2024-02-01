@@ -1,4 +1,4 @@
-import { Chain, EIP155_TEST_CHAINS } from '@/data/EIP155Data';
+import { Chain, EIP155_CHAINS } from '@/data/EIP155Data';
 import { Verify, SessionTypes } from '@walletconnect/types';
 import { proxy } from 'valtio';
 
@@ -25,7 +25,7 @@ const state = proxy<State>({
   activeChainId: '1',
   eip155Address: '',
   relayerRegionURL: '',
-  network: EIP155_TEST_CHAINS['eip155:80001'],
+  network: EIP155_CHAINS[window.localStorage.getItem('eip155Address') || 'eip155:80001'],
   sessions: [],
 });
 

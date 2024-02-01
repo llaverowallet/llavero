@@ -16,18 +16,19 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
-      - name: set veriables
-        run: |
-          NODE_OPTIONS=--max-old-space-size=4096 
-      - name: Run install
+      - name: yarn
         uses: borales/actions-yarn@v4
         with:
           cmd: workspace desktop install --network-timeout 100000
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
+      - name: set veriables
+        run: |
+          export NODE_OPTIONS=--max-old-space-size=8192
       - name: Publish
         uses: borales/actions-yarn@v4
         with:
           cmd: workspace desktop publish-app --auth-token=${{secrets.GITHUB_TOKEN }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
+          NODE_OPTIONS: --max-old-space-size=8192
