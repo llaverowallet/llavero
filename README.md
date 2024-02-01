@@ -1,13 +1,14 @@
 <img src="apps/desktop/assets/llavero-logo.png" width="200" >
 
-**Llavero: My hardware wallet as MY service.**
+**My hardware wallet as MY service**
 
 Llavero means keyring in spanish. “LLa” is pronounced as “Ya” in Yatch
+
+Llavero is a self-service, non-custodial wallet that uses [AWS KMS](https://aws.amazon.com/kms/faqs/) for secure key management, offering a custodial user experience.
 
 ## Table of Contents
 
 - [Introduction](#introduction)
-  - [TL;DR](#tldr)
   - [KMS](#kms)
   - [Software as MY Service (SaMS)](#software-as-my-service-sams)
   - [Llavero's features](#llaveros-features)
@@ -31,10 +32,6 @@ Llavero means keyring in spanish. “LLa” is pronounced as “Ya” in Yatch
 
 **Llavero: My hardware wallet as MY service. What does this mean?**
 
-### TL;DR
-
-Llavero is a self-service, non-custodial wallet that uses AWS KMS for secure key management, offering a custodial user experience.
-
 ### KMS
 
 Major cloud companies like AWS, Azure and Google Cloud offer a service generically referred to as KMS (Key management service).
@@ -43,7 +40,7 @@ HSMs can be thought of as cloud-based hardware wallets, such as Trezor or Ledger
 
 AWS KMS is a service where all private keys are securely stored. These keys, generated within the HSM, never leave it. All signing operations are executed within the KMS a concept also known as Cryptography as a Service.
 
-Prominent companies like [OpenZeppelin©](https://www.openzeppelin.com/) leader in the security industry, use AWS KMS to store keys on [Defender](https://docs.openzeppelin.com/defender). [Defender](https://docs.openzeppelin.com/defender/v2/manage/relayers#security-considerations) assists Blockchain companies in signing and securing their crypto assets.
+Prominent companies like [OpenZeppelin©](https://www.openzeppelin.com/) leader in the security industry, use AWS KMS to store keys on [Defender](https://docs.openzeppelin.com/defender/v2/manage/relayers#security-considerations). [Defender](https://docs.openzeppelin.com/defender/v2/manage/relayers#security-considerations) assists Blockchain companies in signing and securing their crypto assets.
 
 ### Software as MY Service (SaMS)
 
@@ -57,6 +54,8 @@ We are used to the Software as a Service (SaaS) paradigm, where intermediate com
 - Enterprise Security: [AWS’s data centers](https://aws.amazon.com/compliance/data-center/controls/). Multiple security layers. MFA (SMS, EMAIL, TOTP, Biometrics (Passkeys))
 - Full Privacy: Your infrastructure. Encryption at rest
 - Protect Transactions: Whitelist address, MFA, multi-signature approval.
+- Wallet Connect
+- Built with well-known components: Next.js, Ethers.js, CDK and SST, Electron, AWS Cognito, AWS KMS
 
 ### Wallet comparisons
 
@@ -69,6 +68,12 @@ We are used to the Software as a Service (SaaS) paradigm, where intermediate com
 | **Protect any digital asset** | NO         | NO       | NO       | Yes               |
 
 ### Status & contributions
+
+Currently, Llavero is an MVP. Is a basic EVM wallet with WalletConnect support. Many security layers aren't yet developed. Such as Passkeys, a good penetration test, create many tests.
+
+So if you are a developer, a web security specialist or QA tester that you wanna contribute great!
+
+If you are a cloud architect or security specialist and you wanna participate in architecture and/or security layers proposal also you are very welcome :)
 
 ## Objectives
 
@@ -95,6 +100,8 @@ Second, in the coming years, our digital identity will be compromised by AI. We 
     Technology to the people. Provide the best technology as possible to end-users at an affordable cost.
 
 # Installation
+
+Llavero wallet currently has two types of installations. One for devs, using Github Actions and another for regular users with a desktop installer for Windows, Mac and Linux.
 
 ## Manual/Dev Installation
 
@@ -132,6 +139,10 @@ EMAIL="your@email.com" REGION="us-east-1" AWS_ACCESS_KEY_ID="id" AWS_SECRET_ACCE
 ```
 
 # Roadmap and proposals
+
+- Root user security
+- Service cloak
+- Multi-chain wallet?
 
 # components and architecture
 
