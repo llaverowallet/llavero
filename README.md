@@ -77,6 +77,8 @@ If you are a cloud architect or security specialist and you wanna participate in
 
 ## Objectives
 
+**Objective:** Effortless Secure Self-Custody
+
 Can open source create an IaC solution for personal use – easy, secure, 100% private, cheap, and censorship-resistant?
 
 Why? For absolute privacy, security, ease of use, and resilience to secure my assets and personal verifiable credentials.
