@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { FormEvent, useState } from 'react';
 import { web3wallet } from '@/shared/utils/walletConnectUtil';
 import {
@@ -11,7 +12,7 @@ import {
 } from '@/shared/components/ui/dialog';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
-import { QrCode } from 'lucide-react';
+import WalletConnectLogo from '@/shared/assets/wallet-connect-logo.png';
 
 const WalletConnectDialog = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -43,9 +44,11 @@ const WalletConnectDialog = () => {
     <>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
-          <Button>
-            <QrCode className="h-4 w-4" />
-          </Button>
+          <img
+            src={WalletConnectLogo.src}
+            alt="Wallet Connect logo"
+            className="h-8 w-8 cursor-pointer"
+          />
         </DialogTrigger>
         <DialogContent className="max-w-[360px] sm:max-w-[425px]">
           <DialogHeader>
