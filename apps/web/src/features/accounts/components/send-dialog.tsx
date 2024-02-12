@@ -44,12 +44,12 @@ async function estimateGasPriceFee({
   // Estimate gas price
   const { gasPrice } = await provider.getFeeData();
 
-  console.log({
-    gasAmount,
-    gasPrice,
-    to: to,
-    value: parseEther(amount),
-  });
+  // console.log({
+  //   gasAmount,
+  //   gasPrice,
+  //   to: to,
+  //   value: parseEther(amount),
+  // });
 
   return new BigNumber(+gasAmount.toString()).times(gasPrice ? +gasPrice?.toString() : 1).times(3);
 }
@@ -62,21 +62,21 @@ async function estimateMaxTransfer({
   amount: any;
 }) {
   try {
-    console.log('amount', amount);
+    // console.log('amount', amount);
     // Convert the amount to sent to a BigNumber
     const bigNumberAmount = new BigNumber(parseEther(amount).toString());
     const estimateGasFee = await estimateGasPriceFee({ provider, amount });
     const maxTransferAmount = bigNumberAmount.minus(+estimateGasFee.toString());
 
-    console.log('bigNumberAmount.toString()', bigNumberAmount.toString());
-    console.log('estimateGas.toString()', estimateGasFee.toString());
-    console.log('maxTransferAmount', maxTransferAmount.toString());
+    // console.log('bigNumberAmount.toString()', bigNumberAmount.toString());
+    // console.log('estimateGas.toString()', estimateGasFee.toString());
+    // console.log('maxTransferAmount', maxTransferAmount.toString());
 
-    console.log({
-      bigNumberAmount: formatUnits(bigNumberAmount.toString(), 'ether'),
-      maxTransferAmount: formatUnits(maxTransferAmount.toString(), 'ether'),
-      estimatedGasPrice: formatUnits(estimateGasFee.toString(), 'ether'),
-    });
+    // console.log({
+    //   bigNumberAmount: formatUnits(bigNumberAmount.toString(), 'ether'),
+    //   maxTransferAmount: formatUnits(maxTransferAmount.toString(), 'ether'),
+    //   estimatedGasPrice: formatUnits(estimateGasFee.toString(), 'ether'),
+    // });
 
     return {
       maxTransferAmount: formatUnits(maxTransferAmount.toString(), 'ether'),
