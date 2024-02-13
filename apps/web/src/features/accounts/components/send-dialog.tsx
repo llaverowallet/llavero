@@ -32,7 +32,7 @@ async function estimateGasPriceFee({
   to = '0x5446b294e0621150d19b7b24b69317b897ebca72',
 }: {
   provider: JsonRpcProvider;
-  amount: any;
+  amount: string;
   to?: string;
 }) {
   // Estimate gas price
@@ -59,7 +59,7 @@ async function estimateMaxTransfer({
   amount,
 }: {
   provider: JsonRpcProvider;
-  amount: any;
+  amount: string;
 }) {
   try {
     // console.log('amount', amount);
