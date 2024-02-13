@@ -27,7 +27,7 @@ const Accounts = () => {
   const router = useRouter();
   const queryParams = useSearchParams();
   const accountIndex =
-    Number(queryParams.get('k')) || Number(window.localStorage.getItem('accountIndex')) || 0;
+    Number(queryParams.get('k')) || Number(window?.localStorage.getItem('accountIndex')) || 0;
   const { network } = useNetwork();
   const eip155Address = `${network.namespace}:${network.chainId}`;
   const { rpc } = getChainByEip155Address(eip155Address);
@@ -54,7 +54,7 @@ const Accounts = () => {
   const handleSelectAccount = (account: WalletInfo) => {
     const index = accounts?.findIndex((a) => a.address === account.address || 0);
     router.replace(`/accounts?k=${index}`);
-    window.localStorage.setItem('accountIndex', index?.toString() || '0');
+    window?.localStorage.setItem('accountIndex', index?.toString() || '0');
   };
 
   return (
