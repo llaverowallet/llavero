@@ -16,6 +16,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
+      - name: Install host dependencies
+        # if: runner.os == 'macOS'
+        # FIXME: Python 3.12 dropped distutils that node-gyp depends upon.
+        # This is a temporary workaround to make the job use Python 3.11 until
+        # got it from https://github.com/balena-io/etcher/blob/master/.github/actions/publish/action.yml
+        uses: actions/setup-python@d27e3f3d7c64b4bbf8e4abfb9b63b83e846e0435 # v4
+        with:
+          python-version: '3.11'
       - name: yarn
         uses: borales/actions-yarn@v4
         with:
