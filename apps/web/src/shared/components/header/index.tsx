@@ -77,7 +77,7 @@ const Header = () => {
                     value={eip155Address}
                     onValueChange={(eip155Address) => {
                       SettingsStore.setNetwork(getChainByEip155Address(eip155Address));
-                      window.localStorage.setItem('eip155Address', eip155Address);
+                      window?.localStorage.setItem('eip155Address', eip155Address);
                     }}
                   >
                     <SelectTrigger>

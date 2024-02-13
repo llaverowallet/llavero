@@ -25,7 +25,12 @@ const state = proxy<State>({
   activeChainId: '1',
   eip155Address: '',
   relayerRegionURL: '',
-  network: EIP155_CHAINS[window.localStorage.getItem('eip155Address') || 'eip155:80001'],
+  network:
+    EIP155_CHAINS[
+      typeof window !== 'undefined'
+        ? window?.localStorage.getItem('eip155Address') || 'eip155:80001'
+        : 'eip155:80001'
+    ],
   sessions: [],
 });
 
