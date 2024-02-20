@@ -50,8 +50,6 @@ const Header = () => {
     await signOut({ callbackUrl: REDIRECT_AFTER_LOGOUT_URL });
   };
 
-  console.log('eip155Address', eip155Address);
-
   return (
     <header className="px-4 xl:px-0 sm:flex sm:justify-between py-3 border-b shadow-md sticky top-0 bg-background z-50 border-border">
       <Container>
