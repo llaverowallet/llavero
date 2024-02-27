@@ -61,7 +61,7 @@ const getTransaction = ({ network, txHash }: { network: string; txHash: string }
     if (!receipt && !transaction) return Promise.reject("Couldn't find transaction");
 
     const block = await provider.getBlock(
-      check<string>(transaction?.blockNumber?.toString(), 'TX BlockNumber'),
+      check<number>(transaction?.blockNumber, 'TX BlockNumber'),
     );
     const { status, gasUsed } = receipt || {};
     const { from, to, value, nonce, hash, chainId, gasLimit } = transaction || {};
