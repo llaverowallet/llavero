@@ -26,6 +26,34 @@ import { useSession } from 'next-auth/react';
 import { toast } from '@/shared/hooks/use-toast';
 import { check, getAccessToken } from '@/shared/utils/general';
 
+async function estimateGasPriceFee({
+  provider,
+  amount,
+  to = '0x5446b294e0621150d19b7b24b69317b897ebca72',
+}: {
+  provider: JsonRpcProvider;
+  amount: string;
+  to?: string;
+}) {
+  // Estimate gas price
+  const gasAmount = await provider.estimateGas({
+    to: to,
+    value: parseEther(amount),
+  });
+
+  // Estimate gas price
+  const { gasPrice } = await provider.getFeeData();
+
+  // console.log({
+  //   gasAmount,
+  //   gasPrice,
+  //   to: to,
+  //   value: parseEther(amount),
+  // });
+
+  return new BigNumber(+gasAmount.toString()).times(gasPrice ? +gasPrice?.toString() : 1).times(3);
+}
+
 async function estimateMaxTransfer({
   provider,
   amount,
@@ -34,23 +62,25 @@ async function estimateMaxTransfer({
   amount: string;
 }) {
   try {
-    // Convert the number to a BigNumber
-    const bigNumberAmount = new BigNumber(amount);
+    // console.log('amount', amount);
+    // Convert the amount to sent to a BigNumber
+    const bigNumberAmount = new BigNumber(parseEther(amount).toString());
+    const estimateGasFee = await estimateGasPriceFee({ provider, amount });
+    const maxTransferAmount = bigNumberAmount.minus(+estimateGasFee.toString());
 
-    // Estimate gas price
-    const feeData = await provider.getFeeData();
-    const gasPrice = feeData.gasPrice;
+    // console.log('bigNumberAmount.toString()', bigNumberAmount.toString());
+    // console.log('estimateGas.toString()', estimateGasFee.toString());
+    // console.log('maxTransferAmount', maxTransferAmount.toString());
 
-    // Convert the gas price from Wei to Gwei or Ether for better readability
-    const gasPriceInEth = formatUnits(check<bigint>(gasPrice, 'gasPrice'), 'ether');
-    //const gasPriceInGwei = formatUnits(gasPrice, 'gwei');
-    //const gasPriceInWei = formatUnits(gasPrice, 'wei');
-
-    const maxTransferAmount = bigNumberAmount.minus(new BigNumber(gasPriceInEth));
+    // console.log({
+    //   bigNumberAmount: formatUnits(bigNumberAmount.toString(), 'ether'),
+    //   maxTransferAmount: formatUnits(maxTransferAmount.toString(), 'ether'),
+    //   estimatedGasPrice: formatUnits(estimateGasFee.toString(), 'ether'),
+    // });
 
     return {
-      maxTransferAmount: maxTransferAmount.toString(),
-      estimatedGasPrice: Number(amount) ? gasPriceInEth : '0',
+      maxTransferAmount: formatUnits(maxTransferAmount.toString(), 'ether'),
+      estimatedGasPrice: formatUnits(estimateGasFee.toString(), 'ether'),
     };
   } catch (error: unknown) {
     console.error('estimateMaxTransfer Error:', error);

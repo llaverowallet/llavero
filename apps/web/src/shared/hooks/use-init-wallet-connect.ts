@@ -5,6 +5,7 @@ import { useSnapshot } from 'valtio';
 import { Session } from 'next-auth';
 
 export default function useInitWalletConnect(session: Session | null) {
+  const isLoading = useRef(false);
   const [initialized, setInitialized] = useState(false);
   const prevRelayerURLValue = useRef<string>('');
 
@@ -12,7 +13,10 @@ export default function useInitWalletConnect(session: Session | null) {
 
   const onInitialize = useCallback(async () => {
     try {
+      if (isLoading.current || initialized) return;
       if (!session || !session.user || !session.user?.email) return;
+      if (web3wallet) return;
+      isLoading.current = true;
 
       const eip155Addresses = await (await fetch(`/api/accounts?network=`)).json();
       SettingsStore.setEIP155Address(eip155Addresses[0].address);
@@ -21,7 +25,7 @@ export default function useInitWalletConnect(session: Session | null) {
     } catch (err: unknown) {
       console.error(err);
     }
-  }, [relayerRegionURL, session]);
+  }, [relayerRegionURL, session, initialized]);
 
   // restart transport if relayer region changes
   const onRelayerRegionChange = useCallback(() => {

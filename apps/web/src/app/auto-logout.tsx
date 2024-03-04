@@ -25,7 +25,7 @@ export function AutoLogoutProvider({
   const _storageKey = '_lastActivity';
 
   function storage() {
-    return global.window !== undefined ? window.localStorage : null;
+    return global.window !== undefined ? window?.localStorage : null;
   }
 
   const parseLastActivityString = useCallback((activityStr?: string | null) => {
