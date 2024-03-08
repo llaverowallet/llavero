@@ -37,6 +37,8 @@ async function estimateGasPriceFee({
 }) {
   if (!Number(amount)) return 0;
 
+  // Some chains like ´DeepL´ gives error when trying to estimate gas
+  // But you can still make a transaction
   const gasUnits = await provider.estimateGas({
     to: to,
     value: parseEther(amount) ?? 0,
