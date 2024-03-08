@@ -35,23 +35,26 @@ async function estimateGasPriceFee({
   amount: string;
   to?: string;
 }) {
-  // Estimate gas price
-  const gasAmount = await provider.estimateGas({
+  if (!Number(amount)) return 0;
+
+  const gasUnits = await provider.estimateGas({
     to: to,
-    value: parseEther(amount),
+    value: parseEther(amount) ?? 0,
+  });
+  const gasUnitsIncreased = BigNumber(gasUnits.toString()).times(2); // Un calculo en duro, se puede mejorar con el tiempo
+  const getFeeData = await provider.getFeeData();
+  const gasPrice = getFeeData?.maxFeePerGas?.toString() ?? getFeeData?.gasPrice!.toString();
+  const transactionFee = new BigNumber(gasPrice).times(gasUnitsIncreased.toString());
+
+  console.log({
+    gasUnits: gasUnits.toString(),
+    gasUnitsIncreased: gasUnitsIncreased.toString(),
+    gasPrice: gasPrice.toString(),
+    transactionFee: transactionFee.toString(),
+    getFeeData: getFeeData,
   });
 
-  // Estimate gas price
-  const { gasPrice } = await provider.getFeeData();
-
-  // console.log({
-  //   gasAmount,
-  //   gasPrice,
-  //   to: to,
-  //   value: parseEther(amount),
-  // });
-
-  return new BigNumber(+gasAmount.toString()).times(gasPrice ? +gasPrice?.toString() : 1).times(3);
+  return transactionFee;
 }
 
 async function estimateMaxTransfer({
@@ -62,21 +65,9 @@ async function estimateMaxTransfer({
   amount: string;
 }) {
   try {
-    // console.log('amount', amount);
-    // Convert the amount to sent to a BigNumber
     const bigNumberAmount = new BigNumber(parseEther(amount).toString());
     const estimateGasFee = await estimateGasPriceFee({ provider, amount });
     const maxTransferAmount = bigNumberAmount.minus(+estimateGasFee.toString());
-
-    // console.log('bigNumberAmount.toString()', bigNumberAmount.toString());
-    // console.log('estimateGas.toString()', estimateGasFee.toString());
-    // console.log('maxTransferAmount', maxTransferAmount.toString());
-
-    // console.log({
-    //   bigNumberAmount: formatUnits(bigNumberAmount.toString(), 'ether'),
-    //   maxTransferAmount: formatUnits(maxTransferAmount.toString(), 'ether'),
-    //   estimatedGasPrice: formatUnits(estimateGasFee.toString(), 'ether'),
-    // });
 
     return {
       maxTransferAmount: formatUnits(maxTransferAmount.toString(), 'ether'),
@@ -185,12 +176,12 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
     const calculateFee = async () => {
       if (!debouncedBalance) return;
 
-      const transferData = await estimateMaxTransfer({
+      const estimateGasFee = await estimateGasPriceFee({
         provider,
         amount: check<string>(debouncedBalance || 0, 'debouncedBalance'),
       });
 
-      setEstimatedGas(transferData?.estimatedGasPrice || '0');
+      setEstimatedGas(estimateGasFee.toString() || '0');
     };
 
     calculateFee();
