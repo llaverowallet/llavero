@@ -107,11 +107,11 @@ Llavero wallet currently has two types of installations. One for devs, using Git
 
 ## Manual/Dev Installation
 
-GA installation
+GA installation - SOON
 
 ## Desktop Installer
 
-download
+download - SOON
 
 # Develop
 
@@ -142,6 +142,7 @@ EMAIL="your@email.com" REGION="us-east-1" AWS_ACCESS_KEY_ID="id" AWS_SECRET_ACCE
 
 # Roadmap and proposals
 
+- Tokens
 - Root user security
 - Service cloak
 - Multi-chain wallet?
