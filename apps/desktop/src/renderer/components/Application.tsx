@@ -1,8 +1,11 @@
+/* eslint-disable jsx-a11y/alt-text */
 import React, { useEffect, useState } from 'react';
 import './Application.scss';
+import { EnvVars } from '../appPreload';
 import { AwsCredentialsForm } from './CredentialsForm/aws-credentials-from';
 import { AwsInstall } from './AwsInstall/aws-install';
-import { Card, CardContent, Grid, Link, Typography } from '@mui/material';
+import { Card, CardContent, Grid, Typography } from '@mui/material';
+// eslint-disable-next-line import/no-unresolved, import/no-extraneous-dependencies
 import logoLlavero from '@assets/llavero-logo.png';
 
 const Application: React.FC = () => {
@@ -10,21 +13,51 @@ const Application: React.FC = () => {
   const [showCredentialsForm, setShowCredentialsForm] = useState(true);
   const [accessKeyId, setAccessKeyId] = useState('');
   const [secretAccessKey, setSecretAccessKey] = useState('');
-  const [showCard, setShowCard] = useState(true);
+  const [, setShowCard] = useState(true);
+  const [credentialsError, setCredentialsError] = useState(false);
 
-  function handleCredentialsSubmit(accessKeyId: string, secretAccessKey: string) {
+  async function handleCredentialsSubmit(
+    accessKeyId: string,
+    secretAccessKey: string,
+  ) {
+    setCredentialsError(false);
+    if (!(await checkCredentials(accessKeyId, secretAccessKey))) {
+      setCredentialsError(true);
+      return;
+    }
     setAccessKeyId(accessKeyId);
     setSecretAccessKey(secretAccessKey);
     setShowCredentialsForm(false);
     setShowCard(false);
-    //onCredentialsSubmit(accessKeyId, secretAccessKey);
+  }
+
+  async function checkCredentials(
+    accessKeyId: string,
+    secretAccessKey: string,
+  ): Promise<boolean> {
+    if (!accessKeyId || !secretAccessKey) return false;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const envVars: EnvVars = await (window as any).setCredentials(
+        accessKeyId,
+        secretAccessKey,
+      );
+      if (envVars) {
+        return true;
+      }
+      return false;
+    } catch {
+      return false;
+    }
   }
 
   /**
    * On component mount
    */
   useEffect(() => {
-    const useDarkTheme = parseInt(localStorage.getItem('dark-mode'));
+    const useDarkTheme = parseInt(localStorage.getItem('dark-mode'), 10);
     if (isNaN(useDarkTheme)) {
       setDarkTheme(false);
     } else if (useDarkTheme == 1) {
@@ -32,10 +65,6 @@ const Application: React.FC = () => {
     } else if (useDarkTheme == 0) {
       setDarkTheme(false);
     }
-
-    // Apply verisons
-    //const app = document.getElementById('app');
-
   }, []);
 
   /**
@@ -51,20 +80,7 @@ const Application: React.FC = () => {
     }
   }, [darkTheme]);
 
-  /**
-   * Toggle Theme
-   */
-  function toggleTheme() {
-    setDarkTheme(!darkTheme);
-  }
-
-  async function openBrowser(url: string) {
-    await (window as any).openInBrowser(url);
-  }
-
   return (
-
-
     <Grid container spacing={2}>
       <Grid xs={12}>
         <span>{/* empty */}</span>
@@ -75,7 +91,7 @@ const Application: React.FC = () => {
         <span>{/* empty */}</span>
       </Grid>
       <Grid xs={10}>
-        <img src={logoLlavero} height="150px" />
+        <img src={logoLlavero} height='150px' />
       </Grid>
       <Grid xs={0}>
         <span>{/* empty */}</span>
@@ -84,7 +100,10 @@ const Application: React.FC = () => {
         <span>{/* empty */}</span>
       </Grid>
       <Grid xs={10}>
-        <Typography ><h1>Installer</h1> </Typography><br />
+        <Typography>
+          <h1>Installer</h1>{' '}
+        </Typography>
+        <br />
       </Grid>
       <Grid xs={0}>
         <span>{/* empty */}</span>
@@ -96,16 +115,28 @@ const Application: React.FC = () => {
         {showCredentialsForm ? (
           <AwsCredentialsForm onSubmit={handleCredentialsSubmit} />
         ) : (
-          <AwsInstall accessKeyId={accessKeyId} secretAccessKey={secretAccessKey} />
+          <AwsInstall
+            accessKeyId={accessKeyId}
+            secretAccessKey={secretAccessKey}
+          />
+        )}
+        {credentialsError && (
+          <p>
+            <Card>
+              <CardContent>
+                <Typography variant='h6' color='error'>
+                  Invalid credentials
+                </Typography>
+              </CardContent>
+            </Card>
+          </p>
         )}
       </Grid>
       <Grid xs={2}>
         <span>{/* empty */}</span>
       </Grid>
     </Grid>
-
   );
 };
 
 export default Application;
-

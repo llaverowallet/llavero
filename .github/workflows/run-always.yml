@@ -1,0 +1,22 @@
+name: Build on PR
+
+on:
+ pull_request:
+    types: [opened, synchronize]
+
+jobs:
+ build:
+    #if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set Node.js 20.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - name: Run install
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: install
+      - name: Build
+        run: yarn build
