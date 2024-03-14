@@ -79,6 +79,8 @@ If you are a cloud architect or security specialist and you wanna participate in
 
 **Objective:** Effortless Secure Self-Custody
 
+**Path:** Identity decentralization
+
 Can open source create an IaC solution for personal use – easy, secure, 100% private, cheap, and censorship-resistant?
 
 Why? For absolute privacy, security, ease of use, and resilience to secure my assets and personal verifiable credentials.
@@ -107,11 +109,11 @@ Llavero wallet currently has two types of installations. One for devs, using Git
 
 ## Manual/Dev Installation
 
-GA installation
+GA installation - SOON
 
 ## Desktop Installer
 
-download
+download - SOON
 
 # Develop
 
@@ -142,6 +144,7 @@ EMAIL="your@email.com" REGION="us-east-1" AWS_ACCESS_KEY_ID="id" AWS_SECRET_ACCE
 
 # Roadmap and proposals
 
+- Tokens
 - Root user security
 - Service cloak
 - Multi-chain wallet?
