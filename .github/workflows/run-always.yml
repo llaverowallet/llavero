@@ -15,8 +15,8 @@ jobs:
         with:
           node-version: 20
       - name: Run install
-        uses: borales/actions-yarn@v4
+        uses: borales/actions-yarn@v4   
         with:
           cmd: install
       - name: Build
-        run: yarn build
+        run: yarn workspace web build-next
