@@ -9,6 +9,7 @@
     "dev-sst": "sst dev",
     "build": "sst bind next build",
     "start": "next start",
+    "build-next": "next build",
     "start-sst": "sst start",
     "lint": "next lint",
     "deploy": "yarn sst deploy --stage prod"
