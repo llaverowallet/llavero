@@ -1,6 +1,10 @@
 import * as sdk from 'aws-sdk';
 import { contextBridge } from 'electron';
-import { DescribeStackEventsCommand, CloudFormationClient, DescribeStacksCommand } from '@aws-sdk/client-cloudformation';
+import {
+  DescribeStackEventsCommand,
+  CloudFormationClient,
+  DescribeStacksCommand,
+} from '@aws-sdk/client-cloudformation';
 import { Bootstrapper } from 'aws-cdk/lib/api/bootstrap';
 import { SdkProvider } from 'aws-cdk/lib/api/aws-auth';
 import path from 'path';
@@ -16,7 +20,6 @@ console.log(nodeModulesPath);
 const REGION = process.env.AWS_DEFAULT_REGION || 'us-east-1';
 sdk.config.update({ region: REGION });
 
-
 //setCredentials
 export interface EnvVars {
   AWS_ACCESS_KEY_ID: string;
@@ -28,6 +31,7 @@ export interface EnvVars {
   KEYS_NUMBER?: number;
   REGION: string;
   EMAIL: string;
+  AutoUpdate?: boolean;
 }
 export type InstallationResult = 'installing' | 'updating' | 'failed';
 const setCredentials = async (accessKeyId: string, secretAccessKey: string) => {
@@ -40,7 +44,7 @@ const setCredentials = async (accessKeyId: string, secretAccessKey: string) => {
       AWS_SECRET_ACCESS_KEY: secretAccessKey,
       EMAIL: '',
       REGION: REGION,
-    }
+    };
     //process.env['AWS_ACCESS_KEY_ID'] = accessKeyId;
     //process.env['AWS_SECRET_ACCESS_KEY'] = secretAccessKey;
     sdk.config.update({ accessKeyId, secretAccessKey });
@@ -62,11 +66,36 @@ const setCredentials = async (accessKeyId: string, secretAccessKey: string) => {
     });
   });
 };
-contextBridge.exposeInMainWorld('setCredentials', (accessKeyId: string, secretAccessKey: string) => setCredentials(accessKeyId, secretAccessKey));
+contextBridge.exposeInMainWorld(
+  'setCredentials',
+  (accessKeyId: string, secretAccessKey: string) =>
+    setCredentials(accessKeyId, secretAccessKey),
+);
 
 //getAllRegions
 async function getAllRegions() {
-  return ['us-east-1', 'us-east-2', 'us-west-1', 'us-west-2', 'eu-west-1', 'eu-west-2', 'eu-west-3', 'eu-central-1', 'eu-north-1', 'ap-east-1', 'ap-south-1', 'ap-northeast-1', 'ap-northeast-2', 'ap-southeast-1', 'ap-southeast-2', 'ca-central-1', 'cn-north-1', 'cn-northwest-1', 'me-south-1', 'sa-east-1'];
+  return [
+    'us-east-1',
+    'us-east-2',
+    'us-west-1',
+    'us-west-2',
+    'eu-west-1',
+    'eu-west-2',
+    'eu-west-3',
+    'eu-central-1',
+    'eu-north-1',
+    'ap-east-1',
+    'ap-south-1',
+    'ap-northeast-1',
+    'ap-northeast-2',
+    'ap-southeast-1',
+    'ap-southeast-2',
+    'ca-central-1',
+    'cn-north-1',
+    'cn-northwest-1',
+    'me-south-1',
+    'sa-east-1',
+  ];
 }
 contextBridge.exposeInMainWorld('getAllRegions', () => getAllRegions());
 
@@ -75,7 +104,9 @@ function setRegion(region: string) {
   sdk.config.update({ region });
   process.env.AWS_DEFAULT_REGION = process.env.CDK_DEFAULT_REGION = region;
 }
-contextBridge.exposeInMainWorld('setRegion', (region: string) => setRegion(region));
+contextBridge.exposeInMainWorld('setRegion', (region: string) =>
+  setRegion(region),
+);
 
 //getStackEvents
 interface StackEvent {
@@ -90,7 +121,10 @@ interface StackEvent {
   ResourceStatusReason?: string;
   ResourceProperties?: string;
 }
-async function getStackEvents(stackName: string, callback: (event: StackEvent) => void) {
+async function getStackEvents(
+  stackName: string,
+  callback: (event: StackEvent) => void,
+) {
   const cloudFormationClient = new CloudFormationClient({});
   const command = new DescribeStackEventsCommand({ StackName: stackName });
   const response = await cloudFormationClient.send(command);
@@ -101,7 +135,11 @@ async function getStackEvents(stackName: string, callback: (event: StackEvent) =
     callback(event as StackEvent);
   });
 }
-contextBridge.exposeInMainWorld('getStackEvents', (stackName: string, callback: (event: StackEvent) => void) => getStackEvents(stackName, callback));
+contextBridge.exposeInMainWorld(
+  'getStackEvents',
+  (stackName: string, callback: (event: StackEvent) => void) =>
+    getStackEvents(stackName, callback),
+);
 
 //getStackInfo
 async function getStackInfo(stackName: string) {
@@ -125,21 +163,38 @@ async function getStackInfo(stackName: string) {
     tags: stack.Tags,
   };
 }
-contextBridge.exposeInMainWorld('getStackInfo', (stackName: string) => getStackInfo(stackName));
+contextBridge.exposeInMainWorld('getStackInfo', (stackName: string) =>
+  getStackInfo(stackName),
+);
 
 //bootstrapCdk
 async function bootstrapCdk(vars: EnvVars) {
   try {
-    console.log(`Running bootstrapCdk for aws://${vars.AWS_ACCOUNT_ID}/${vars.REGION}`);
+    console.log(
+      `Running bootstrapCdk for aws://${vars.AWS_ACCOUNT_ID}/${vars.REGION}`,
+    );
     console.log('process.env.AWS_PROFILE: ', process.env.AWS_PROFILE);
 
-    const credentials = new sdk.Credentials({ accessKeyId: vars.AWS_ACCESS_KEY_ID, secretAccessKey: vars.AWS_SECRET_ACCESS_KEY });
+    const credentials = new sdk.Credentials({
+      accessKeyId: vars.AWS_ACCESS_KEY_ID,
+      secretAccessKey: vars.AWS_SECRET_ACCESS_KEY,
+    });
     const chain = new sdk.CredentialProviderChain([() => credentials]);
     const sdkProvider = new SdkProvider(chain, vars.REGION, {});
-    const template = nodeModulesPath + '/aws-cdk/lib/api/bootstrap/bootstrap-template.yaml';
+    const template = `${nodeModulesPath}/aws-cdk/lib/api/bootstrap/bootstrap-template.yaml`;
     console.log('template: ', template);
-    const bootstrapper = new Bootstrapper({ 'source': 'custom', templateFile: template });
-    const result = await bootstrapper.bootstrapEnvironment({ name: 'llavero-bootstrap', account: vars.AWS_ACCOUNT_ID, region: vars.REGION }, sdkProvider);
+    const bootstrapper = new Bootstrapper({
+      source: 'custom',
+      templateFile: template,
+    });
+    const result = await bootstrapper.bootstrapEnvironment(
+      {
+        name: 'llavero-bootstrap',
+        account: vars.AWS_ACCOUNT_ID,
+        region: vars.REGION,
+      },
+      sdkProvider,
+    );
     console.log('bootstrapCdk result: ', result);
     return result;
   } catch (error) {
@@ -148,47 +203,66 @@ async function bootstrapCdk(vars: EnvVars) {
   return false;
 }
 
-/* 
-* This function synths the CDK app and returns the stack template
-*/
+/*
+ * This function synths the CDK app and returns the stack template
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const getStackArtifact = (app: cdk.App, stack: any): cxapi.CloudArtifact | undefined => {
+const getStackArtifact = (
+  app: cdk.App,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  stack: any,
+): cxapi.CloudArtifact | undefined => {
   try {
     const synthesized = app.synth();
 
     // Reload the synthesized artifact for stack using the cxapi from dependencies
-    const assembly = new cxapi.CloudAssembly(synthesized.directory, { skipVersionCheck: true }); //TODO ver esto
+    const assembly = new cxapi.CloudAssembly(synthesized.directory, {
+      skipVersionCheck: true,
+    }); //TODO ver esto
 
     return cxapi.CloudFormationStackArtifact.fromManifest(
       assembly,
       stack.artifactId,
-      synthesized.getStackArtifact(stack.artifactId).manifest
+      synthesized.getStackArtifact(stack.artifactId).manifest,
     );
   } catch (error) {
-    console.log("getArtifact:" + error);
+    console.log(`getArtifact:${error}`);
     throw error;
   }
 };
 
-/* 
-* This function creates a basic CDK app that creates an S3 bucket
-*/
+/*
+ * This function creates a basic CDK app that creates an S3 bucket
+ */
 async function createCdkStack(vars: EnvVars) {
   try {
     const app = new cdk.App();
-    const stack = new CodedeployStack(app, 'CodedeployStack', {
-      env: { account: vars.AWS_ACCOUNT_ID, region: vars.REGION },
-    },
+    const stack = new CodedeployStack(
+      app,
+      'CodedeployStack',
       {
-        region: vars.REGION, account: vars.AWS_ACCOUNT_ID, email: vars.EMAIL, numberOfKeys: vars.KEYS_NUMBER,
-        awsAccessKeyId: vars.AWS_ACCESS_KEY_ID, awsSecretAccessKey: vars.AWS_SECRET_ACCESS_KEY,
-      }
+        env: { account: vars.AWS_ACCOUNT_ID, region: vars.REGION },
+      },
+      {
+        region: vars.REGION,
+        account: vars.AWS_ACCOUNT_ID,
+        email: vars.EMAIL,
+        numberOfKeys: vars.KEYS_NUMBER,
+        awsAccessKeyId: vars.AWS_ACCESS_KEY_ID,
+        awsSecretAccessKey: vars.AWS_SECRET_ACCESS_KEY,
+        autoUpdate: vars.AutoUpdate ?? false,
+      },
     );
     const stackArtifact = getStackArtifact(app, stack);
-    const credentials = new sdk.Credentials({ accessKeyId: vars.AWS_ACCESS_KEY_ID, secretAccessKey: vars.AWS_SECRET_ACCESS_KEY });
+    const credentials = new sdk.Credentials({
+      accessKeyId: vars.AWS_ACCESS_KEY_ID,
+      secretAccessKey: vars.AWS_SECRET_ACCESS_KEY,
+    });
     const chain = new sdk.CredentialProviderChain([() => credentials]);
     const sdkProvider = new SdkProvider(chain, vars.REGION, {});
-    const cloudFormation = new cfDeployments.CloudFormationDeployments({ sdkProvider });
+    const cloudFormation = new cfDeployments.CloudFormationDeployments({
+      sdkProvider,
+    });
 
     if (!stackArtifact) throw new Error('stackArtifact is null');
 
@@ -196,12 +270,11 @@ async function createCdkStack(vars: EnvVars) {
       stack: stackArtifact as cxapi.CloudFormationStackArtifact,
       quiet: false,
     });
-    process.env.AWS_ACCESS_KEY_ID = "dfdsfregrgrtgthtrhrththt";
-    process.env.AWS_SECRET_ACCESS_KEY = "dfdsfregrgrtgthtrhrththt";
-    vars.AWS_ACCESS_KEY_ID = "dfdsfregrgrtgthtrhrththt";
-    vars.AWS_SECRET_ACCESS_KEY = "dfdsfregrgrtgthtrhrththt";
-  }
-  catch (e) {
+    process.env.AWS_ACCESS_KEY_ID = 'dfdsfregrgrtgthtrhrththt';
+    process.env.AWS_SECRET_ACCESS_KEY = 'dfdsfregrgrtgthtrhrththt';
+    vars.AWS_ACCESS_KEY_ID = 'dfdsfregrgrtgthtrhrththt';
+    vars.AWS_SECRET_ACCESS_KEY = 'dfdsfregrgrtgthtrhrththt';
+  } catch (e) {
     console.log(e);
     throw e;
   }
@@ -214,7 +287,10 @@ async function installWallet(envVars: EnvVars): Promise<InstallationResult> {
     console.log('envVars bootstrapCdk: ', envVars);
     setCredentials(envVars.AWS_ACCESS_KEY_ID, envVars.AWS_SECRET_ACCESS_KEY);
 
-    const exists = await checkIfPipelineExists('LlaveroPipeline', envVars.REGION);
+    const exists = await checkIfPipelineExists(
+      'LlaveroPipeline',
+      envVars.REGION,
+    );
     await bootstrapCdk(envVars);
     console.log('envVars createCdkStack: ', envVars);
     await createCdkStack(envVars);
@@ -224,16 +300,20 @@ async function installWallet(envVars: EnvVars): Promise<InstallationResult> {
     }
     return 'installing';
   } catch (error) {
-    debugger;
     console.log('installWallet error: ', error);
-    return  'failed';
+    return 'failed';
   }
 }
-contextBridge.exposeInMainWorld('installWallet', async (envVars: EnvVars): Promise<InstallationResult> => await installWallet(envVars));
+contextBridge.exposeInMainWorld(
+  'installWallet',
+  async (envVars: EnvVars): Promise<InstallationResult> =>
+    await installWallet(envVars),
+);
 
-
-
-async function checkIfPipelineExists(pipelineName: string, region: string): Promise<boolean> {
+async function checkIfPipelineExists(
+  pipelineName: string,
+  region: string,
+): Promise<boolean> {
   const codepipeline = new sdk.CodePipeline({ region: region });
 
   try {
@@ -248,7 +328,10 @@ async function checkIfPipelineExists(pipelineName: string, region: string): Prom
   }
 }
 
-async function startPipelineAndWait(pipelineName: string, region: string): Promise<void> {
+async function startPipelineAndWait(
+  pipelineName: string,
+  region: string,
+): Promise<void> {
   const codepipeline = new sdk.CodePipeline({ region: region });
 
   try {
@@ -257,15 +340,18 @@ async function startPipelineAndWait(pipelineName: string, region: string): Promi
 
     let pipelineRunning = false;
     let attempts = 0;
-    while (!pipelineRunning && attempts < 12) { // check every 5 seconds for 1 minute
-      const pipelineState = await codepipeline.getPipelineState({ name: pipelineName }).promise();
+    while (!pipelineRunning && attempts < 12) {
+      // check every 5 seconds for 1 minute
+      const pipelineState = await codepipeline
+        .getPipelineState({ name: pipelineName })
+        .promise();
       const currentStage = pipelineState.stageStates?.[0]; // assuming the first stage is the one we want to check
 
       if (currentStage?.latestExecution?.status === 'InProgress') {
         pipelineRunning = true;
       } else {
         console.log('Waiting for pipeline to start running...');
-        await new Promise(resolve => setTimeout(resolve, 5000)); // wait for 5 seconds before checking again
+        await new Promise((resolve) => setTimeout(resolve, 5000)); // wait for 5 seconds before checking again
         attempts++;
       }
     }
@@ -284,10 +370,16 @@ async function startPipelineAndWait(pipelineName: string, region: string): Promi
 function openInBrowser(url: string) {
   require('electron').shell.openExternal(url);
 }
-contextBridge.exposeInMainWorld('openInBrowser', (url: string) => openInBrowser(url));
+contextBridge.exposeInMainWorld('openInBrowser', (url: string) =>
+  openInBrowser(url),
+);
 
-
-function checkInputs(envVars: { REGION: string; EMAIL: string; AWS_ACCESS_KEY_ID: string; AWS_SECRET_ACCESS_KEY: string; }) {
+function checkInputs(envVars: {
+  REGION: string;
+  EMAIL: string;
+  AWS_ACCESS_KEY_ID: string;
+  AWS_SECRET_ACCESS_KEY: string;
+}) {
   if (!envVars.REGION) {
     throw new Error('REGION is required');
   }

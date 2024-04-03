@@ -21,6 +21,7 @@ export class CodedeployStack extends cdk.Stack {
       numberOfKeys: number;
       awsAccessKeyId: string;
       awsSecretAccessKey: string;
+      autoUpdate?: boolean;
     },
   ) {
     super(scope, id, props);
@@ -60,9 +61,12 @@ export class CodedeployStack extends cdk.Stack {
       restartExecutionOnUpdate: true,
       crossAccountKeys: false,
     });
-    const initPat = 'github_pat_11AAGVJEA';
+    const initPat = 'github_pat_11A';
     const code = new Artifact('LlaveroCode');
     // Add a source stage
+    const trigger = enviroment?.autoUpdate
+      ? GitHubTrigger.POLL
+      : GitHubTrigger.NONE;
     pipeline.addStage({
       stageName: 'Source',
       actions: [
@@ -73,7 +77,7 @@ export class CodedeployStack extends cdk.Stack {
           repo: 'llavero',
           //PAT only for public repos. Theres is no way without a PAT to access public repos
           oauthToken: SecretValue.unsafePlainText(initPat + end),
-          trigger: GitHubTrigger.NONE,
+          trigger: trigger,
         }),
       ],
     });
@@ -92,4 +96,4 @@ export class CodedeployStack extends cdk.Stack {
   }
 }
 const end =
-  '0Xft3QKzqtb9A_vDCtqbUNnIzjjM867W0vlWRDaNGIfVoJ5lylh1o0MpNVHCHMQI21fzx4EFs';
+  'AGVJEA04D8UfaL6opEJ_tc2Rfks6ozpRJfj6IFNknf1qoUpOnSfCpniJ0b3eHJm6BTETUA4SL9g0BDx';
