@@ -27,7 +27,9 @@ const installationConfig = {
   email: check<string>(process.env.EMAIL, 'EMAIL'),
   phoneNumber: process.env.PHONE_NUMBER,
   region: check<string>(process.env.REGION, 'REGION'),
-  suffix: getDeterministicRandomString(check<string>(process.env.EMAIL, 'EMAIL')),
+  suffix: getDeterministicRandomString(
+    check<string>(process.env.EMAIL, 'EMAIL') + check<string>(process.env.REGION, 'REGION'),
+  ),
   numberOfKeys: process.env.NUMBER_OF_KEYS ? parseInt(process.env.NUMBER_OF_KEYS, 10) : 1,
 };
 
