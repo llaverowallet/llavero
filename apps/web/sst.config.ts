@@ -184,11 +184,7 @@ export function llaveroStack({ stack, app }: StackContext) {
   ]);
 
   stack.addOutputs({
-    SiteUrl: site.url,
-    UserPoolId: auth.userPoolId,
-    UserPoolClientId: auth.userPoolClientId,
-    CognitoPoolId: auth.cognitoIdentityPoolId ?? 'empty',
-    cognitoUserPoolArn: auth.userPoolArn,
+    finished: 'true',
   });
 }
 
