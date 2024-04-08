@@ -19,6 +19,8 @@ import { KMS } from './sst/kms-construct';
 import crypto from 'crypto';
 import { getParameterPath } from 'sst/constructs/util/functionBinding.js';
 import { TableEncryption } from 'aws-cdk-lib/aws-dynamodb';
+import { customRandom } from 'nanoid';
+import seedrandom from 'seedrandom';
 
 process.setMaxListeners(Infinity); //TODO remove this
 const localhostUrl = 'http://localhost:3000';
@@ -27,7 +29,9 @@ const installationConfig = {
   email: check<string>(process.env.EMAIL, 'EMAIL'),
   phoneNumber: process.env.PHONE_NUMBER,
   region: check<string>(process.env.REGION, 'REGION'),
-  suffix: getDeterministicRandomString(check<string>(process.env.EMAIL, 'EMAIL')),
+  suffix: getDeterministicRandomString(
+    check<string>(process.env.EMAIL, 'EMAIL') + check<string>(process.env.REGION, 'REGION'),
+  ),
   numberOfKeys: process.env.NUMBER_OF_KEYS ? parseInt(process.env.NUMBER_OF_KEYS, 10) : 1,
 };
 
@@ -243,11 +247,9 @@ function randomString(length: number, justChars = false): string {
 }
 
 function getDeterministicRandomString(seed: string, max = 5): string {
-  // Create a deterministic hash from the seed
-  const hash = crypto
-    .createHmac('sha256', seed.toLocaleLowerCase())
-    .update('deterministicSalt')
-    .digest('hex');
-
-  return hash.substring(0, max).replace('0x', '');
+  const rng = seedrandom(seed);
+  const nanoid = customRandom('abcdefghijklmnopqrstuvwxyz0123456789', max, (size) => {
+    return new Uint8Array(size).map(() => 256 * rng());
+  });
+  return nanoid();
 }

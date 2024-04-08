@@ -90,20 +90,15 @@ const Application: React.FC = () => {
       <Grid xs={2}>
         <span>{/* empty */}</span>
       </Grid>
-      <Grid xs={10}>
-        <img src={logoLlavero} height='150px' />
-      </Grid>
-      <Grid xs={0}>
-        <span>{/* empty */}</span>
-      </Grid>
       <Grid xs={2}>
-        <span>{/* empty */}</span>
-      </Grid>
-      <Grid xs={10}>
-        <Typography>
-          <h1>Installer</h1>{' '}
-        </Typography>
+        <img src={logoLlavero} height='90px' />
         <br />
+        <br />
+      </Grid>
+      <Grid xs={8}>
+        <Typography>
+          <h2>Installer</h2>{' '}
+        </Typography>
       </Grid>
       <Grid xs={0}>
         <span>{/* empty */}</span>

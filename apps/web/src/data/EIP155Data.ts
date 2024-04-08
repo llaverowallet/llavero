@@ -80,16 +80,6 @@ export const EIP155_MAINNET_CHAINS: Record<string, Chain> = {
     symbol: 'ETH',
     explorer: 'https://aurora.dev',
   },
-  'eip155:222555': {
-    chainId: 222555,
-    name: 'DeepL Mainnet',
-    logo: '/chain-logos/eip155-324.svg',
-    rgb: '242, 242, 242',
-    rpc: 'http://rpc.deeplnetwork.org/',
-    namespace: 'eip155',
-    symbol: 'DEEPL',
-    explorer: 'https://scan.deeplnetwork.org/',
-  },
 };
 
 export const EIP155_TEST_CHAINS: Record<string, Chain> = {
@@ -152,16 +142,6 @@ export const EIP155_TEST_CHAINS: Record<string, Chain> = {
     namespace: 'eip155',
     symbol: 'ETH',
     explorer: 'https://rinkeby-explorer.zksync.io',
-  },
-  'eip155:222666': {
-    chainId: 222666,
-    name: 'DeepL Testnet',
-    logo: '/chain-logos/eip155-324.svg',
-    rgb: '242, 242, 242',
-    rpc: 'https://testnet.deeplnetwork.org/',
-    namespace: 'eip155',
-    symbol: 'DEEPL',
-    explorer: 'https://testnet-scan.deeplnetwork.org/',
   },
 };
 

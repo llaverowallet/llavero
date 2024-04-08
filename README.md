@@ -2,15 +2,15 @@
 
 **My hardware wallet as MY service**
 
-Llavero means keyring in spanish. “LLa” is pronounced as “Ya” in Yatch
+Llavero means keyring in spanish. “Lla” is pronounced as “Ya” in Yacht or SHA
 
 Llavero is a self-service, non-custodial wallet that uses [AWS KMS](https://aws.amazon.com/kms/faqs/) for secure key management, offering a custodial user experience.
 
 ## Table of Contents
 
 - [Introduction](#introduction)
-  - [KMS](#kms)
   - [Software as MY Service (SaMS)](#software-as-my-service-sams)
+  - [KMS](#kms)
   - [Llavero's features](#llaveros-features)
     - [Wallet comparisons](#wallet-comparisons)
     - [Status \& contributions](#status--contributions)
@@ -20,17 +20,24 @@ Llavero is a self-service, non-custodial wallet that uses [AWS KMS](https://aws.
 - [Installation](#installation)
   - [Manual/Dev Installation](#manualdev-installation)
   - [Desktop Installer](#desktop-installer)
+  - [Differences between Fork and Desktop Installer](#differences-between-fork-and-desktop-installer)
 - [Develop](#develop)
   - [To Dev:](#to-dev)
     - [To emulate next.js prod on local env](#to-emulate-nextjs-prod-on-local-env)
 - [Roadmap and proposals](#roadmap-and-proposals)
-- [components and architecture](#components-and-architecture)
+- [Components and architecture](#components-and-architecture)
   - [Installer](#installer)
   - [Web](#web)
 
 # Introduction
 
 **Llavero: My hardware wallet as MY service. What does this mean?**
+
+### Software as MY Service (SaMS)
+
+**As MY services** mean that is a self-hosted service. It’s your cloud stack: buckets, DB, CDN, authentication and authorization services, and KMS, without intermediaries. Is a cloud stack design for just one person, as cost-effective as possible, taking advantage of the generous free tier major cloud companies offer.
+
+We are used to the Software as a Service (SaaS) paradigm, where intermediate companies such as OpenZeppelin or DropBox deliver high-quality products to end users, using major cloud companies as vendors. With Software as MY Service (SaMS), the end user can host their services, maintaining absolute control, autonomy and privacy over their digital assets.
 
 ### KMS
 
@@ -41,12 +48,6 @@ HSMs can be thought of as cloud-based hardware wallets, such as Trezor or Ledger
 AWS KMS is a service where all private keys are securely stored. These keys, generated within the HSM, never leave it. All signing operations are executed within the KMS a concept also known as Cryptography as a Service.
 
 Prominent companies like [OpenZeppelin©](https://www.openzeppelin.com/) leader in the security industry, use AWS KMS to store keys on [Defender](https://docs.openzeppelin.com/defender/v2/manage/relayers#security-considerations). [Defender](https://docs.openzeppelin.com/defender/v2/manage/relayers#security-considerations) assists Blockchain companies in signing and securing their crypto assets.
-
-### Software as MY Service (SaMS)
-
-**As MY services** mean that is a self-hosted service. It’s your cloud stack: buckets, DB, CDN, authentication and authorization services, and KMS, without intermediaries. Is a cloud stack design for just one person, as cost-effective as possible, taking advantage of the generous free tier major cloud companies offer.
-
-We are used to the Software as a Service (SaaS) paradigm, where intermediate companies such as OpenZeppelin or DropBox deliver high-quality products to end users, using major cloud companies as vendors. With Software as MY Service (SaMS), the end user can host their services, maintaining absolute control, autonomy and privacy over their digital assets.
 
 ## Llavero's features
 
@@ -101,19 +102,42 @@ Second, in the coming years, our digital identity will be compromised by AI. We 
 
 ### Philosophy
 
-    Technology to the people. Provide the best technology as possible to end-users at an affordable cost.
+Technology to the people. Provide the best technology as possible to end-users at an affordable cost.
 
 # Installation
 
 Llavero wallet currently has two types of installations. One for devs, using Github Actions and another for regular users with a desktop installer for Windows, Mac and Linux.
 
-## Manual/Dev Installation
+## Steps and Requirements
 
-GA installation - SOON
+1. [Guide: Create a AWS Account](docs/aws-account.md)
+2. [Guide: Create Aws root credentials for installation](docs/create-credentials.md)
+3. Choose your installation. By Forking or download your Desktop OS Installer
+
+## Fork Installation
+
+- [Full fork installation Guide](docs/fork-llavero.md)
+
+- Small version:
+  1. Fork this repo
+  2. Add the following secrets on your repo:
+  - AWS_ACCESS_KEY_ID: the created KEY Id
+  - AWS_SECRET_ACCESS_KEY : the created Secret Key
+  - EMAIL : the email for account recovery and login.
+  - REGION : us-east-1
+  - NUMBER_OF_KEYS (optional default: 1): The number of KMS to be created
+  3. Run the Github action: "GithubAction Installer"
+  4. Wait, approx 20 min, an get on your email your temporary password and login
 
 ## Desktop Installer
 
 download - SOON
+
+## Differences between Fork and Desktop Installer
+
+The Fork installer just run the SST (CDK) Stack on the GIthub action. The user has to update manually each time by pulling from the original repo.
+
+The Desktop install creates a AWS CodePipeline. The SST stack is run on AWS on the AWS Codepipeline. On the Desktop installation the user can setup if Llavero is updated automatically each time the Llavero's Repo has a new release. The AWS Codepipeline tier has a free tier, but is more limited than the GH Action tier. So cost can increase if Llavero releases many versions on the same month.
 
 # Develop
 
@@ -144,10 +168,13 @@ EMAIL="your@email.com" REGION="us-east-1" AWS_ACCESS_KEY_ID="id" AWS_SECRET_ACCE
 
 # Roadmap and proposals
 
-- Tokens
+- AWS KMS Replica multi-region
+- Passkeys and/or Mobile App
+- Tokens ERC20 and NFT
 - Root user security
 - Service cloak
-- Multi-chain wallet?
+- Multi-chain wallet
+- Container installation
 
 # components and architecture
 

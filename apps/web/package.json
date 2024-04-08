@@ -60,9 +60,12 @@
     "valtio": "^1.11.2"
   },
   "devDependencies": {
+    "seedrandom": "^3.0.5",
+    "nanoid": "^5.0.6",
     "@types/js-yaml": "^4.0.6",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/seedrandom": "^3.0.8",
     "@types/uuid": "^9.0.6",
     "@types/validator": "^13.11.8",
     "autoprefixer": "^10.0.1",
