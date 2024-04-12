@@ -21,6 +21,7 @@ Llavero is a self-service, non-custodial wallet that uses [AWS KMS](https://aws.
   - [Manual/Dev Installation](#manualdev-installation)
   - [Desktop Installer](#desktop-installer)
   - [Differences between Fork and Desktop Installer](#differences-between-fork-and-desktop-installer)
+  - [Uninstall](#uninstall)
 - [Develop](#develop)
   - [To Dev:](#to-dev)
     - [To emulate next.js prod on local env](#to-emulate-nextjs-prod-on-local-env)
@@ -141,6 +142,11 @@ Llavero wallet currently has two types of installations. One for devs, using Git
 The Fork installer just run the SST (CDK) Stack on the GIthub action. The user has to update manually each time by pulling from the original repo.
 
 The Desktop install creates a AWS CodePipeline. The SST stack is run on AWS on the AWS Codepipeline. On the Desktop installation the user can setup if Llavero is updated automatically each time the Llavero's Repo has a new release. The AWS Codepipeline tier has a free tier, but is more limited than the GH Action tier. So cost can increase if Llavero releases many versions on the same month.
+
+## Uninstall
+
+Move your crypto before you start the uninstall process:
+[Full uninstall guide](docs/uninstall.md)
 
 # Develop
 
