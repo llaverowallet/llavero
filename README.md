@@ -131,7 +131,10 @@ Llavero wallet currently has two types of installations. One for devs, using Git
 
 ## Desktop Installer
 
-download - SOON
+1. [Create a Personal AWS Account](docs/aws-account.md)
+2. [Create your AWS Credentials](docs/create-credentials.md)
+3. [Download your OS Installer](https://github.com/elranu/llavero/releases/)
+4. [Install it, with simple steps](docs/install-desktop.md)
 
 ## Differences between Fork and Desktop Installer
 
@@ -176,8 +179,6 @@ EMAIL="your@email.com" REGION="us-east-1" AWS_ACCESS_KEY_ID="id" AWS_SECRET_ACCE
 - Multi-chain wallet
 - Container installation
 
-# components and architecture
+#
 
-## Installer
-
-## Web
+### Give us [feedback](https://forms.gle/EffWGrBUdc4wPBSD8) or create and [issue](https://github.com/elranu/llavero/issues)

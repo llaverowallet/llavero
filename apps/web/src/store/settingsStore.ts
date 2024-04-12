@@ -28,8 +28,8 @@ const state = proxy<State>({
   network:
     EIP155_CHAINS[
       typeof window !== 'undefined'
-        ? window?.localStorage.getItem('eip155Address') || 'eip155:80001'
-        : 'eip155:80001'
+        ? window?.localStorage.getItem('eip155Address') || 'eip155:1'
+        : 'eip155:1'
     ],
   sessions: [],
 });
