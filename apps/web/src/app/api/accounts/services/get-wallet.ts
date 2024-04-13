@@ -12,9 +12,7 @@ export default async function getWallet(address: string, username: string): Prom
     const keyDb = await userRepo.getKey(address, '', user);
     if (!keyDb?.keyArn) throw new Error('KeyArn not found');
     console.log('keyDb.keyArn: ', keyDb?.keyArn);
-    const provider = new JsonRpcProvider(
-      'https://sepolia.infura.io/v3/8a30a48106eb413bb29d9ff89d0b99a6',
-    ); //TODO get from an endpoint
+    const provider = new JsonRpcProvider('https://cloudflare-eth.com/'); //TODO get from an endpoint
     const balance = formatEther(await provider.getBalance(keyDb.address as string));
     return { address: address, balance, name: keyDb?.name ?? '', description: keyDb?.description };
   } catch (error) {

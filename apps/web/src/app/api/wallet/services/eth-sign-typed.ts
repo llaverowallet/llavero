@@ -28,9 +28,7 @@ export default async function signTypedData(
 
     const keyClient = new kmsClient.KMSClient();
     const provider = new JsonRpcProvider(
-      !chainId
-        ? 'https://sepolia.infura.io/v3/8a30a48106eb413bb29d9ff89d0b99a6'
-        : getChainRpc(chainId),
+      !chainId ? 'https://cloudflare-eth.com/' : getChainRpc(chainId),
     );
     const signer = new AwsKmsSigner(getKeyId(key.keyArn), keyClient, provider);
     console.log('signed type2222: ', typedData.toString());
