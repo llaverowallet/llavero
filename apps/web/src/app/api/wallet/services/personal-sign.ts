@@ -26,9 +26,7 @@ export default async function personalSign(
     if (!key?.keyArn) throw new Error('KeyArn not found');
 
     const keyClient = new kmsClient.KMSClient();
-    const provider = new JsonRpcProvider(
-      'https://sepolia.infura.io/v3/8a30a48106eb413bb29d9ff89d0b99a6',
-    ); //TODO get from an endpoint
+    const provider = new JsonRpcProvider('https://cloudflare-eth.com/'); //TODO get from an endpoint
     const signer = new AwsKmsSigner(getKeyId(key.keyArn), keyClient, provider);
     const signed = await signer.signMessage(message);
     console.log('addr: ', key.address);
