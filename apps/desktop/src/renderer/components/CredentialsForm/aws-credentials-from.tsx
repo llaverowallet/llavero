@@ -48,7 +48,7 @@ export function AwsCredentialsForm({ onSubmit }: Props) {
                 onClick={() =>
                   // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   openBrowser(
-                    'https://github.com/elranu/llavero/blob/master/docs/create-credentials.md',
+                    'https://github.com/llaverowallet/llavero/blob/master/docs/create-credentials.md',
                   )
                 }
               >
