@@ -1,18 +1,18 @@
 ## Install Llavero forking Llavero's Repo
 
-### [1\. Go to elranu/llavero: My Hardware Wallet as MY Service](https://github.com/elranu/llavero)
+### [1\. Go llaverowallet/llavero: My Hardware Wallet as MY Service](https://github.com/llaverowallet/llavero)
 
 ![](https://dubble-prod-01.s3.amazonaws.com/assets/ded3e659-e774-4121-a96c-05e4b1b57a21.png?0)
 
-### [2\. Click on Fork](https://github.com/elranu/llavero)
+### [2\. Click on Fork](https://github.com/llaverowallet/llavero)
 
 ![](https://d3q7ie80jbiqey.cloudfront.net/media/image/zoom/8d6a2495-5fcd-4fd2-b369-6702207d5677/2.5/66.367919713139/13.18454166853?0)
 
-### [3\. Click on Choose an owner](https://github.com/elranu/llavero/fork)
+### [3\. Click on Choose an owner](https://github.com/llaverowallet/llavero/fork)
 
 ![](https://d3q7ie80jbiqey.cloudfront.net/media/image/zoom/1929f11b-d618-4505-8cd2-a27331ac2680/2.5/32.65298437402/32.762833514893?0)
 
-### [4\. Click on Create fork](https://github.com/elranu/llavero/fork)
+### [4\. Click on Create fork](https://github.com/llaverowallet/llavero/fork)
 
 ![](https://d3q7ie80jbiqey.cloudfront.net/media/image/zoom/36e8e38b-6337-4332-9eb9-87537163e3f4/2.5/66.698965585854/69.837287164504?0)
 

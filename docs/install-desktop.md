@@ -2,7 +2,7 @@
 
 ### 1. Create your AWS Credentials -> [Guide](./create-credentials.md)
 
-### 2. Download -> [Github Release](https://github.com/elranu/llavero/releases/)
+### 2. Download -> [Github Release](https://github.com/llaverowallet/llavero/releases/)
 
 ### 3. Run and Login with the credentials on the desktop installer
 

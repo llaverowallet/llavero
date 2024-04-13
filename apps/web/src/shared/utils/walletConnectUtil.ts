@@ -17,7 +17,7 @@ export async function createWeb3Wallet(relayerRegionURL: string) {
         description: 'Llavero my hardware wallet as MY Service',
         url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://localhost:3000',
         icons: [
-          'https://raw.githubusercontent.com/elranu/llavero/master/apps/desktop/assets/llavero-logo.png',
+          'https://raw.githubusercontent.com/llaverowallet/llavero/master/apps/desktop/assets/llavero-logo.png',
         ],
       },
     });

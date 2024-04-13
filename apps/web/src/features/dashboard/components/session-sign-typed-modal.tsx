@@ -96,7 +96,7 @@ export default function SessionSignTypedDataModal() {
   //       description: 'Llavero my hardware wallet as MY Service',
   //       url: 'https://localhost:3000',
   //       icons: [
-  //         'https://raw.githubusercontent.com/elranu/llavero/master/apps/desktop/assets/llavero-logo.png',
+  //         'https://raw.githubusercontent.com/llaverowallet/llavero/master/apps/desktop/assets/llavero-logo.png',
   //       ],
   //     },
   //   },
