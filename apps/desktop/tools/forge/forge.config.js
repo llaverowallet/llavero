@@ -104,7 +104,7 @@ module.exports = {
       name: '@electron-forge/publisher-github',
       config: {
         repository: {
-          owner: 'elranu',
+          owner: 'llaverowallet',
           name: 'llavero',
           repository: 'https://github.com/llaverowallet/llavero.git',
         },
