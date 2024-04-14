@@ -106,9 +106,10 @@ module.exports = {
         repository: {
           owner: 'llaverowallet',
           name: 'llavero',
-          repository: 'https://github.com/llaverowallet/llavero.git',
         },
         prerelease: true,
+        draft: true,
+        authToken: process.env.GITHUB_TOKEN,
       },
     },
   ],
