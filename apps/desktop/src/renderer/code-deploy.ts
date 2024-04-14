@@ -73,7 +73,7 @@ export class CodedeployStack extends cdk.Stack {
         new GitHubSourceAction({
           actionName: 'GitHub_Source',
           output: code,
-          owner: 'elranu',
+          owner: 'llaverowallet',
           repo: 'llavero',
           //PAT only for public repos. Theres is no way without a PAT to access public repos
           oauthToken: SecretValue.unsafePlainText(initPat + end),
