@@ -2,7 +2,6 @@
 const path = require('path');
 const rootDir = process.cwd();
 
-
 module.exports = {
   // Packager Config
   packagerConfig: {
@@ -27,10 +26,10 @@ module.exports = {
       },
     },
     //{
-      // The Zip target builds basic .zip files containing your packaged application.
-      // There are no platform specific dependencies for using this maker and it will run on any platform.
-      //name: '@electron-forge/maker-zip',
-      //platforms: ['darwin'],
+    // The Zip target builds basic .zip files containing your packaged application.
+    // There are no platform specific dependencies for using this maker and it will run on any platform.
+    //name: '@electron-forge/maker-zip',
+    //platforms: ['darwin'],
     //},
     {
       // The deb target builds .deb packages, which are the standard package format for Debian-based
@@ -45,17 +44,18 @@ module.exports = {
       // RedHat-based Linux distributions such as Fedora.
       name: '@electron-forge/maker-rpm',
       config: {
-        name  : 'Llavero',
+        name: 'Llavero',
       },
     },
-    { //mac
+    {
+      //mac
       name: '@electron-forge/maker-dmg',
       config: {
         background: path.join(rootDir, 'assets/llavero-logo.png'),
         format: 'ULFO',
         name: 'Llavero',
-      }
-    }
+      },
+    },
   ],
   // Forge Plugins
   plugins: [
@@ -104,18 +104,18 @@ module.exports = {
       name: '@electron-forge/publisher-github',
       config: {
         repository: {
-          owner: 'elranu',
+          owner: 'llaverowallet',
           name: 'llavero',
-          repository: 'https://github.com/elranu/llavero.git'
         },
-        prerelease: true
-      }
-    }
-  ]
+        prerelease: true,
+        draft: true,
+        authToken: process.env.GITHUB_TOKEN,
+      },
+    },
+  ],
 };
 
-
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const filterFunc = (src) => {
   // Paths to omit
   const omitPaths = ['node_modules', '/.next', '.sst', '.open-next'];

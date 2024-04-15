@@ -6,6 +6,8 @@ Llavero means keyring in spanish. “Lla” is pronounced as “Ya” in Yacht o
 
 Llavero is a self-service, non-custodial wallet that uses [AWS KMS](https://aws.amazon.com/kms/faqs/) for secure key management, offering a custodial user experience.
 
+### The vault for the people.
+
 ## Table of Contents
 
 - [Introduction](#introduction)
@@ -17,17 +19,17 @@ Llavero is a self-service, non-custodial wallet that uses [AWS KMS](https://aws.
   - [Objectives](#objectives)
     - [Why all this?](#why-all-this)
     - [Philosophy](#philosophy)
+    - [Big Roadmap Steps](#long-term-roadmap)
 - [Installation](#installation)
   - [Manual/Dev Installation](#manualdev-installation)
   - [Desktop Installer](#desktop-installer)
   - [Differences between Fork and Desktop Installer](#differences-between-fork-and-desktop-installer)
+  - [Uninstall](#uninstall)
 - [Develop](#develop)
   - [To Dev:](#to-dev)
     - [To emulate next.js prod on local env](#to-emulate-nextjs-prod-on-local-env)
-- [Roadmap and proposals](#roadmap-and-proposals)
-- [Components and architecture](#components-and-architecture)
-  - [Installer](#installer)
-  - [Web](#web)
+- [Roadmap and proposals](#short-term-roadmap)
+- [How it works?](#how-it-works)
 
 # Introduction
 
@@ -104,6 +106,18 @@ Second, in the coming years, our digital identity will be compromised by AI. We 
 
 Technology to the people. Provide the best technology as possible to end-users at an affordable cost.
 
+## Long term Roadmap:
+
+**The vault for the people.**
+
+MY Secure Identity Stack:
+
+1. AWS Installation. Really cheap. SaaS companies removed. done :) Llavero's first version.
+2. Agnostic cloud. The ability to change of cloud provider.
+3. Censorship Resistance: Many PaaS ans SaaS companies. Easy install supporting many providers. How? Shamir? MPC?
+4. Hardware backups: PaaS + SaaS + Owned hardware (rapsberry pi? Old cellphones?)
+5. Family and friends network
+
 # Installation
 
 Llavero wallet currently has two types of installations. One for devs, using Github Actions and another for regular users with a desktop installer for Windows, Mac and Linux.
@@ -131,13 +145,21 @@ Llavero wallet currently has two types of installations. One for devs, using Git
 
 ## Desktop Installer
 
-download - SOON
+1. [Create a Personal AWS Account](docs/aws-account.md)
+2. [Create your AWS Credentials](docs/create-credentials.md)
+3. [Download your OS Installer](https://github.com/llaverowallet/llavero/releases/)
+4. [Install it, with simple steps](docs/install-desktop.md)
 
 ## Differences between Fork and Desktop Installer
 
 The Fork installer just run the SST (CDK) Stack on the GIthub action. The user has to update manually each time by pulling from the original repo.
 
 The Desktop install creates a AWS CodePipeline. The SST stack is run on AWS on the AWS Codepipeline. On the Desktop installation the user can setup if Llavero is updated automatically each time the Llavero's Repo has a new release. The AWS Codepipeline tier has a free tier, but is more limited than the GH Action tier. So cost can increase if Llavero releases many versions on the same month.
+
+## Uninstall
+
+Move your crypto before you start the uninstall process:
+[Full uninstall guide](docs/uninstall.md)
 
 # Develop
 
@@ -166,7 +188,7 @@ EMAIL="your@email.com" REGION="us-east-1" AWS_ACCESS_KEY_ID="id" AWS_SECRET_ACCE
 EMAIL="your@email.com" REGION="us-east-1" AWS_ACCESS_KEY_ID="id" AWS_SECRET_ACCESS_KEY="secret" yarn workspace web sst bind next start
 ```
 
-# Roadmap and proposals
+# Short term roadmap
 
 - AWS KMS Replica multi-region
 - Passkeys and/or Mobile App
@@ -176,8 +198,8 @@ EMAIL="your@email.com" REGION="us-east-1" AWS_ACCESS_KEY_ID="id" AWS_SECRET_ACCE
 - Multi-chain wallet
 - Container installation
 
-# components and architecture
+# How it works?
 
-## Installer
+<img src="./docs/asssets/llavero-flow.png"/>
 
-## Web
+### Give us [feedback](https://forms.gle/EffWGrBUdc4wPBSD8) or create and [issue](https://github.com/llaverowallet/llavero/issues)

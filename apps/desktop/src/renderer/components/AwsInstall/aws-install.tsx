@@ -198,7 +198,7 @@ export function AwsInstall({ accessKeyId, secretAccessKey }: Props) {
                 <Link
                   onClick={() =>
                     openBrowser(
-                      'https://github.com/elranu/llavero#differences-between-fork-and-desktop-installer',
+                      'https://github.com/llaverowallet/llavero#differences-between-fork-and-desktop-installer',
                     )
                   }
                 >
