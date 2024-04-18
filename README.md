@@ -190,6 +190,8 @@ EMAIL="your@email.com" REGION="us-east-1" AWS_ACCESS_KEY_ID="id" AWS_SECRET_ACCE
 
 # Short term roadmap
 
+- Pen test, research pen test and audit cloud tools
+- unit and integration test 
 - AWS KMS Replica multi-region
 - Passkeys and/or Mobile App
 - Tokens ERC20 and NFT
