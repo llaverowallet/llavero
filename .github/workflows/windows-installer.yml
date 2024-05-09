@@ -1,0 +1,53 @@
+name: Windows Installer builder
+on:
+  workflow_dispatch:
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
+  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Github checkout
+        uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - if: runner.os == 'Windows'
+        run: |
+          set NODE_OPTIONS=--max-old-space-size=4096
+      - name: Run install
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: workspace desktop install --network-timeout 100000
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
+      - name: Build
+        run: yarn workspace desktop make
+      - name: List
+        run: ls
+      - name: Sign Setup Artifact
+        uses: sslcom/esigner-codesign@develop
+        with:
+          command: sign
+          username: ${{ secrets.SSL_COM_USERNAME }}
+          password: ${{ secrets.SSL_COM_PASSWORD }}
+          credential_id: ${{ secrets.SSL_COM_CREDENTIAL_ID }}
+          totp_secret: ${{ secrets.SSL_COM_TOTP_SECRET }}
+          file_path: dist/llavero-0.1.1.Setup.exe
+          malware_block: false
+          override: false
+          environment_name: PROD
+      - name: Publish
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: workspace desktop publish-app --auth-token=${{secrets.GITHUB_TOKEN }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

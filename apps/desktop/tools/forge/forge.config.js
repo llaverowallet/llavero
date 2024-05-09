@@ -23,6 +23,7 @@ module.exports = {
       name: '@electron-forge/maker-squirrel',
       config: {
         name: 'Llavero',
+        outputDirectory: path.join(rootDir, 'dist'),
       },
     },
     //{

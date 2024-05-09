@@ -1,7 +1,7 @@
 {
   "name": "desktop",
   "productName": "Llavero Installer",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Llavero Installer",
   "main": ".webpack/main",
   "scripts": {
