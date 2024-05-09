@@ -38,9 +38,9 @@ jobs:
       - name: List
         run: Get-ChildItem -Path apps/desktop/out/llavero-win32-x64
       - name: List
-        run: Get-ChildItem -Path apps/desktop/out/make
+        run: Get-ChildItem -Path apps/desktop/out/make/squirrel.windows
       - name: List
-        run: Get-ChildItem -Path apps/desktop/out/publish-dry-run
+        run: Get-ChildItem -Path apps/desktop/out/make/squirrel.windows/x64
       - name: Sign Setup Artifact
         uses: sslcom/esigner-codesign@develop
         with:
@@ -49,7 +49,7 @@ jobs:
           password: ${{ secrets.SSL_COM_PASSWORD }}
           credential_id: ${{ secrets.SSL_COM_CREDENTIAL_ID }}
           totp_secret: ${{ secrets.SSL_COM_TOTP_SECRET }}
-          file_path: ${GITHUB_WORKSPACE}/apps/desktop/out/llavero-win32-x64/llavero-0.1.1.Setup.exe
+          file_path: ${GITHUB_WORKSPACE}/apps/desktop/out/make/squirrel.windows/x64/llavero-0.1.1.Setup.exe
           malware_block: false
           override: false
           environment_name: PROD
