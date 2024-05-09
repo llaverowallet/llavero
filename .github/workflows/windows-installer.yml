@@ -51,9 +51,9 @@ jobs:
           password: ${{ secrets.SSL_COM_PASSWORD }}
           credential_id: ${{ secrets.SSL_COM_CREDENTIAL_ID }}
           totp_secret: ${{ secrets.SSL_COM_TOTP_SECRET }}
-          file_path: ${GITHUB_WORKSPACE}/apps/desktop/out/make/squirrel.windows/x64/llavero-0.1.1.Setup.exe
+          file_path: ${GITHUB_WORKSPACE}/apps/desktop/out/make/squirrel.windows/x64/llavero-0.1.1 Setup.exe
           malware_block: false
-          override: false
+          override: true
           environment_name: PROD
       - name: Publish
         uses: borales/actions-yarn@v4
