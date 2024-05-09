@@ -1,6 +1,6 @@
 {
   "name": "llavero",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "My Hardware Wallet as MY Service",
   "main": "index.js",
   "private": true,
