@@ -28,6 +28,13 @@ export default async function ethSendTransaction(
     const keyClient = new kmsClient.KMSClient();
     const rpc = getChainRpc(chainId);
     const provider = new JsonRpcProvider(rpc);
+    try {
+      await provider._detectNetwork();
+    } catch (err) {
+      console.log('-----ethSendTransaction-----');
+      console.log(err);
+      provider.destroy();
+    }
     const signer = new AwsKmsSigner(getKeyId(key.keyArn), keyClient, provider);
     console.log('transaction: ', transaction);
     const response = await signer.sendTransaction(transaction as TransactionLike);

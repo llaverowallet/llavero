@@ -36,11 +36,11 @@ const useTransactions = ({ account }: { account: WalletInfo | null }) => {
   const { network } = useNetwork();
   const { address } = account || {};
   const { data: transactions, isPending } = useQuery({
-    queryKey: ['getActivity', address, network.chainId],
-    queryFn: getActivity({ address, chainId: String(network.chainId) }),
+    queryKey: ['getActivity', address, network?.chainId],
+    queryFn: getActivity({ address, chainId: String(network?.chainId) }),
   });
   const { transactionsHashes } = useSnapshot(TransactionsStore.state);
-  const localKey = address ? `txHashes:${network.chainId}:${String(address).toLowerCase()}` : '';
+  const localKey = address ? `txHashes:${network?.chainId}:${String(address).toLowerCase()}` : '';
 
   useEffect(() => {
     if (!localKey) {

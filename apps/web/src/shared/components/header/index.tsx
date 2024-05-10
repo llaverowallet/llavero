@@ -41,7 +41,7 @@ const REDIRECT_AFTER_LOGOUT_URL = '/';
 
 const Header = () => {
   const { network } = useNetwork();
-  const eip155Address = `${network.namespace}:${network.chainId}`;
+  const eip155Address = `${network?.namespace}:${network?.chainId}`;
   const { data: session } = useSession();
   const { user } = session || {};
   const { email } = user || {};
