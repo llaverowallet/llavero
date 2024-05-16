@@ -73,7 +73,16 @@ export async function main(event: { params: ICloudWalletInitParams }) {
   const keysArn = event.params.keys.map((k) => k.keyArn);
   console.log('keysArn: ', keysArn);
   const keyClient = new kmsClient.KMSClient();
-  const provider = new JsonRpcProvider(EIP155_MAINNET_CHAINS['eip155:1'].rpc); //TODO get from an endpoint
+  const provider = new JsonRpcProvider(
+    EIP155_MAINNET_CHAINS['eip155:1'].rpc || 'https://eth.llamarpc.com',
+  ); //TODO get from an endpoint
+  try {
+    await provider._detectNetwork();
+  } catch (err) {
+    console.log('-----mainmainmain-----');
+    console.log(err);
+    provider.destroy();
+  }
   for (let index = 0; index < keysArn.length; index++) {
     const element = keysArn[index];
     const signer = new AwsKmsSigner(getKeyId(element), keyClient, provider);

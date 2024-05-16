@@ -29,15 +29,15 @@ const Accounts = () => {
   const accountIndex =
     Number(queryParams.get('k')) || Number(window?.localStorage.getItem('accountIndex')) || 0;
   const { network } = useNetwork();
-  const eip155Address = `${network.namespace}:${network.chainId}`;
-  const { rpc } = getChainByEip155Address(eip155Address);
+  const eip155Address = `${network?.namespace}:${network?.chainId}`;
+  const { rpc } = getChainByEip155Address(eip155Address) ?? {};
   const { data: accounts, isPending } = useQuery({
     queryKey: ['getAccounts', eip155Address],
     queryFn: getAccounts(rpc),
   });
   const [selectedAccount, setSelectedAccount] = useState<WalletInfo | null>(null);
   const { balance: accountBalance, address: accountAddress } = selectedAccount || {};
-  const explorerAddressURL = `${network.explorer}/address/${accountAddress}`;
+  const explorerAddressURL = `${network?.explorer}/address/${accountAddress}`;
 
   useEffect(() => {
     if (!accounts) return;
@@ -84,7 +84,7 @@ const Accounts = () => {
                 </CopyToClipboard>
 
                 <div className="text-3xl mb-4 mt-2">
-                  {formatBalance(accountBalance || 0)} {network.symbol}
+                  {formatBalance(accountBalance || 0)} {network?.symbol}
                 </div>
                 <div className="flex gap-4">
                   <div>

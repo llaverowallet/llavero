@@ -28,8 +28,15 @@ export default async function signTypedData(
 
     const keyClient = new kmsClient.KMSClient();
     const provider = new JsonRpcProvider(
-      !chainId ? 'https://cloudflare-eth.com/' : getChainRpc(chainId),
+      !chainId ? 'https://eth.llamarpc.com' : getChainRpc(chainId),
     );
+    try {
+      await provider._detectNetwork();
+    } catch (err) {
+      console.log('-----signTypedData-----');
+      console.log(err);
+      provider.destroy();
+    }
     const signer = new AwsKmsSigner(getKeyId(key.keyArn), keyClient, provider);
     console.log('signed type2222: ', typedData.toString());
 

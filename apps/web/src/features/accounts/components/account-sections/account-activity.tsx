@@ -54,7 +54,14 @@ type TransactionData = {
 
 const getTransaction = ({ network, txHash }: { network: string; txHash: string }) => {
   return async (): Promise<TransactionData> => {
-    const provider = new JsonRpcProvider(network);
+    const provider = new JsonRpcProvider(network || 'https://eth.llamarpc.com');
+    try {
+      await provider._detectNetwork();
+    } catch (err) {
+      console.log('-----getTransaction-----');
+      console.log(err);
+      provider.destroy();
+    }
     const receipt = await provider.waitForTransaction(txHash);
     const transaction = await provider.getTransaction(txHash);
 

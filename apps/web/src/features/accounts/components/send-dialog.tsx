@@ -87,16 +87,35 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
   const [mfaRegistered, setMFARegistered] = useState<boolean>(false);
   const [mfaCode, setMfaCode] = useState('');
   const { network } = useNetwork();
-  const provider = useMemo(() => new JsonRpcProvider(network.rpc), [network.rpc]);
-  const eip155Address = `${network.namespace}:${network.chainId}`;
+  const provider = useMemo(
+    () => new JsonRpcProvider(network?.rpc || 'https://eth.llamarpc.com'),
+    [network?.rpc],
+  );
+  const eip155Address = `${network?.namespace}:${network?.chainId}`;
   const { address } = account || {};
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenMFA, setIsOpenMFA] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const TX_CHAIN_ID = `${network.chainId}`;
+  const TX_CHAIN_ID = `${network?.chainId}`;
   const CHAIN_ID = eip155Address;
   const SEND_TX_URL = `/api/wallet/${address}/eth-send-transaction`;
   const { data } = useSession();
+
+  useEffect(() => {
+    if (!provider) return;
+
+    const checkProvider = async () => {
+      try {
+        await provider._detectNetwork();
+      } catch (err) {
+        console.log('-----SendDialog-----');
+        console.log(err);
+        provider.destroy();
+      }
+    };
+
+    checkProvider();
+  }, [provider]);
 
   const handleSetMaxBalance = async () => {
     const transferData = await estimateMaxTransfer({
@@ -222,7 +241,7 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
           <form onSubmit={handleSend} id="send-form">
             <div className="flex flex-col gap-4 py-4">
               <div className="flex gap-2 items-center justify-end">
-                <Label>Balance:</Label> {formatBalance(account?.balance || 0)} {network.symbol}
+                <Label>Balance:</Label> {formatBalance(account?.balance || 0)} {network?.symbol}
               </div>
 
               <div>
@@ -244,7 +263,7 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
                 />
                 <div className="flex justify-end">
                   <span className="text-xs text-gray-500">
-                    Estimated gas fee: {estimatedGas} {network.symbol}
+                    Estimated gas fee: {estimatedGas} {network?.symbol}
                   </span>
                 </div>
               </div>
