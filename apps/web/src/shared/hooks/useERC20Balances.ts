@@ -18,15 +18,19 @@ export default function useERC20Balances(account: string, provider: ethers.provi
 
       for (const network in ERC20TokenData) {
         for (const token of ERC20TokenData[network]) {
-          const tokenContract = new ethers.Contract(token.address, [
-            // ABI fragment for balanceOf function
-            'function balanceOf(address owner) view returns (uint256)'
-          ], provider);
+          const tokenContract = new ethers.Contract(
+            token.address,
+            [
+              // ABI fragment for balanceOf function
+              'function balanceOf(address owner) view returns (uint256)',
+            ],
+            provider,
+          );
 
           const balance = await tokenContract.balanceOf(account);
           balances.push({
             token: token.symbol,
-            balance: ethers.utils.formatUnits(balance, token.decimals)
+            balance: ethers.utils.formatUnits(balance, token.decimals),
           });
         }
       }
