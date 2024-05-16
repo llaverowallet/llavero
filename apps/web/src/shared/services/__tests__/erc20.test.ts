@@ -35,109 +35,37 @@ const mockJsonRpcProvider = {
   connect: jest.fn(), // Mock the connect function to do nothing
 };
 
-// Handler for the mock contract Proxy
-const mockContractHandler: ProxyHandler<object> = {
-  get: function (target: object, prop: PropertyKey, receiver: unknown) {
-    // Simulate contract read operations by returning predefined values or simulating a method not found error
-    const mockResponses: { [key: string]: jest.Mock } = {
-      transfer: jest.fn((to, amount) =>
-        Promise.resolve({
-          hash: '0xMockTransactionHash',
-          to: to,
-          from: '0xMockSignerAddress',
-          value: amount,
-          gasUsed: BigInt(21000),
-          blockNumber: 123456,
-        }),
-      ),
-      approve: jest.fn((spender, amount) =>
-        Promise.resolve({
-          hash: '0xMockApprovalHash',
-          to: spender,
-          from: '0xMockOwnerAddress',
-          value: amount,
-          gasUsed: BigInt(21000),
-          blockNumber: 123456,
-        }),
-      ),
-      name: jest.fn(() => Promise.resolve('MockToken')),
-      symbol: jest.fn(() => Promise.resolve('MCK')),
-      decimals: jest.fn(() => Promise.resolve(18)),
-      allowance: jest.fn((owner, spender) => Promise.resolve(BigInt(1000))),
-      balanceOf: jest.fn(() => Promise.resolve(BigInt(5000))),
-      // Add other cases as needed for different read methods
-    };
-
-    if (typeof prop === 'string' && prop in mockResponses) {
-      return mockResponses[prop];
+const mockContract = new Proxy({} as {
+  // Define all the methods and properties expected by the ERC-20 interface
+  allowance: jest.Mock<Promise<bigint>, [string, string]>,
+  transfer: jest.Mock<Promise<{ hash: string }>, [string, bigint]>,
+  approve: jest.Mock<Promise<{ hash: string }>, [string, bigint]>,
+  name: jest.Mock<Promise<string>, []>,
+  symbol: jest.Mock<Promise<string>, []>,
+  decimals: jest.Mock<Promise<number>, []>,
+  balanceOf: jest.Mock<Promise<bigint>, [string]>,
+  transferFrom: jest.Mock<Promise<{ hash: string }>, [string, string, bigint]>,
+  totalSupply: jest.Mock<Promise<bigint>, []>,
+  increaseAllowance: jest.Mock<Promise<{ hash: string }>, [string, bigint]>,
+  decreaseAllowance: jest.Mock<Promise<{ hash: string }>, [string, bigint]>,
+  mint: jest.Mock<Promise<{ hash: string }>, [string, bigint]>,
+  burn: jest.Mock<Promise<{ hash: string }>, [string, bigint]>,
+  on: jest.Mock<Promise<void>, [string, (...args: unknown[]) => void]>,
+  once: jest.Mock<Promise<void>, [string, (...args: unknown[]) => void]>,
+  emit: jest.Mock<boolean, [string, ...unknown[]]>,
+  // Add any additional methods or properties required by the ethers v6 ERC-20 interface
+}, {
+  get: function (target, prop: string | symbol, receiver) {
+    if (prop in target) {
+      return target[prop as keyof typeof target];
     } else {
-      // Simulate an error as would be thrown by an actual Ethereum contract for unknown methods
+      // Return a mock function for any property not explicitly set on the target
       return jest.fn(() =>
-        Promise.reject(new Error(`Method ${String(prop)} not found in contract`)),
+        Promise.reject(new Error(`Property ${String(prop)} not implemented in mock`))
       );
     }
-  },
-};
-
-// Mock implementation of the Contract class using a Proxy
-const mockContract: {
-  allowance: jest.Mock<Promise<bigint>, [string, string]>;
-  transfer: jest.Mock<
-    Promise<{
-      hash: string;
-      to: string;
-      from: string;
-      value: bigint;
-      gasUsed: bigint;
-      blockNumber: number;
-    }>,
-    [string, bigint]
-  >;
-  approve: jest.Mock<
-    Promise<{
-      hash: string;
-      to: string;
-      from: string;
-      value: bigint;
-      gasUsed: bigint;
-      blockNumber: number;
-    }>,
-    [string, bigint]
-  >;
-  name: jest.Mock<Promise<string>, []>;
-  symbol: jest.Mock<Promise<string>, []>;
-  decimals: jest.Mock<Promise<number>, []>;
-  balanceOf: jest.Mock<Promise<bigint>, [string]>;
-} = new Proxy(
-  {
-    allowance: jest.fn((owner: string, spender: string) => Promise.resolve(BigInt(1000))),
-    transfer: jest.fn((to: string, amount: bigint) =>
-      Promise.resolve({
-        hash: '0xMockTransactionHash',
-        to: to,
-        from: '0xMockSignerAddress',
-        value: amount,
-        gasUsed: BigInt(21000),
-        blockNumber: 123456,
-      }),
-    ),
-    approve: jest.fn((spender: string, amount: bigint) =>
-      Promise.resolve({
-        hash: '0xMockApprovalHash',
-        to: spender,
-        from: '0xMockOwnerAddress',
-        value: amount,
-        gasUsed: BigInt(21000),
-        blockNumber: 123456,
-      }),
-    ),
-    name: jest.fn(() => Promise.resolve('MockToken')),
-    symbol: jest.fn(() => Promise.resolve('MCK')),
-    decimals: jest.fn(() => Promise.resolve(18)),
-    balanceOf: jest.fn((address: string) => Promise.resolve(BigInt(5000))),
-  },
-  mockContractHandler,
-);
+  }
+});
 
 // Mocks for ethers functionality
 jest.mock('ethers', () => {
