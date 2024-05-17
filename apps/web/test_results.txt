@@ -1,0 +1,107 @@
+yarn run v1.22.21
+$ jest
+  console.error
+    Error calling contract method: Error: contract runner does not support calling (operation="call", code=UNSUPPORTED_OPERATION, version=6.12.1)
+        at makeError (/home/ubuntu/llavero/node_modules/ethers/src.ts/utils/errors.ts:694:21)
+        at makeError (/home/ubuntu/llavero/node_modules/ethers/src.ts/utils/errors.ts:715:25)
+        at staticCallResult (/home/ubuntu/llavero/node_modules/ethers/src.ts/contract/contract.ts:330:15)
+        at staticCallResult (/home/ubuntu/llavero/node_modules/ethers/src.ts/contract/contract.ts:303:30)
+        at Proxy.staticCall (/home/ubuntu/llavero/node_modules/ethers/src.ts/contract/contract.ts:351:47)
+        at /home/ubuntu/llavero/apps/web/src/shared/services/erc20.ts:39:38
+        at step (/home/ubuntu/llavero/apps/web/src/shared/services/erc20.ts:33:23)
+        at Object.next (/home/ubuntu/llavero/apps/web/src/shared/services/erc20.ts:14:53)
+        at /home/ubuntu/llavero/apps/web/src/shared/services/erc20.ts:8:71
+        at new Promise (<anonymous>)
+        at Object.<anonymous>.__awaiter (/home/ubuntu/llavero/apps/web/src/shared/services/erc20.ts:4:12)
+        at fetchERC20TokenMetadata (/home/ubuntu/llavero/apps/web/src/shared/services/erc20.ts:67:12)
+        at /home/ubuntu/llavero/apps/web/src/shared/services/__tests__/erc20.test.ts:300:43
+        at step (/home/ubuntu/llavero/apps/web/src/shared/services/__tests__/erc20.test.ts:44:23)
+        at Object.next (/home/ubuntu/llavero/apps/web/src/shared/services/__tests__/erc20.test.ts:25:53)
+        at /home/ubuntu/llavero/apps/web/src/shared/services/__tests__/erc20.test.ts:19:71
+        at new Promise (<anonymous>)
+        at Object.<anonymous>.__awaiter (/home/ubuntu/llavero/apps/web/src/shared/services/__tests__/erc20.test.ts:15:12)
+        at Object.<anonymous> (/home/ubuntu/llavero/apps/web/src/shared/services/__tests__/erc20.test.ts:287:85)
+        at Promise.then.completed (/home/ubuntu/llavero/node_modules/jest-circus/build/utils.js:298:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (/home/ubuntu/llavero/node_modules/jest-circus/build/utils.js:231:10)
+        at _callCircusTest (/home/ubuntu/llavero/node_modules/jest-circus/build/run.js:316:40)
+        at _runTest (/home/ubuntu/llavero/node_modules/jest-circus/build/run.js:252:3)
+        at _runTestsForDescribeBlock (/home/ubuntu/llavero/node_modules/jest-circus/build/run.js:126:9)
+        at _runTestsForDescribeBlock (/home/ubuntu/llavero/node_modules/jest-circus/build/run.js:121:9)
+        at _runTestsForDescribeBlock (/home/ubuntu/llavero/node_modules/jest-circus/build/run.js:121:9)
+        at run (/home/ubuntu/llavero/node_modules/jest-circus/build/run.js:71:3)
+        at runAndTransformResultsToJestFormat (/home/ubuntu/llavero/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+        at jestAdapter (/home/ubuntu/llavero/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+        at runTestInternal (/home/ubuntu/llavero/node_modules/jest-runner/build/runTest.js:367:16)
+        at runTest (/home/ubuntu/llavero/node_modules/jest-runner/build/runTest.js:444:34) {
+      code: 'UNSUPPORTED_OPERATION',
+      operation: 'call',
+      shortMessage: 'contract runner does not support calling'
+    }
+
+      43 |   } catch (error) {
+      44 |     // If the contract does not support calling, log the error for debugging
+    > 45 |     console.error('Error calling contract method:', error);
+         |             ^
+      46 |     throw error;
+      47 |   }
+      48 | }
+
+      at src/shared/services/erc20.ts:45:13
+      at step (src/shared/services/erc20.ts:33:23)
+      at Object.throw (src/shared/services/erc20.ts:14:53)
+      at rejected (src/shared/services/erc20.ts:6:65)
+
+  console.error
+    Error calling contract method: Error: contract runner does not support calling (operation="call", code=UNSUPPORTED_OPERATION, version=6.12.1)
+        at makeError (/home/ubuntu/llavero/node_modules/ethers/src.ts/utils/errors.ts:694:21)
+        at makeError (/home/ubuntu/llavero/node_modules/ethers/src.ts/utils/errors.ts:715:25)
+        at staticCallResult (/home/ubuntu/llavero/node_modules/ethers/src.ts/contract/contract.ts:330:15)
+        at staticCallResult (/home/ubuntu/llavero/node_modules/ethers/src.ts/contract/contract.ts:303:30)
+        at Proxy.staticCall (/home/ubuntu/llavero/node_modules/ethers/src.ts/contract/contract.ts:351:47)
+        at /home/ubuntu/llavero/apps/web/src/shared/services/erc20.ts:39:38
+        at step (/home/ubuntu/llavero/apps/web/src/shared/services/erc20.ts:33:23)
+        at Object.next (/home/ubuntu/llavero/apps/web/src/shared/services/erc20.ts:14:53)
+        at /home/ubuntu/llavero/apps/web/src/shared/services/erc20.ts:8:71
+        at new Promise (<anonymous>)
+        at Object.<anonymous>.__awaiter (/home/ubuntu/llavero/apps/web/src/shared/services/erc20.ts:4:12)
+        at fetchERC20TokenMetadata (/home/ubuntu/llavero/apps/web/src/shared/services/erc20.ts:67:12)
+        at /home/ubuntu/llavero/apps/web/src/shared/services/__tests__/erc20.test.ts:312:51
+        at step (/home/ubuntu/llavero/apps/web/src/shared/services/__tests__/erc20.test.ts:44:23)
+        at Object.next (/home/ubuntu/llavero/apps/web/src/shared/services/__tests__/erc20.test.ts:25:53)
+        at /home/ubuntu/llavero/apps/web/src/shared/services/__tests__/erc20.test.ts:19:71
+        at new Promise (<anonymous>)
+        at Object.<anonymous>.__awaiter (/home/ubuntu/llavero/apps/web/src/shared/services/__tests__/erc20.test.ts:15:12)
+        at Object.<anonymous> (/home/ubuntu/llavero/apps/web/src/shared/services/__tests__/erc20.test.ts:308:71)
+        at Promise.then.completed (/home/ubuntu/llavero/node_modules/jest-circus/build/utils.js:298:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (/home/ubuntu/llavero/node_modules/jest-circus/build/utils.js:231:10)
+        at _callCircusTest (/home/ubuntu/llavero/node_modules/jest-circus/build/run.js:316:40)
+        at _runTest (/home/ubuntu/llavero/node_modules/jest-circus/build/run.js:252:3)
+        at _runTestsForDescribeBlock (/home/ubuntu/llavero/node_modules/jest-circus/build/run.js:126:9)
+        at _runTestsForDescribeBlock (/home/ubuntu/llavero/node_modules/jest-circus/build/run.js:121:9)
+        at _runTestsForDescribeBlock (/home/ubuntu/llavero/node_modules/jest-circus/build/run.js:121:9)
+        at run (/home/ubuntu/llavero/node_modules/jest-circus/build/run.js:71:3)
+        at runAndTransformResultsToJestFormat (/home/ubuntu/llavero/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+        at jestAdapter (/home/ubuntu/llavero/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+        at runTestInternal (/home/ubuntu/llavero/node_modules/jest-runner/build/runTest.js:367:16)
+        at runTest (/home/ubuntu/llavero/node_modules/jest-runner/build/runTest.js:444:34) {
+      code: 'UNSUPPORTED_OPERATION',
+      operation: 'call',
+      shortMessage: 'contract runner does not support calling'
+    }
+
+      43 |   } catch (error) {
+      44 |     // If the contract does not support calling, log the error for debugging
+    > 45 |     console.error('Error calling contract method:', error);
+         |             ^
+      46 |     throw error;
+      47 |   }
+      48 | }
+
+      at src/shared/services/erc20.ts:45:13
+      at step (src/shared/services/erc20.ts:33:23)
+      at Object.throw (src/shared/services/erc20.ts:14:53)
+      at rejected (src/shared/services/erc20.ts:6:65)
+
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
