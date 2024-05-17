@@ -35,37 +35,61 @@ const mockJsonRpcProvider = {
   connect: jest.fn(), // Mock the connect function to do nothing
 };
 
-const mockContract = new Proxy({} as {
-  // Define all the methods and properties expected by the ERC-20 interface
-  allowance: jest.Mock<Promise<bigint>, [string, string]>,
-  transfer: jest.Mock<Promise<{ hash: string }>, [string, bigint]>,
-  approve: jest.Mock<Promise<{ hash: string }>, [string, bigint]>,
-  name: jest.Mock<Promise<string>, []>,
-  symbol: jest.Mock<Promise<string>, []>,
-  decimals: jest.Mock<Promise<number>, []>,
-  balanceOf: jest.Mock<Promise<bigint>, [string]>,
-  transferFrom: jest.Mock<Promise<{ hash: string }>, [string, string, bigint]>,
-  totalSupply: jest.Mock<Promise<bigint>, []>,
-  increaseAllowance: jest.Mock<Promise<{ hash: string }>, [string, bigint]>,
-  decreaseAllowance: jest.Mock<Promise<{ hash: string }>, [string, bigint]>,
-  mint: jest.Mock<Promise<{ hash: string }>, [string, bigint]>,
-  burn: jest.Mock<Promise<{ hash: string }>, [string, bigint]>,
-  on: jest.Mock<Promise<void>, [string, (...args: unknown[]) => void]>,
-  once: jest.Mock<Promise<void>, [string, (...args: unknown[]) => void]>,
-  emit: jest.Mock<boolean, [string, ...unknown[]]>,
-  // Add any additional methods or properties required by the ethers v6 ERC-20 interface
-}, {
-  get: function (target, prop: string | symbol, receiver) {
-    if (prop in target) {
-      return target[prop as keyof typeof target];
-    } else {
-      // Return a mock function for any property not explicitly set on the target
-      return jest.fn(() =>
-        Promise.reject(new Error(`Property ${String(prop)} not implemented in mock`))
-      );
-    }
-  }
-});
+const mockContract = new Proxy(
+  {} as {
+    // Define all the methods and properties expected by the ERC-20 interface
+    // Define all the methods and properties expected by the ERC-20 interface
+    allowance: jest.Mock<Promise<bigint>, [string, string]>;
+    transfer: jest.Mock<Promise<{ hash: string }>, [string, bigint]>;
+    approve: jest.Mock<Promise<{ hash: string }>, [string, bigint]>;
+    name: jest.Mock<Promise<string>, []>;
+    symbol: jest.Mock<Promise<string>, []>;
+    decimals: jest.Mock<Promise<number>, []>;
+    balanceOf: jest.Mock<Promise<bigint>, [string]>;
+    transferFrom: jest.Mock<Promise<{ hash: string }>, [string, string, bigint]>;
+    totalSupply: jest.Mock<Promise<bigint>, []>;
+    increaseAllowance: jest.Mock<Promise<{ hash: string }>, [string, bigint]>;
+    decreaseAllowance: jest.Mock<Promise<{ hash: string }>, [string, bigint]>;
+    mint: jest.Mock<Promise<{ hash: string }>, [string, bigint]>;
+    burn: jest.Mock<Promise<{ hash: string }>, [string, bigint]>;
+    on: jest.Mock<Promise<void>, [string, (...args: unknown[]) => void]>;
+    once: jest.Mock<Promise<void>, [string, (...args: unknown[]) => void]>;
+    emit: jest.Mock<boolean, [string, ...unknown[]]>;
+  },
+  {
+    get: function (target, prop: string | symbol, receiver) {
+      if (prop in target) {
+        return target[prop as keyof typeof target];
+      } else {
+        // Simulate successful contract calls for the ERC-20 interface methods
+        if (typeof prop === 'string') {
+          switch (prop) {
+            case 'name':
+              return () => Promise.resolve('MockToken');
+            case 'symbol':
+              return () => Promise.resolve('MCK');
+            case 'decimals':
+              return () => Promise.resolve(18);
+            case 'balanceOf':
+              return () =>
+                Promise.resolve({
+                  // Simulate a Result object structure as expected by ethers v6
+                  // The array contains the balance as the only element
+                  // The named property 'balance' represents the balance of the account
+                  [BigInt(1000).toString()]: BigInt(1000),
+                  balance: BigInt(1000),
+                });
+            default:
+              // Throw an error for any methods not implemented in the mock
+              throw new Error(`Method ${String(prop)} not implemented in mock`);
+          }
+        }
+        // Throw an error for any properties not implemented in the mock
+        throw new Error(`Property ${String(prop)} not implemented in mock`);
+      }
+    },
+  },
+);
 
 // Mocks for ethers functionality
 jest.mock('ethers', () => {
@@ -128,27 +152,19 @@ describe('ERC20 service', () => {
 
   describe('fetchERC20TokenMetadata', () => {
     it('should throw an error if the ENS name is not configured', async () => {
-      try {
-        const result = await fetchERC20TokenMetadata(
-          'unknown.eth',
-          jest.requireMock('ethers').providers.JsonRpcProvider() as unknown as Provider,
-        );
-        console.log('Result for unknown.eth:', result); // Added for debugging
-        fail('Expected an error to be thrown');
-      } catch (error: unknown) {
-        const e = error as Error;
-        console.log('Error for unknown.eth:', e.message); // Added for debugging
-        expect(e).toBeInstanceOf(Error);
-        expect(e.message).toContain('ENS name not configured');
-      }
+      const provider = jest
+        .requireMock('ethers')
+        .providers.JsonRpcProvider() as unknown as Provider;
+      await expect(fetchERC20TokenMetadata('unknown.eth', provider)).rejects.toThrow(
+        'ENS name not configured',
+      );
     });
 
     it('should fetch ERC20 token metadata for a configured ENS name', async () => {
-      const result = await fetchERC20TokenMetadata(
-        'known.eth',
-        jest.requireMock('ethers').providers.JsonRpcProvider() as unknown as Provider,
-      );
-      console.log('Result for known.eth:', result); // Added for debugging
+      const provider = jest
+        .requireMock('ethers')
+        .providers.JsonRpcProvider() as unknown as Provider;
+      const result = await fetchERC20TokenMetadata('known.eth', provider);
       expect(result).toEqual({
         name: 'MockToken',
         symbol: 'MCK',
