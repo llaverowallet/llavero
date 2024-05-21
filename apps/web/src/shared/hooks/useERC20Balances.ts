@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
-import { ethers } from 'ethers';
-import ERC20TokenData from '../data/token-data';
+import { ethers, formatUnits } from 'ethers';
+import ERC20TokenData from '../../token-data';
 
 interface ERC20Balance {
   token: string;
   balance: string;
 }
 
-export default function useERC20Balances(account: string, provider: ethers.providers.Web3Provider) {
+export default function useERC20Balances(account: string, provider: ethers.Provider) {
   const [balances, setBalances] = useState<ERC20Balance[]>([]);
 
   useEffect(() => {
@@ -30,7 +30,7 @@ export default function useERC20Balances(account: string, provider: ethers.provi
           const balance = await tokenContract.balanceOf(account);
           balances.push({
             token: token.symbol,
-            balance: ethers.utils.formatUnits(balance, token.decimals),
+            balance: formatUnits(balance, token.decimals),
           });
         }
       }

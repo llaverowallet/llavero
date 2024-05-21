@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Copy, ExternalLink } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { ethers, JsonRpcProvider } from 'ethers';
+import { JsonRpcProvider } from 'ethers';
 import { fetchERC20TokenMetadata, checkTokenApproval } from '@/shared/services/erc20';
 import useERC20Balances from '@/shared/hooks/useERC20Balances';
 import { getAccounts } from '@/shared/services/account';
@@ -32,10 +32,8 @@ const LlaveroWalletContractAddress = '0x...'; // Replace with the actual contrac
 type ERC20Balance = {
   token: string;
   balance: string;
+  amount: string;
 };
-
-// Type definition for the approval status with an index signature
-type ApprovalStatus = { [token: string]: boolean };
 
 const Accounts = () => {
   const router = useRouter();
@@ -65,17 +63,11 @@ const Accounts = () => {
     router.replace(`/accounts?k=${index}`);
   }, [accountIndex, router]);
 
-  // State to store ERC-20 token balances, metadata, and approval status
+  // State to store ERC-20 token balances
   const [erc20Balances, setErc20Balances] = useState<ERC20Balance[]>([]);
-  const [erc20Metadata, setErc20Metadata] = useState<{
-    [token: string]: { name: string; symbol: string; decimals: number };
-  }>({});
-  // Type definition for the approval status with an index signature
-  type ApprovalStatus = { [token: string]: boolean };
-  const [erc20ApprovalNeeded, setErc20ApprovalNeeded] = useState<ApprovalStatus>({});
 
   // Instantiate a Web3Provider using the rpc URL
-  const provider = new JsonRpcProvider(rpc);
+  const provider = useMemo(() => new JsonRpcProvider(rpc), [rpc]);
 
   // Ensure accountAddress is a string before using it
   const accountAddressString = accountAddress || '';
@@ -87,15 +79,7 @@ const Accounts = () => {
       const metadataPromises = fetchedErc20Balances.map((balance) =>
         fetchERC20TokenMetadata(balance.token, provider),
       );
-      const metadata = await Promise.all(metadataPromises);
-      const metadataObject = metadata.reduce<{
-        [token: string]: { name: string; symbol: string; decimals: number };
-      }>((acc, meta, index) => {
-        const token = fetchedErc20Balances[index].token;
-        acc[token] = meta;
-        return acc;
-      }, {});
-      setErc20Metadata(metadataObject);
+      await Promise.all(metadataPromises);
     };
 
     if (fetchedErc20Balances.length > 0) {
@@ -105,13 +89,13 @@ const Accounts = () => {
 
   // Update the state whenever the fetched balances change
   useEffect(() => {
-    setErc20Balances(fetchedErc20Balances);
+    setErc20Balances(fetchedErc20Balances as ERC20Balance[]);
   }, [fetchedErc20Balances]);
 
   // Check for token approval requirements
   useEffect(() => {
     const checkApprovals = async () => {
-      const approvalStatus = {};
+      const approvalStatus: { [key: string]: boolean } = {};
       for (const balance of erc20Balances) {
         const isApprovalNeeded = await checkTokenApproval(
           balance.token,
@@ -122,7 +106,6 @@ const Accounts = () => {
         );
         approvalStatus[balance.token] = isApprovalNeeded;
       }
-      setErc20ApprovalNeeded(approvalStatus);
     };
 
     if (erc20Balances.length > 0) {
