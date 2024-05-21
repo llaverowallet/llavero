@@ -1,7 +1,7 @@
 import createLogger from '@/shared/utils/logger';
 const logger = createLogger('SendTransaction');
 import { UserRepository } from '@/repositories/user-repository';
-import { JsonRpcProvider, TransactionLike, TransactionResponse } from 'ethers';
+import { JsonRpcProvider, TransactionLike, TransactionResponse, Provider } from 'ethers';
 import { AwsKmsSigner } from '@dennisdang/ethers-aws-kms-signer';
 import * as kmsClient from '@aws-sdk/client-kms';
 import { getChainRpc, getKeyId } from '@/shared/utils/crypto';
@@ -35,7 +35,11 @@ export default async function ethSendTransaction(
       console.log(err);
       provider.destroy();
     }
-    const signer = new AwsKmsSigner(getKeyId(key.keyArn), keyClient, provider);
+    const signer = new AwsKmsSigner(
+      getKeyId(key.keyArn),
+      keyClient,
+      provider as unknown as Provider,
+    );
     console.log('transaction: ', transaction);
     const response = await signer.sendTransaction(transaction as TransactionLike);
     return response;
