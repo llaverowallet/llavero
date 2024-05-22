@@ -8,7 +8,7 @@ import {
 } from '@aws-sdk/client-cognito-identity-provider';
 
 export async function getParameterValue(name: string): Promise<string> {
-  const ssmClient = new SSMClient({ region: process.env.REGION });
+  const ssmClient = new SSMClient({ region: 'us-east-1' });
   const command = new GetParameterCommand({
     Name: name,
     WithDecryption: true, // Set this to false if you're storing a non-sensitive value
@@ -29,7 +29,7 @@ export async function updateUserPoolClientCallbackUrl(
   callbackUrl: string,
   logoutURL: string,
 ): Promise<void> {
-  const cognitoClient = new CognitoIdentityProviderClient({ region: process.env.REGION });
+  const cognitoClient = new CognitoIdentityProviderClient({ region: 'us-east-1' });
 
   const command = new UpdateUserPoolClientCommand({
     ClientId: clientId,
@@ -51,7 +51,7 @@ export async function updateUserPoolClientCallbackUrl(
 }
 
 export async function updateInviteMessageTemplate(url: string, userPoolId: string) {
-  const client = new CognitoIdentityProviderClient({ region: process.env.REGION });
+  const client = new CognitoIdentityProviderClient({ region: 'us-east-1' });
   // const usrPoolData = await getUserPoolData(userPoolId);
   // if(!usrPoolData || !usrPoolData.SmsConfiguration) throw new Error("User Pool not found");
 
@@ -100,7 +100,7 @@ export async function updateInviteMessageTemplate(url: string, userPoolId: strin
 export async function getUserPoolData(userPoolId: string) {
   // eslint-disable-next-line no-useless-catch
   try {
-    const client = new CognitoIdentityProviderClient({ region: process.env.REGION });
+    const client = new CognitoIdentityProviderClient({ region: 'us-east-1' });
 
     const params = {
       UserPoolId: userPoolId,
