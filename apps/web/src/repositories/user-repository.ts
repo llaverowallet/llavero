@@ -1,6 +1,7 @@
 import { Entity, Table } from 'dynamodb-onetable';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import UserSchema from './user-schema';
+import { WalletInfo } from '@/models/interfaces'; // Adjust the import path as necessary
 
 export type User = Entity<typeof UserSchema.models.User>;
 export type Network = Entity<typeof UserSchema.models.Networks>;
@@ -56,12 +57,17 @@ export class UserRepository {
     }
   }
 
-  async getKeys(username = '', user?: User) {
+  async getKeys(username = '', user?: User): Promise<WalletInfo[]> {
     try {
       if (!username && !user) throw new Error('Either username or user must be provided');
       const selectedUser = user || (await this.getUser(username));
       const keys = await this.keysModel.find({ userId: selectedUser?.userId });
-      return keys;
+      return keys.map((key) => ({
+        address: key.address,
+        balance: '', // Placeholder, as balance is not retrieved here
+        name: key.name,
+        description: key.description,
+      }));
     } catch (error) {
       logger.error(error, 'Error in UserRepository getKeys');
       throw error;

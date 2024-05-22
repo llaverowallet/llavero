@@ -6,6 +6,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  productionBrowserSourceMaps: true, // Enable source maps for production builds
 };
 
 module.exports = nextConfig;

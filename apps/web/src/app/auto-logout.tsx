@@ -91,7 +91,7 @@ export function AutoLogoutProvider({
 
     // maybe verify that they are authenticated?
     if (status === 'authenticated') {
-      const expiry = new Date(session?.expires).getTime();
+      const expiry = new Date(session?.expires ?? 0).getTime();
 
       if (now > expiry) {
         if (debug) {

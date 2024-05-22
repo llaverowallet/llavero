@@ -10,11 +10,26 @@ export async function register() {
 
   try {
     console.log('registering instrumentation');
-    const siteUrl = await getParameterValue(
-      process.env.SITEURL_PARAM_NAME ?? 'https://localhost:3000',
-    );
-    process.env.NEXTAUTH_URL = siteUrl;
-    process.env.NEXT_PUBLIC_SITE_URL = siteUrl;
+    const siteUrlParamName = process.env.SITEURL_PARAM_NAME;
+    if (siteUrlParamName) {
+      try {
+        const siteUrl = await getParameterValue(siteUrlParamName);
+        process.env.NEXTAUTH_URL = siteUrl;
+        process.env.NEXT_PUBLIC_SITE_URL = siteUrl;
+      } catch (paramError) {
+        if ((paramError as Error).name === 'ParameterNotFound') {
+          console.warn('Parameter not found. Using default URL.');
+          process.env.NEXTAUTH_URL = 'http://localhost:3000';
+          process.env.NEXT_PUBLIC_SITE_URL = 'http://localhost:3000';
+        } else {
+          throw paramError;
+        }
+      }
+    } else {
+      console.warn('SITEURL_PARAM_NAME is not set. Using default URL.');
+      process.env.NEXTAUTH_URL = 'http://localhost:3000';
+      process.env.NEXT_PUBLIC_SITE_URL = 'http://localhost:3000';
+    }
   } catch (error) {
     console.log({ error });
     logger.error(error);

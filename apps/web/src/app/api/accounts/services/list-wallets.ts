@@ -20,7 +20,7 @@ export default async function listWallets(
     const userRepo = new UserRepository();
     const user = await userRepo.getUser(username);
     if (!user) return [];
-    const keys = await userRepo.getKeys('', user);
+    const keys: WalletInfo[] = await userRepo.getKeys('', user);
     const provider = new JsonRpcProvider(network || 'https://eth.llamarpc.com'); //TODO get from an endpoint
     try {
       await provider._detectNetwork();
@@ -29,11 +29,11 @@ export default async function listWallets(
       console.log(err);
       provider.destroy();
     }
-    const keysPromise = keys.map(async (key) => {
+    const keysPromise: Promise<WalletInfo>[] = keys.map(async (key: WalletInfo) => {
       const balance = formatEther(await provider.getBalance(key.address));
       return { address: key.address, balance, name: key.name, description: key.description };
     });
-    const ethKeys = await Promise.all(keysPromise);
+    const ethKeys: WalletInfo[] = await Promise.all(keysPromise);
 
     console.log('ethKeys: ', ethKeys);
     return ethKeys;
