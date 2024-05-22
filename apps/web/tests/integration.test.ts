@@ -97,26 +97,26 @@ test('Llavero Web App Integration Test', async ({ page }) => {
 
   // Wait for the username and password fields to be visible and enabled
   console.log('Waiting for the "Username" field to be visible...');
-  await page.waitForSelector('input[name="username"]:nth-of-type(1)', { state: 'visible' });
+  await page.waitForSelector('[devin-id="0"]', { state: 'visible' });
   console.log('"Username" field is now visible.');
 
   console.log('Waiting for the "Password" field to be visible...');
-  await page.waitForSelector('input[name="password"]:nth-of-type(1)', { state: 'visible' });
+  await page.waitForSelector('[devin-id="1"]', { state: 'visible' });
   console.log('"Password" field is now visible.');
 
   // Log the visibility status of the input fields on the Cognito login page after waiting
-  const usernameFieldVisibleAfterWait = await page.isVisible('input[name="username"]');
-  const passwordFieldVisibleAfterWait = await page.isVisible('input[name="password"]');
+  const usernameFieldVisibleAfterWait = await page.isVisible('[devin-id="0"]');
+  const passwordFieldVisibleAfterWait = await page.isVisible('[devin-id="1"]');
   console.log(`"Username" field visible after wait: ${usernameFieldVisibleAfterWait}`);
   console.log(`"Password" field visible after wait: ${passwordFieldVisibleAfterWait}`);
 
   // Log the bounding client rect of the input fields on the Cognito login page after waiting
   const usernameFieldRectAfterWait = await page.evaluate(() => {
-    const usernameField = document.querySelector('input[name="username"]');
+    const usernameField = document.querySelector('[devin-id="0"]');
     return usernameField ? usernameField.getBoundingClientRect().toJSON() : null;
   });
   const passwordFieldRectAfterWait = await page.evaluate(() => {
-    const passwordField = document.querySelector('input[name="password"]');
+    const passwordField = document.querySelector('[devin-id="1"]');
     return passwordField ? passwordField.getBoundingClientRect().toJSON() : null;
   });
   console.log(
@@ -128,7 +128,7 @@ test('Llavero Web App Integration Test', async ({ page }) => {
 
   // Log the computed styles of the input fields on the Cognito login page after waiting
   const usernameFieldStylesAfterWait = await page.evaluate(() => {
-    const usernameField = document.querySelector('input[name="username"]');
+    const usernameField = document.querySelector('[devin-id="0"]');
     if (usernameField) {
       const computedStyles = window.getComputedStyle(usernameField);
       return {
@@ -140,7 +140,7 @@ test('Llavero Web App Integration Test', async ({ page }) => {
     return null;
   });
   const passwordFieldStylesAfterWait = await page.evaluate(() => {
-    const passwordField = document.querySelector('input[name="password"]');
+    const passwordField = document.querySelector('[devin-id="1"]');
     if (passwordField) {
       return {
         display: window.getComputedStyle(passwordField).display,
@@ -159,11 +159,11 @@ test('Llavero Web App Integration Test', async ({ page }) => {
 
   // Enter the login credentials on the Cognito login page
   console.log('Filling the "Username" field...');
-  await page.fill('input[name="username"]:nth-of-type(1)', email);
+  await page.fill('[devin-id="0"]', email);
   console.log('"Username" field filled.');
 
   console.log('Filling the "Password" field...');
-  await page.fill('input[name="password"]:nth-of-type(1)', password);
+  await page.fill('[devin-id="1"]', password);
   console.log('"Password" field filled.');
 
   // Click the "Sign in" button on the Cognito login page
