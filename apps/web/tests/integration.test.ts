@@ -96,8 +96,8 @@ test('Llavero Web App Integration Test', async ({ page }) => {
   console.log(`"Password" field computed styles: ${JSON.stringify(passwordFieldStyles)}`);
 
   // Wait for the username and password fields to be visible and enabled
-  await page.waitForSelector('input[name="username"]:nth-of-type(1)', { state: 'visible' });
-  await page.waitForSelector('input[name="password"]:nth-of-type(1)', { state: 'visible' });
+  await page.waitForSelector('input[name="username"]', { state: 'visible' });
+  await page.waitForSelector('input[name="password"]', { state: 'visible' });
 
   // Log the visibility status of the input fields on the Cognito login page after waiting
   const usernameFieldVisibleAfterWait = await page.isVisible('input[name="username"]');
@@ -153,8 +153,8 @@ test('Llavero Web App Integration Test', async ({ page }) => {
   );
 
   // Enter the login credentials on the Cognito login page
-  await page.fill('input[name="username"]', email);
-  await page.fill('input[name="password"]', password);
+  await page.fill('input[name="username"]:nth-of-type(1)', email);
+  await page.fill('input[name="password"]:nth-of-type(1)', password);
 
   // Click the "Sign in" button on the Cognito login page
   await page.click('input[name="signInSubmitButton"]');
