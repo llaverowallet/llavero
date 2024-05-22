@@ -1,6 +1,10 @@
 import { test, expect } from '@playwright/test';
 
 test('Llavero Web App Integration Test', async ({ page }) => {
+  // Retrieve login credentials from environment variables
+  const email = process.env.EMAIL;
+  const password = process.env.PASSWORD;
+
   // Navigate to the login page
   await page.goto('http://localhost:3000');
 
@@ -38,8 +42,8 @@ test('Llavero Web App Integration Test', async ({ page }) => {
   await page.click('#login-button');
 
   // Enter the login credentials
-  await page.fill('input[name="username"]', 'elranu@gmail.com');
-  await page.fill('input[name="password"]', 'Qqaazz1144$');
+  await page.fill('input[name="username"]', email);
+  await page.fill('input[name="password"]', password);
 
   // Click the "Sign in" button
   await page.click('button[type="submit"]');
