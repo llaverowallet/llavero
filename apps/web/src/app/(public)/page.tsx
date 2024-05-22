@@ -29,7 +29,7 @@ const HomePage = () => {
           </CardHeader>
           <CardContent></CardContent>
           <CardFooter className="flex justify-between">
-            <Button className="w-full" onClick={handleLogin}>
+            <Button id="login-button" className="w-full" onClick={handleLogin}>
               Log in
             </Button>
           </CardFooter>

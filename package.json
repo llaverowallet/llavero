@@ -27,7 +27,9 @@
   },
   "author": "Mariano Julio Vicario",
   "license": "Apache-2.0",
-  "dependencies": {},
+  "dependencies": {
+    "serverless-stack": "^0.1.0"
+  },
   "devDependencies": {
     "@types/node": "^20.4.4",
     "@typescript-eslint/eslint-plugin": "^6.18.1",
