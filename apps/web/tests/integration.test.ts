@@ -6,22 +6,22 @@ test('Llavero Web App Integration Test', async ({ page }) => {
 
   // Wait for the "Log in" button to be visible
   console.log('Waiting for the "Log in" button to be visible...');
-  await page.waitForSelector('[devin-id="3"]', { state: 'visible' });
+  await page.waitForSelector('#login-button', { state: 'visible' });
 
   // Log the visibility status of the "Log in" button
-  const loginButtonVisible = await page.isVisible('[devin-id="3"]');
+  const loginButtonVisible = await page.isVisible('#login-button');
   console.log(`"Log in" button visible: ${loginButtonVisible}`);
 
   // Log the bounding client rect of the "Log in" button
   const loginButtonRect = await page.evaluate(() => {
-    const loginButton = document.querySelector('[devin-id="3"]');
+    const loginButton = document.querySelector('#login-button');
     return loginButton ? loginButton.getBoundingClientRect().toJSON() : null;
   });
   console.log(`"Log in" button bounding client rect: ${JSON.stringify(loginButtonRect)}`);
 
   // Log the computed styles of the "Log in" button
   const loginButtonStyles = await page.evaluate(() => {
-    const loginButton = document.querySelector('[devin-id="3"]');
+    const loginButton = document.querySelector('#login-button');
     if (loginButton) {
       const computedStyles = window.getComputedStyle(loginButton);
       return {
@@ -35,7 +35,7 @@ test('Llavero Web App Integration Test', async ({ page }) => {
   console.log(`"Log in" button computed styles: ${JSON.stringify(loginButtonStyles)}`);
 
   // Click the "Log in" button
-  await page.click('[devin-id="3"]');
+  await page.click('#login-button');
 
   // Enter the login credentials
   await page.fill('input[name="username"]', 'elranu@gmail.com');
