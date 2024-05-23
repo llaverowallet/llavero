@@ -7,6 +7,7 @@ test('Llavero Web App Integration Test', async ({ page }) => {
   // Output for debugging
   console.log('Navigated to login page.');
   console.log('Current URL before clicking Log in button:', await page.url());
+  console.log('Page HTML content:', await page.content());
 
   // Wait for the page to fully load
   await page.waitForLoadState('load');
@@ -40,6 +41,17 @@ test('Llavero Web App Integration Test', async ({ page }) => {
     { timeout: 60000 },
   );
   console.log('Log in button is interactable.');
+
+  // Check for any overlays or modals that might be blocking the button
+  const blockingElements = await page.$$('div[aria-hidden="true"], .modal, .overlay');
+  if (blockingElements.length > 0) {
+    console.log('Found blocking elements:', blockingElements.length);
+    for (const element of blockingElements) {
+      console.log('Blocking element bounding box:', await element.boundingBox());
+    }
+  } else {
+    console.log('No blocking elements found.');
+  }
 
   // Wait for the network to be idle to ensure the page has fully loaded
   await page.waitForLoadState('networkidle');
