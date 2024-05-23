@@ -5,6 +5,30 @@ test('Llavero Web App Integration Test', async ({ page }) => {
   await page.goto('http://localhost:3000');
   console.log('Navigated to login page.');
 
+  // Log the current URL before clicking the Log in button
+  const currentURL = page.url();
+  console.log('Current URL before clicking Log in button:', currentURL);
+
+  // Check if the Log in button is visible before clicking
+  const loginButton = await page.$('[devin-id="3"]');
+  const loginButtonVisible = await loginButton?.isVisible();
+  console.log('Log in button visibility before clicking:', loginButtonVisible);
+
+  // Log the bounding box of the Log in button
+  const loginButtonBoundingBox = await loginButton?.boundingBox();
+  console.log('Log in button bounding box:', loginButtonBoundingBox);
+
+  // Log the computed styles of the Log in button
+  const loginButtonComputedStyles = await page.evaluate((element) => {
+    const styles = window.getComputedStyle(element);
+    return {
+      display: styles.display,
+      visibility: styles.visibility,
+      opacity: styles.opacity,
+    };
+  }, loginButton);
+  console.log('Log in button computed styles:', loginButtonComputedStyles);
+
   // Click the Log in button
   await page.click('[devin-id="3"]');
   console.log('Clicked on login button.');
