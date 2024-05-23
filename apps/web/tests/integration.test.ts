@@ -23,7 +23,7 @@ test('Llavero Web App Integration Test', async ({ page }) => {
   // Wait for the "Sign in" button to be visible
   console.log('Waiting for "Sign in" button to be visible...');
   await page.waitForSelector('[name="signInSubmitButton"]', { state: 'visible' });
-  console.log('"Sign in" button is visible.');
+  console.log('Sign in button is visible.');
 
   // Fill in the username and password fields
   console.log('Filling in the username and password fields...');
@@ -34,7 +34,7 @@ test('Llavero Web App Integration Test', async ({ page }) => {
   // Click the "Sign in" button
   console.log('Clicking the "Sign in" button...');
   await page.click('[name="signInSubmitButton"]');
-  console.log('"Sign in" button clicked.');
+  console.log('Sign in button clicked.');
 
   // Wait for navigation to the dashboard
   console.log('Waiting for navigation to the dashboard...');
