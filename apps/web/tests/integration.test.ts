@@ -26,6 +26,11 @@ test('Llavero Web App Integration Test', async ({ page }) => {
   await page.waitForSelector('[devin-id="0"]', { state: 'visible', timeout: 60000 });
   console.log('Username input field is visible.');
 
+  // Additional logging to diagnose the issue
+  const usernameField = await page.$('[devin-id="0"]');
+  const usernameFieldVisible = await usernameField?.isVisible();
+  console.log('Username field visibility:', usernameFieldVisible);
+
   // Fill in the username and password fields
   console.log('Filling in the username and password fields...');
   await page.fill('[devin-id="0"]', process.env.EMAIL);
