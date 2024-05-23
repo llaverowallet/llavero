@@ -18,6 +18,9 @@ test('Llavero Web App Integration Test', async ({ page }) => {
     await page.isVisible('[devin-id="3"]'),
   );
 
+  // Take a screenshot before waiting for the login button to be visible
+  await page.screenshot({ path: 'before_waiting_for_login_button.png' });
+
   // Wait for the login button to be visible and output its properties for debugging
   await page.waitForSelector('[devin-id="3"]', { state: 'visible', timeout: 120000 });
   console.log('Log in button visibility before clicking:', await page.isVisible('[devin-id="3"]'));
