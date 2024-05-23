@@ -1,5 +1,3 @@
-import { test, expect } from '@playwright/test';
-
 test('Llavero Web App Integration Test', async ({ page }) => {
   // Navigate to the login page
   await page.goto('http://localhost:3000');
