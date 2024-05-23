@@ -9,7 +9,7 @@ test('Llavero Web App Integration Test', async ({ page }) => {
   console.log('Current URL before clicking Log in button:', await page.url());
 
   // Wait for the login button to be visible and output its properties for debugging
-  await page.waitForSelector('text=Sign in');
+  await page.waitForSelector('text=Sign in', { state: 'visible', timeout: 60000 });
   console.log('Log in button visibility before clicking:', await page.isVisible('text=Sign in'));
   console.log('Log in button bounding box:', await page.locator('text=Sign in').boundingBox());
   console.log(
@@ -17,8 +17,13 @@ test('Llavero Web App Integration Test', async ({ page }) => {
     await page.locator('text=Sign in').evaluate((node) => window.getComputedStyle(node)),
   );
 
+  // Wait for the network to be idle to ensure the page has fully loaded
+  await page.waitForLoadState('networkidle');
+
   // Click on the login button
+  console.log('Attempting to click the Log in button.');
   await page.click('text=Sign in');
+  console.log('Clicked the Log in button.');
 
   // Wait for navigation after login
   await page.waitForNavigation();
