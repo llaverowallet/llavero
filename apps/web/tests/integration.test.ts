@@ -21,6 +21,17 @@ test('Llavero Web App Integration Test', async ({ page }) => {
     await page.locator('[devin-id="3"]').evaluate((node) => window.getComputedStyle(node)),
   );
 
+  // Additional wait condition to ensure the button is interactable
+  await page.waitForFunction(
+    (selector) => {
+      const button = document.querySelector(selector);
+      return button && button.offsetWidth > 0 && button.offsetHeight > 0;
+    },
+    '[devin-id="3"]',
+    { timeout: 60000 },
+  );
+  console.log('Log in button is interactable.');
+
   // Wait for the network to be idle to ensure the page has fully loaded
   await page.waitForLoadState('networkidle');
 
