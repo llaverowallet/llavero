@@ -21,7 +21,7 @@ test('Llavero Web App Integration Test', async ({ page }) => {
   // Log the computed styles of the Log in button
   const loginButtonComputedStyles = await page.evaluate((selector) => {
     const element = document.querySelector(selector);
-    if (!element) return null;
+    if (!element || !(element instanceof Element)) return null;
     const styles = window.getComputedStyle(element);
     return {
       display: styles.display,
