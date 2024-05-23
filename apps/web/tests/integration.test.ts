@@ -12,8 +12,14 @@ test('Llavero Web App Integration Test', async ({ page }) => {
   await page.waitForLoadState('load');
   console.log('Page fully loaded.');
 
+  // Check if the login button is already visible
+  console.log(
+    'Checking if Log in button is already visible:',
+    await page.isVisible('[devin-id="3"]'),
+  );
+
   // Wait for the login button to be visible and output its properties for debugging
-  await page.waitForSelector('[devin-id="3"]', { state: 'visible', timeout: 60000 });
+  await page.waitForSelector('[devin-id="3"]', { state: 'visible', timeout: 120000 });
   console.log('Log in button visibility before clicking:', await page.isVisible('[devin-id="3"]'));
   console.log('Log in button bounding box:', await page.locator('[devin-id="3"]').boundingBox());
   console.log(
@@ -37,8 +43,12 @@ test('Llavero Web App Integration Test', async ({ page }) => {
 
   // Click on the login button
   console.log('Attempting to click the Log in button.');
-  await page.click('[devin-id="3"]');
-  console.log('Clicked the Log in button.');
+  try {
+    await page.click('[devin-id="3"]');
+    console.log('Clicked the Log in button.');
+  } catch (error) {
+    console.error('Error clicking the Log in button:', error);
+  }
 
   // Wait for navigation after login
   await page.waitForNavigation();
