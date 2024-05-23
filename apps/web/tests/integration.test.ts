@@ -10,7 +10,7 @@ test('Llavero Web App Integration Test', async ({ page }) => {
   console.log('Current URL before clicking Log in button:', currentURL);
 
   // Check if the Log in button is visible before clicking
-  const loginButton = await page.$('[devin-id="3"]');
+  const loginButton = await page.$('text="Sign in"');
   const loginButtonVisible = await loginButton?.isVisible();
   console.log('Log in button visibility before clicking:', loginButtonVisible);
 
@@ -28,11 +28,11 @@ test('Llavero Web App Integration Test', async ({ page }) => {
       visibility: styles.visibility,
       opacity: styles.opacity,
     };
-  }, '[devin-id="3"]');
+  }, 'text="Sign in"');
   console.log('Log in button computed styles:', loginButtonComputedStyles);
 
   // Click the Log in button
-  await page.click('[devin-id="3"]');
+  await page.click('text="Sign in"');
   console.log('Clicked on login button.');
 
   // Wait for the Cognito login page to load
@@ -49,23 +49,23 @@ test('Llavero Web App Integration Test', async ({ page }) => {
 
   // Wait for the username input field to be visible
   console.log('Waiting for username input field to be visible...');
-  await page.waitForSelector('[devin-id="0"]', { state: 'visible', timeout: 60000 });
+  await page.waitForSelector('input[type="email"]', { state: 'visible', timeout: 60000 });
   console.log('Username input field is visible.');
 
   // Additional logging to diagnose the issue
-  const usernameField = await page.$('[devin-id="0"]');
+  const usernameField = await page.$('input[type="email"]');
   const usernameFieldVisible = await usernameField?.isVisible();
   console.log('Username field visibility:', usernameFieldVisible);
 
   // Fill in the username and password fields
   console.log('Filling in the username and password fields...');
-  await page.fill('[devin-id="0"]', process.env.EMAIL);
-  await page.fill('[devin-id="1"]', process.env.PASSWORD);
+  await page.fill('input[type="email"]', process.env.EMAIL);
+  await page.fill('input[type="password"]', process.env.PASSWORD);
   console.log('Username and password fields filled.');
 
   // Click the Sign in button
   console.log('Clicking the Sign in button...');
-  await page.click('[devin-id="3"]');
+  await page.click('text="Sign in"');
   console.log('Sign in button clicked.');
 
   // Wait for navigation to the dashboard
