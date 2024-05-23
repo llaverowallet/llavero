@@ -8,13 +8,17 @@ test('Llavero Web App Integration Test', async ({ page }) => {
   console.log('Navigated to login page.');
   console.log('Current URL before clicking Log in button:', await page.url());
 
+  // Wait for the page to fully load
+  await page.waitForLoadState('load');
+  console.log('Page fully loaded.');
+
   // Wait for the login button to be visible and output its properties for debugging
-  await page.waitForSelector('text=Sign in', { state: 'visible', timeout: 60000 });
-  console.log('Log in button visibility before clicking:', await page.isVisible('text=Sign in'));
-  console.log('Log in button bounding box:', await page.locator('text=Sign in').boundingBox());
+  await page.waitForSelector('[devin-id="3"]', { state: 'visible', timeout: 60000 });
+  console.log('Log in button visibility before clicking:', await page.isVisible('[devin-id="3"]'));
+  console.log('Log in button bounding box:', await page.locator('[devin-id="3"]').boundingBox());
   console.log(
     'Log in button computed styles:',
-    await page.locator('text=Sign in').evaluate((node) => window.getComputedStyle(node)),
+    await page.locator('[devin-id="3"]').evaluate((node) => window.getComputedStyle(node)),
   );
 
   // Wait for the network to be idle to ensure the page has fully loaded
@@ -22,7 +26,7 @@ test('Llavero Web App Integration Test', async ({ page }) => {
 
   // Click on the login button
   console.log('Attempting to click the Log in button.');
-  await page.click('text=Sign in');
+  await page.click('[devin-id="3"]');
   console.log('Clicked the Log in button.');
 
   // Wait for navigation after login
