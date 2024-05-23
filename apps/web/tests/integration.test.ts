@@ -19,14 +19,16 @@ test('Llavero Web App Integration Test', async ({ page }) => {
   console.log('Log in button bounding box:', loginButtonBoundingBox);
 
   // Log the computed styles of the Log in button
-  const loginButtonComputedStyles = await page.evaluate((element) => {
+  const loginButtonComputedStyles = await page.evaluate((selector) => {
+    const element = document.querySelector(selector);
+    if (!element) return null;
     const styles = window.getComputedStyle(element);
     return {
       display: styles.display,
       visibility: styles.visibility,
       opacity: styles.opacity,
     };
-  }, loginButton);
+  }, '[devin-id="3"]');
   console.log('Log in button computed styles:', loginButtonComputedStyles);
 
   // Click the Log in button
