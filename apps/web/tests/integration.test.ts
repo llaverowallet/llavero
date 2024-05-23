@@ -6,7 +6,7 @@ test('Llavero Web App Integration Test', async ({ page }) => {
   console.log('Navigated to login page.');
 
   // Click the Log in button
-  await page.click('#login-button');
+  await page.click('[devin-id="3"]');
   console.log('Clicked on login button.');
 
   // Wait for the Cognito login page to load
