@@ -1,6 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
+import { Copy, ExternalLink } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
+import { JsonRpcProvider } from 'ethers';
+import { fetchERC20TokenMetadata, checkTokenApproval } from '@/shared/services/erc20';
+import useERC20Balances from '@/shared/hooks/useERC20Balances';
+import { getAccounts } from '@/shared/services/account';
 import { getChainByEip155Address } from '@/data/chainsUtil';
 import { WalletInfo } from '@/models/interfaces';
 import { Card, CardContent } from '@/shared/components/ui/card';
@@ -9,25 +17,29 @@ import { AccountsSkeleton } from './components/accounts-skeleton';
 import { AccountsHeader } from './components/accounts-header';
 import { getShortWalletAddress, formatBalance } from '@/shared/utils/crypto';
 import { Badge } from '@/shared/components/ui/badge';
-import { Copy, ExternalLink } from 'lucide-react';
+import { Button } from '@/shared/components/ui/button';
 import { SendDialog } from './components/send-dialog';
 import { CopyToClipboard } from '@/shared/components/ui/copy-to-clipboard';
-import { useQuery } from '@tanstack/react-query';
 import { useNetwork } from '@/shared/hooks/use-network';
 import { AccountMenu } from '@/features/accounts/components/account-menu';
 import { AccountSections } from './components/account-sections';
 import { Separator } from '@/shared/components/ui/separator';
 import { ReceiveDialog } from './components/receive-dialog';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { getAccounts } from '@/shared/services/account';
-import Link from 'next/link';
-import { Button } from '@/shared/components/ui/button';
+
+// Placeholder for the Llavero Wallet contract address
+const LlaveroWalletContractAddress = '0x...'; // Replace with the actual contract address
+// Define the ERC20Balance type with an additional 'amount' property for approval checks
+type ERC20Balance = {
+  token: string;
+  balance: string;
+  amount: string;
+};
 
 const Accounts = () => {
   const router = useRouter();
-  const queryParams = useSearchParams();
+  const queryParams = router.query;
   const accountIndex =
-    Number(queryParams.get('k')) || Number(window?.localStorage.getItem('accountIndex')) || 0;
+    Number(queryParams['k']) || Number(window?.localStorage.getItem('accountIndex')) || 0;
   const { network } = useNetwork();
   const eip155Address = `${network?.namespace}:${network?.chainId}`;
   const { rpc } = getChainByEip155Address(eip155Address) ?? {};
@@ -50,6 +62,56 @@ const Accounts = () => {
     const index = accountIndex ? accountIndex.toString() : '0';
     router.replace(`/accounts?k=${index}`);
   }, [accountIndex, router]);
+
+  // State to store ERC-20 token balances
+  const [erc20Balances, setErc20Balances] = useState<ERC20Balance[]>([]);
+
+  // Instantiate a Web3Provider using the rpc URL
+  const provider = useMemo(() => new JsonRpcProvider(rpc), [rpc]);
+
+  // Ensure accountAddress is a string before using it
+  const accountAddressString = accountAddress || '';
+  const fetchedErc20Balances = useERC20Balances(accountAddressString, provider);
+
+  // Fetch ERC-20 token metadata
+  useEffect(() => {
+    const fetchMetadata = async () => {
+      const metadataPromises = fetchedErc20Balances.map((balance) =>
+        fetchERC20TokenMetadata(balance.token, provider),
+      );
+      await Promise.all(metadataPromises);
+    };
+
+    if (fetchedErc20Balances.length > 0) {
+      fetchMetadata();
+    }
+  }, [fetchedErc20Balances, provider]);
+
+  // Update the state whenever the fetched balances change
+  useEffect(() => {
+    setErc20Balances(fetchedErc20Balances as ERC20Balance[]);
+  }, [fetchedErc20Balances]);
+
+  // Check for token approval requirements
+  useEffect(() => {
+    const checkApprovals = async () => {
+      const approvalStatus: { [key: string]: boolean } = {};
+      for (const balance of erc20Balances) {
+        const isApprovalNeeded = await checkTokenApproval(
+          balance.token,
+          accountAddressString,
+          LlaveroWalletContractAddress,
+          balance.amount,
+          provider,
+        );
+        approvalStatus[balance.token] = isApprovalNeeded;
+      }
+    };
+
+    if (erc20Balances.length > 0) {
+      checkApprovals();
+    }
+  }, [erc20Balances, accountAddressString, provider]);
 
   const handleSelectAccount = (account: WalletInfo) => {
     const index = accounts?.findIndex((a) => a.address === account.address || 0);

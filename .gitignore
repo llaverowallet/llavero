@@ -107,3 +107,7 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Test result files
+apps/web/full_test_results.txt
+apps/web/test_results.txt

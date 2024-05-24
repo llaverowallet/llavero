@@ -99,8 +99,18 @@ const AccountActivity = ({ account }: Props) => {
   const { transactions = [], transactionsHashes = [], isPending } = useTransactions({ account });
 
   const sortedTransactions = transactions.sort((a, b) => {
-    const aTimestamp = JSON.parse(a.data).timestamp;
-    const bTimestamp = JSON.parse(b.data).timestamp;
+    let aTimestamp = 0;
+    let bTimestamp = 0;
+    try {
+      aTimestamp = JSON.parse(a.data).timestamp;
+    } catch (e) {
+      console.error('Failed to parse transaction data for sorting:', e);
+    }
+    try {
+      bTimestamp = JSON.parse(b.data).timestamp;
+    } catch (e) {
+      console.error('Failed to parse transaction data for sorting:', e);
+    }
     return bTimestamp - aTimestamp;
   });
 
@@ -112,9 +122,9 @@ const AccountActivity = ({ account }: Props) => {
         ) : (
           <>
             {transactionsHashes?.length > 0
-              ? transactionsHashes
-                  .toReversed()
-                  .map((txHash) => (
+              ? [...transactionsHashes]
+                  .reverse()
+                  .map((txHash: string) => (
                     <AccountActivityItemInMemory key={txHash} txHash={txHash} account={account} />
                   ))
               : null}
@@ -303,9 +313,35 @@ const AccountActivityItem = ({
   account: WalletInfo | null;
 }) => {
   const { network } = useNetwork();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { status, value, from, to, nonce, gasLimit, gasUsed, hash, timestamp, chainId }: any =
-    JSON.parse(transaction.data) || {};
+  let transactionData: TransactionData = {
+    status: null,
+    gasUsed: undefined,
+    from: undefined,
+    to: undefined,
+    value: undefined,
+    nonce: undefined,
+    hash: undefined,
+    chainId: undefined,
+    gasLimit: undefined,
+    timestamp: undefined,
+  };
+  try {
+    transactionData = JSON.parse(transaction.data) || {};
+  } catch (e) {
+    console.error('Failed to parse transaction data:', e);
+  }
+  const {
+    status,
+    value,
+    from,
+    to,
+    nonce,
+    gasLimit,
+    gasUsed,
+    hash,
+    timestamp,
+    chainId,
+  }: TransactionData = transactionData;
 
   const explorerTransactionURL = `${network.explorer}/tx/${hash}`;
   const datetime = timestamp ? new Date(timestamp * 1000).toLocaleString('en') : null;
