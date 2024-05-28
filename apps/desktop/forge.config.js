@@ -16,8 +16,7 @@ module.exports = {
         const oldPckgJson = path.join(buildPath, "package.json");
         const newPckgJson = path.join(buildPath, "_package.json");
 
-        fs.renameSync(oldPckgJson, newPckgJson);
-
+        // Ensure package.json is present throughout the build process
         const yarnAdd = spawn("yarn", commands, {
           cwd: buildPath,
           stdio: "inherit",
@@ -28,8 +27,6 @@ module.exports = {
           console.log("yarn add serialport command executed with code:", code); // Log statement to confirm yarn add execution
 
           if (code === 0) {
-            fs.renameSync(newPckgJson, oldPckgJson);
-
             if (platform === "win32") {
               const problematicPaths = [
                 "android-arm",
