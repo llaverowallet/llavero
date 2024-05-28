@@ -94,6 +94,16 @@ module.exports = {
       });
     },
   },
+  packagerConfig: {
+    ignore: (file) => {
+      // Ensure that the @aws-cdk/cloudformation-diff module is not ignored
+      if (file.includes('@aws-cdk/cloudformation-diff')) {
+        return false;
+      }
+      // Ignore all other files
+      return true;
+    },
+  },
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
