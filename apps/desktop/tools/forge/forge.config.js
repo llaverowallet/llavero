@@ -116,7 +116,6 @@ module.exports = {
   ],
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const filterFunc = (src) => {
   // Paths to omit
   const omitPaths = ['node_modules', '/.next', '.sst', '.open-next'];

@@ -4,88 +4,105 @@ const { spawn } = require('child_process');
 
 module.exports = {
   hooks: {
-    packageAfterPrune: async (config, buildPath, electronVersion, platform, arch) => {
-      console.log("Executing packageAfterPrune hook..."); // Log statement to confirm hook execution
+    packageAfterPrune: async (
+      config,
+      buildPath,
+      electronVersion,
+      platform,
+      arch,
+    ) => {
+      console.log('Executing packageAfterPrune hook...'); // Log statement to confirm hook execution
 
       const commands = [
-        "add",
-        "serialport",
+        'add',
+        'serialport',
+        '@aws-cdk/cloudformation-diff', // Add @aws-cdk/cloudformation-diff module
       ];
 
       return new Promise((resolve, reject) => {
-        const oldPckgJson = path.join(buildPath, "package.json");
-        const newPckgJson = path.join(buildPath, "_package.json");
+        const oldPckgJson = path.join(buildPath, 'package.json');
+        const newPckgJson = path.join(buildPath, '_package.json');
 
         // Ensure package.json is present throughout the build process
-        const yarnAdd = spawn("yarn", commands, {
+        const yarnAdd = spawn('yarn', commands, {
           cwd: buildPath,
-          stdio: "inherit",
+          stdio: 'inherit',
           shell: true,
         });
 
-        yarnAdd.on("close", (code) => {
-          console.log("yarn add serialport command executed with code:", code); // Log statement to confirm yarn add execution
+        yarnAdd.on('close', (code) => {
+          console.log(
+            'yarn add serialport and @aws-cdk/cloudformation-diff command executed with code:',
+            code,
+          ); // Log statement to confirm yarn add execution
 
           if (code === 0) {
-            if (platform === "win32") {
+            if (platform === 'win32') {
               const problematicPaths = [
-                "android-arm",
-                "android-arm64",
-                "darwin-x64+arm64",
-                "linux-arm",
-                "linux-arm64",
-                "linux-x64",
+                'android-arm',
+                'android-arm64',
+                'darwin-x64+arm64',
+                'linux-arm',
+                'linux-arm64',
+                'linux-x64',
               ];
 
               problematicPaths.forEach((binaryFolder) => {
                 fs.rmSync(
                   path.join(
                     buildPath,
-                    "node_modules",
-                    "@serialport",
-                    "bindings-cpp",
-                    "prebuilds",
-                    binaryFolder
+                    'node_modules',
+                    '@serialport',
+                    'bindings-cpp',
+                    'prebuilds',
+                    binaryFolder,
                   ),
-                  { recursive: true, force: true }
+                  { recursive: true, force: true },
                 );
               });
             }
 
             // Log the contents of node_modules to verify presence of all expected modules
-            fs.readdir(path.join(buildPath, "node_modules"), (err, files) => {
+            fs.readdir(path.join(buildPath, 'node_modules'), (err, files) => {
               if (err) {
-                console.error("Error reading node_modules directory:", err);
+                console.error('Error reading node_modules directory:', err);
               } else {
-                console.log("Contents of node_modules:", files);
+                console.log('Contents of node_modules:', files);
                 // Check if "@aws-cdk/cloudformation-diff" is present
-                if (files.includes("@aws-cdk")) {
-                  fs.readdir(path.join(buildPath, "node_modules", "@aws-cdk"), (err, awsCdkFiles) => {
-                    if (err) {
-                      console.error("Error reading @aws-cdk directory:", err);
-                    } else {
-                      console.log("Contents of @aws-cdk:", awsCdkFiles);
-                      // Check if "cloudformation-diff" is present
-                      if (awsCdkFiles.includes("cloudformation-diff")) {
-                        console.log("@aws-cdk/cloudformation-diff module is present");
+                if (files.includes('@aws-cdk')) {
+                  fs.readdir(
+                    path.join(buildPath, 'node_modules', '@aws-cdk'),
+                    (err, awsCdkFiles) => {
+                      if (err) {
+                        console.error('Error reading @aws-cdk directory:', err);
                       } else {
-                        console.error("@aws-cdk/cloudformation-diff module is missing");
+                        console.log('Contents of @aws-cdk:', awsCdkFiles);
+                        // Check if "cloudformation-diff" is present
+                        if (awsCdkFiles.includes('cloudformation-diff')) {
+                          console.log(
+                            '@aws-cdk/cloudformation-diff module is present',
+                          );
+                        } else {
+                          console.error(
+                            '@aws-cdk/cloudformation-diff module is missing',
+                          );
+                        }
                       }
-                    }
-                  });
+                    },
+                  );
                 } else {
-                  console.error("@aws-cdk directory is missing");
+                  console.error('@aws-cdk directory is missing');
                 }
               }
             });
 
             resolve();
           } else {
-            reject(new Error("process finished with error code " + code));
+            reject(new Error(`process finished with error code ${code}`));
           }
         });
 
-        yarnAdd.on("error", (error) => {
+        yarnAdd.on('error', (error) => {
           reject(error);
         });
       });
@@ -93,12 +110,15 @@ module.exports = {
   },
   packagerConfig: {
     ignore: (file) => {
-      // Ensure that the @aws-cdk/cloudformation-diff module is not ignored
-      if (file.includes('@aws-cdk/cloudformation-diff')) {
+      // Ensure that the package.json file and @aws-cdk/cloudformation-diff module are not ignored
+      if (
+        file.includes('package.json') ||
+        file.includes('@aws-cdk/cloudformation-diff')
+      ) {
         return false;
       }
-      // Ignore all other files
-      return true;
+      // Do not ignore any other files
+      return false;
     },
   },
   makers: [
