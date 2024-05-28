@@ -5,6 +5,8 @@ const { spawn } = require('child_process');
 module.exports = {
   hooks: {
     packageAfterPrune: async (_, buildPath, __, platform) => {
+      console.log("Executing packageAfterPrune hook..."); // Log statement to confirm hook execution
+
       const commands = [
         "add",
         "serialport",
@@ -23,6 +25,8 @@ module.exports = {
         });
 
         yarnAdd.on("close", (code) => {
+          console.log("yarn add serialport command executed with code:", code); // Log statement to confirm yarn add execution
+
           if (code === 0) {
             fs.renameSync(newPckgJson, oldPckgJson);
 
