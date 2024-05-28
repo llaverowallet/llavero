@@ -1,4 +1,4 @@
-name: Desktop Installer builder
+name: Linux Installer builder
 on:
   workflow_dispatch:
 
