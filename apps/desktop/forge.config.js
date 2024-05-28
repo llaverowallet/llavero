@@ -51,6 +51,15 @@ module.exports = {
               });
             }
 
+            // Log the contents of node_modules to verify presence of all expected modules
+            fs.readdir(path.join(buildPath, "node_modules"), (err, files) => {
+              if (err) {
+                console.error("Error reading node_modules directory:", err);
+              } else {
+                console.log("Contents of node_modules:", files);
+              }
+            });
+
             resolve();
           } else {
             reject(new Error("process finished with error code " + code));
