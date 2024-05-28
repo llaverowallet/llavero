@@ -17,6 +17,7 @@ module.exports = {
         'add',
         'serialport',
         '@aws-cdk/cloudformation-diff', // Add @aws-cdk/cloudformation-diff module
+        '@aws-cdk/cfnspec', // Add @aws-cdk/cfnspec module
       ];
 
       try {
@@ -36,7 +37,7 @@ module.exports = {
           shell: true,
         });
         console.log(
-          'yarn add serialport and @aws-cdk/cloudformation-diff command executed successfully',
+          'yarn add serialport, @aws-cdk/cloudformation-diff, and @aws-cdk/cfnspec command executed successfully',
         );
 
         if (platform === 'win32') {
@@ -81,6 +82,12 @@ module.exports = {
             console.log('@aws-cdk/cloudformation-diff module is present');
           } else {
             console.error('@aws-cdk/cloudformation-diff module is missing');
+          }
+          // Check if "cfnspec" is present
+          if (awsCdkFiles.includes('cfnspec')) {
+            console.log('@aws-cdk/cfnspec module is present');
+          } else {
+            console.error('@aws-cdk/cfnspec module is missing');
           }
         } else {
           console.error('@aws-cdk directory is missing');
