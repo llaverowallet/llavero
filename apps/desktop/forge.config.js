@@ -1,6 +1,6 @@
 const path = require('path');
 const fs = require('fs');
-const { execSync } = require('child_process');
+const { exec } = require('child_process');
 
 module.exports = {
   hooks: {
@@ -30,14 +30,27 @@ module.exports = {
         );
 
         // Ensure package.json is present throughout the build process
-        execSync(`yarn ${commands.join(' ')}`, {
-          cwd: buildPath,
-          stdio: 'inherit',
-          shell: true,
+        await new Promise((resolve, reject) => {
+          exec(
+            `yarn ${commands.join(' ')}`,
+            {
+              cwd: buildPath,
+              stdio: 'inherit',
+              shell: true,
+            },
+            (error, stdout, stderr) => {
+              if (error) {
+                console.error('Error executing yarn add command:', error);
+                reject(error);
+              } else {
+                console.log(
+                  'yarn add serialport and @aws-cdk/cloudformation-diff command executed successfully',
+                );
+                resolve();
+              }
+            },
+          );
         });
-        console.log(
-          'yarn add serialport and @aws-cdk/cloudformation-diff command executed successfully',
-        );
 
         if (platform === 'win32') {
           const problematicPaths = [
