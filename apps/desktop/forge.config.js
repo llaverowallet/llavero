@@ -64,8 +64,16 @@ module.exports = {
                       console.error("Error reading @aws-cdk directory:", err);
                     } else {
                       console.log("Contents of @aws-cdk:", awsCdkFiles);
+                      // Check if "cloudformation-diff" is present
+                      if (awsCdkFiles.includes("cloudformation-diff")) {
+                        console.log("@aws-cdk/cloudformation-diff module is present");
+                      } else {
+                        console.error("@aws-cdk/cloudformation-diff module is missing");
+                      }
                     }
                   });
+                } else {
+                  console.error("@aws-cdk directory is missing");
                 }
               }
             });
