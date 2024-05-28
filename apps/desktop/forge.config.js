@@ -6,9 +6,7 @@ module.exports = {
   hooks: {
     packageAfterPrune: async (_, buildPath, __, platform) => {
       const commands = [
-        "install",
-        "--no-package-lock",
-        "--no-save",
+        "add",
         "serialport",
       ];
 
@@ -18,13 +16,13 @@ module.exports = {
 
         fs.renameSync(oldPckgJson, newPckgJson);
 
-        const npmInstall = spawn("npm", commands, {
+        const yarnAdd = spawn("yarn", commands, {
           cwd: buildPath,
           stdio: "inherit",
           shell: true,
         });
 
-        npmInstall.on("close", (code) => {
+        yarnAdd.on("close", (code) => {
           if (code === 0) {
             fs.renameSync(newPckgJson, oldPckgJson);
 
@@ -59,7 +57,7 @@ module.exports = {
           }
         });
 
-        npmInstall.on("error", (error) => {
+        yarnAdd.on("error", (error) => {
           reject(error);
         });
       });
