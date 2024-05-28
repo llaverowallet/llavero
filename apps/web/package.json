@@ -36,6 +36,8 @@
     "@radix-ui/react-tooltip": "^1.0.7",
     "@tabler/icons-react": "^2.1.1",
     "@tanstack/react-query": "^5.8.4",
+    "@typescript-eslint/eslint-plugin": "^7.11.0",
+    "@typescript-eslint/parser": "^7.11.0",
     "@walletconnect/web3wallet": "^1.10.0",
     "bignumber.js": "^9.1.2",
     "class-variance-authority": "^0.7.0",
@@ -60,8 +62,6 @@
     "valtio": "^1.11.2"
   },
   "devDependencies": {
-    "seedrandom": "^3.0.5",
-    "nanoid": "^5.0.6",
     "@types/js-yaml": "^4.0.6",
     "@types/react": "^18",
     "@types/react-dom": "^18",
@@ -73,7 +73,9 @@
     "constructs": "10.2.69",
     "eslint": "^8",
     "eslint-config-next": "13.5.4",
+    "nanoid": "^5.0.6",
     "postcss": "^8",
+    "seedrandom": "^3.0.5",
     "sst": "2.29.2",
     "tailwindcss": "^3.3.0"
   }
