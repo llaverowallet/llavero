@@ -12,7 +12,14 @@ export default async function getWallet(address: string, username: string): Prom
     const keyDb = await userRepo.getKey(address, '', user);
     if (!keyDb?.keyArn) throw new Error('KeyArn not found');
     console.log('keyDb.keyArn: ', keyDb?.keyArn);
-    const provider = new JsonRpcProvider('https://cloudflare-eth.com/'); //TODO get from an endpoint
+    const provider = new JsonRpcProvider('https://eth.llamarpc.com'); //TODO get from an endpoint
+    try {
+      await provider._detectNetwork();
+    } catch (err) {
+      console.log('-----getWallet-----');
+      console.log(err);
+      provider.destroy();
+    }
     const balance = formatEther(await provider.getBalance(keyDb.address as string));
     return { address: address, balance, name: keyDb?.name ?? '', description: keyDb?.description };
   } catch (error) {

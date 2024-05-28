@@ -16,12 +16,19 @@ export default async function listWallets(
   network?: string | null,
 ): Promise<WalletInfo[]> {
   try {
-    console.log('entro listWallets');
+    console.log('entro listWallets', { username, network });
     const userRepo = new UserRepository();
     const user = await userRepo.getUser(username);
     if (!user) return [];
     const keys = await userRepo.getKeys('', user);
-    const provider = new JsonRpcProvider(network || 'https://cloudflare-eth.com'); //TODO get from an endpoint
+    const provider = new JsonRpcProvider(network || 'https://eth.llamarpc.com'); //TODO get from an endpoint
+    try {
+      await provider._detectNetwork();
+    } catch (err) {
+      console.log('-----listWallets-----');
+      console.log(err);
+      provider.destroy();
+    }
     const keysPromise = keys.map(async (key) => {
       const balance = formatEther(await provider.getBalance(key.address));
       return { address: key.address, balance, name: key.name, description: key.description };

@@ -164,7 +164,7 @@ Move your crypto before you start the uninstall process:
 # Develop
 
 ## To Dev:
-
+Deploy local enviroment
 ```
 Terminal 1
 
@@ -176,7 +176,7 @@ EMAIL="your@email.com" REGION="us-east-1" AWS_ACCESS_KEY_ID="id" AWS_SECRET_ACCE
 ```
 
 ### To emulate next.js prod on local env
-
+Is like to build production enviroment. You can debug lambdas on local enviroment
 ```
 Terminal 1
 

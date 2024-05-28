@@ -29,7 +29,7 @@ type Props = {
 function AccountMenu({ selectedAccount }: Props) {
   const { network } = useNetwork();
   const { name: accountName, address: accountAddress } = selectedAccount || {};
-  const explorerAddressURL = `${network.explorer}/address/${accountAddress}`;
+  const explorerAddressURL = `${network?.explorer}/address/${accountAddress}`;
 
   return (
     // Why Dialog needs to encase the DropdownMenu. Ref: https://ui.shadcn.com/docs/components/dialog#notes

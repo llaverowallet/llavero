@@ -32,6 +32,14 @@ export default async function ethSignTransaction(
     const rpc = getChainRpc(chainId);
     console.log('rpc: ', rpc);
     const provider = new JsonRpcProvider(rpc); //TODO get from an endpoint
+    try {
+      await provider._detectNetwork();
+    } catch (err) {
+      console.log('-----ethSignTransaction-----');
+      console.log(err);
+      provider.destroy();
+    }
+
     const signer = new AwsKmsSigner(getKeyId(key.keyArn), keyClient, provider);
     //const populated = await signer.populateTransaction(tx);
     //console.log("populated: ", populated);
