@@ -96,10 +96,11 @@ module.exports = {
       // Log the files being processed by the ignore function
       console.log('Processing file in ignore function:', file);
 
-      // Ensure that the package.json file and @aws-cdk/cloudformation-diff module are not ignored
+      // Ensure that the package.json file and @aws-cdk modules are not ignored
       if (
         file.includes('package.json') ||
-        file.includes('@aws-cdk/cloudformation-diff')
+        file.includes('@aws-cdk/cloudformation-diff') ||
+        file.includes('@aws-cdk/cfnspec')
       ) {
         console.log('Not ignoring file:', file);
         return false;
