@@ -4,7 +4,7 @@ const { spawn } = require('child_process');
 
 module.exports = {
   hooks: {
-    packageAfterPrune: async (_, buildPath, __, platform) => {
+    packageAfterPrune: async (config, buildPath, electronVersion, platform, arch) => {
       console.log("Executing packageAfterPrune hook..."); // Log statement to confirm hook execution
 
       const commands = [
