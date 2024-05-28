@@ -57,6 +57,16 @@ module.exports = {
                 console.error("Error reading node_modules directory:", err);
               } else {
                 console.log("Contents of node_modules:", files);
+                // Check if "@aws-cdk/cloudformation-diff" is present
+                if (files.includes("@aws-cdk")) {
+                  fs.readdir(path.join(buildPath, "node_modules", "@aws-cdk"), (err, awsCdkFiles) => {
+                    if (err) {
+                      console.error("Error reading @aws-cdk directory:", err);
+                    } else {
+                      console.log("Contents of @aws-cdk:", awsCdkFiles);
+                    }
+                  });
+                }
               }
             });
 
