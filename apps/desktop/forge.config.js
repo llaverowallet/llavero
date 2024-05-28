@@ -20,6 +20,21 @@ module.exports = {
       ];
 
       try {
+        // Log the contents of node_modules before adding the modules
+        fs.readdir(path.join(buildPath, 'node_modules'), (err, files) => {
+          if (err) {
+            console.error(
+              'Error reading node_modules directory before adding modules:',
+              err,
+            );
+          } else {
+            console.log(
+              'Contents of node_modules before adding modules:',
+              files,
+            );
+          }
+        });
+
         // Ensure package.json is present throughout the build process
         execSync(`yarn ${commands.join(' ')}`, {
           cwd: buildPath,
@@ -58,9 +73,15 @@ module.exports = {
         // Log the contents of node_modules to verify presence of all expected modules
         fs.readdir(path.join(buildPath, 'node_modules'), (err, files) => {
           if (err) {
-            console.error('Error reading node_modules directory:', err);
+            console.error(
+              'Error reading node_modules directory after adding modules:',
+              err,
+            );
           } else {
-            console.log('Contents of node_modules:', files);
+            console.log(
+              'Contents of node_modules after adding modules:',
+              files,
+            );
             // Check if "@aws-cdk/cloudformation-diff" is present
             if (files.includes('@aws-cdk')) {
               fs.readdir(
