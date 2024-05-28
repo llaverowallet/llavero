@@ -79,14 +79,6 @@
     fs-extra "^9.1.0"
     md5 "^2.3.0"
 
-"@aws-cdk/cfnspec@^2.105.0-alpha.0":
-  version "2.105.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/cfnspec/-/cfnspec-2.105.0-alpha.0.tgz#041556c1f7b55c03f9d209e456820e0f846b44ee"
-  integrity sha512-q8ac9sVbt/jlmtMU4MOq4aPwptQ3zUU9v2ZsJzvCNqpC9LpknWXZvFKcejk/mm0dh/nAdUJ0MdSDUnTKRM2IbA==
-  dependencies:
-    fs-extra "^9.1.0"
-    md5 "^2.3.0"
-
 "@aws-cdk/cloud-assembly-schema@2.79.1":
   version "2.79.1"
   resolved "https://registry.yarnpkg.com/@aws-cdk/cloud-assembly-schema/-/cloud-assembly-schema-2.79.1.tgz#bbd961618eb9f090078d97c43e07f058ca46ea7b"
