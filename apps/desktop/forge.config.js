@@ -31,7 +31,9 @@ module.exports = {
         );
 
         // Ensure package.json is present throughout the build process
-        execSync(`yarn ${commands.join(' ')}`, {
+        const yarnAddCommand = `yarn ${commands.join(' ')}`;
+        console.log(`Executing command: ${yarnAddCommand}`);
+        execSync(yarnAddCommand, {
           cwd: buildPath,
           stdio: 'inherit',
           shell: true,
