@@ -39,6 +39,9 @@ module.exports = [
         browser: true,
         es6: true,
         node: true,
+        require: 'readonly',
+        __dirname: 'readonly',
+        module: 'readonly',
       },
     },
     plugins: {
@@ -52,7 +55,7 @@ module.exports = [
       'no-var': 'error',
       'brace-style': 'error',
       'prefer-template': 'error',
-      'radix': 'error',
+      radix: 'error',
       'space-before-blocks': 'error',
       'import/prefer-default-export': 'off',
       // Temporarily disable the react/no-direct-mutation-state rule
@@ -93,6 +96,9 @@ module.exports = [
         browser: true,
         es6: true,
         node: true,
+        require: 'readonly',
+        __dirname: 'readonly',
+        module: 'readonly',
       },
       parserOptions: {
         ecmaFeatures: {
@@ -117,6 +123,6 @@ module.exports = [
     },
   },
   {
-    ignores: ['build', 'node_modules', '.github'],
+    ignores: ['build', 'node_modules', '.github', '.next'],
   },
 ];
