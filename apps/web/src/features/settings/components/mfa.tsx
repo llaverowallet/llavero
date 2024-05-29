@@ -34,7 +34,7 @@ const MFA = () => {
       if (isAssociated.SecretCode) {
         setQrUri(getTotpCodeURL('Llavero', data?.user?.email || '', isAssociated.SecretCode || ''));
         setSecretCode(isAssociated.SecretCode);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+
         session = isAssociated.Session;
       }
     }

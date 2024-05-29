@@ -38,7 +38,6 @@ const installationConfig = {
 const name = `llavero${installationConfig.suffix}`;
 
 export default {
-  // eslint-disable-next-line no-unused-vars
   config(_input) {
     return {
       name: name,

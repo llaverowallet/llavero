@@ -9,7 +9,7 @@ import { useNetwork } from '@/shared/hooks/use-network';
 
 type Props = {
   accounts: WalletInfo[];
-  // eslint-disable-next-line no-unused-vars
+
   onSelectAccount: (account: WalletInfo) => void;
   selectedAccount: WalletInfo | null;
 };

@@ -38,7 +38,6 @@ export const MfaDialog: FC<MfaDialogProps> = ({ open, onSubmit }) => {
     };
 
     checkMFA();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   useMemo(() => {
@@ -49,7 +48,6 @@ export const MfaDialog: FC<MfaDialogProps> = ({ open, onSubmit }) => {
         handleSubmit();
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, mfaRegistered]);
 
   return (

@@ -10,7 +10,7 @@ class CloudWatchLogger {
   private static lastLogStreamName = '';
   private cloudwatchLogs: CloudWatchLogsClient;
   private readonly LOG_GROUP_NAME;
-  // eslint-disable-next-line no-unused-vars
+
   private constructor(private name = 'default') {
     this.cloudwatchLogs = new CloudWatchLogsClient({ region: process.env.REGION });
     this.LOG_GROUP_NAME = process.env.LOG_GROUP_NAME ?? 'noGroupName-error-check-env-variables';

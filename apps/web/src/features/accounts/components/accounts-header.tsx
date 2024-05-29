@@ -20,7 +20,7 @@ const AccountsHeader = ({
   accounts,
 }: {
   selectedAccount: WalletInfo | null;
-  // eslint-disable-next-line no-unused-vars
+
   onSelectAccount: (account: WalletInfo) => void;
   accounts: WalletInfo[];
 }) => {

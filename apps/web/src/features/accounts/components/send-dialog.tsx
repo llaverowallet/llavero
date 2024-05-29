@@ -215,7 +215,6 @@ const SendDialog = ({ account }: { account: WalletInfo | null }) => {
     };
 
     checkMFA();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.user?.email]);
 
   return (

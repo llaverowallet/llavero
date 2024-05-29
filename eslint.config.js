@@ -20,6 +20,7 @@ module.exports = [
   ...compat.extends('plugin:prettier/recommended'),
   ...compat.extends('plugin:jsx-a11y/strict'),
   ...compat.extends('plugin:@typescript-eslint/recommended'),
+  ...compat.extends('next'),
   {
     settings: {
       react: {
@@ -84,6 +85,8 @@ module.exports = [
       'react/react-in-jsx-scope': 'off',
       // Temporarily disable the react/no-danger-with-children rule
       'react/no-danger-with-children': 'off',
+      // Temporarily disable the @next/next/no-duplicate-head rule
+      '@next/next/no-duplicate-head': 'off',
     },
   },
   {
