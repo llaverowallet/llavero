@@ -9,15 +9,17 @@ const logger = createLogger('account-endpoint');
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(AUTH_OPTIONS);
-    if (!session?.user?.email)
+    if (!session?.user?.email) {
       return NextResponse.json({ message: 'Not authorized' }, { status: 401 });
+    }
 
-    const { searchParams } = request.nextUrl;
+    const url = request.url || '';
+    const { searchParams } = new URL(url, `http://${request.headers.get('host')}`);
     const network = searchParams.get('network');
 
     return NextResponse.json(await listWallets(session?.user?.email, network));
   } catch (error) {
     logger.error(error);
-    return NextResponse.error();
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

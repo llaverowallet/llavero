@@ -1,22 +1,25 @@
 import { AUTH_OPTIONS } from '@/shared/utils/auth';
 import { getServerSession } from 'next-auth';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextApiRequest, NextApiResponse } from 'next';
 import createLogger from '@/shared/utils/logger';
 import { addActivity } from '../../services/activity';
 const logger = createLogger('account-endpoint-activity');
 
-export async function POST(request: NextRequest, { params }: { params: { address: string } }) {
+export async function POST(
+  request: NextApiRequest,
+  response: NextApiResponse,
+  { params }: { params: { address: string } },
+) {
   try {
     const session = await getServerSession(AUTH_OPTIONS);
-    if (!session?.user?.email)
-      return NextResponse.json({ message: 'Not authorized' }, { status: 401 });
+    if (!session?.user?.email) return response.status(401).json({ message: 'Not authorized' });
 
     const { address } = params || {};
     const body: { address: string; chainId: string; data: string; txHash: string } =
-      await request.json();
+      await request.body;
     const { chainId, data, txHash } = body || {};
 
-    return NextResponse.json(
+    return response.json(
       await addActivity(session?.user?.email, {
         address,
         chainId,
@@ -26,6 +29,6 @@ export async function POST(request: NextRequest, { params }: { params: { address
     );
   } catch (error) {
     logger.error(error);
-    return NextResponse.error();
+    return response.status(500).json({ error: 'Internal Server Error' });
   }
 }
