@@ -113,7 +113,8 @@ const AccountActivity = ({ account }: Props) => {
           <>
             {transactionsHashes?.length > 0
               ? transactionsHashes
-                  .toReversed()
+                  .slice()
+                  .reverse()
                   .map((txHash) => (
                     <AccountActivityItemInMemory key={txHash} txHash={txHash} account={account} />
                   ))
