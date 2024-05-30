@@ -11,7 +11,8 @@
     "start": "next start",
     "build-next": "next build",
     "start-sst": "sst start",
-    "deploy": "yarn sst deploy --stage prod"
+    "deploy": "yarn sst deploy --stage prod",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@aws-sdk/client-cloudwatch-logs": "^3.427.0",
