@@ -1,11 +1,15 @@
-import { spawn, ChildProcessWithoutNullStreams, SpawnOptions } from 'child_process';
+import {
+  spawn,
+  ChildProcessWithoutNullStreams,
+  SpawnOptions,
+} from 'child_process';
 
 export async function executeCommand(
   command: string,
   args: string[],
   directory: string,
   onDataCallback: (data: string) => void,
-  envVariables?: NodeJS.ProcessEnv
+  envVariables?: NodeJS.ProcessEnv,
 ): Promise<boolean> {
   return new Promise((resolve, reject) => {
     let allData = ''; // Collects all data for error reporting
@@ -13,10 +17,14 @@ export async function executeCommand(
     const options: SpawnOptions = {
       cwd: directory,
       shell: true,
-      env: { ...process.env, ...envVariables } // Merge current process env with the provided ones
+      env: { ...process.env, ...envVariables }, // Merge current process env with the provided ones
     };
 
-    const childProcess: ChildProcessWithoutNullStreams = spawn(command, args, options);
+    const childProcess: ChildProcessWithoutNullStreams = spawn(
+      command,
+      args,
+      options,
+    );
 
     childProcess.stdout.on('data', (data: Buffer) => {
       const dataStr = data.toString();

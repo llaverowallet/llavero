@@ -1,4 +1,4 @@
-import { app, BrowserWindow, contextBridge, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
 
 // Electron Forge automatically creates these entry points
@@ -35,13 +35,12 @@ export function createAppWindow(): BrowserWindow {
     return app.getPath('userData');
   });
 
-
   // Load the index.html of the app window.
   appWindow.loadURL(APP_WINDOW_WEBPACK_ENTRY);
 
   // Open the DevTools.
   if (!app.isPackaged) {
-    appWindow.webContents.openDevTools()
+    appWindow.webContents.openDevTools();
   }
 
   // Show window when its ready to

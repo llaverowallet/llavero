@@ -3,10 +3,10 @@ module.exports = [
     // Add support for native node modules
     test: /native_modules\/.+\.node$/,
     use: 'node-loader',
-    exclude: ["/.wallet"]
+    exclude: ['/.wallet'],
   },
   {
-    exclude: ["/.wallet"],
+    exclude: ['/.wallet'],
     test: /\.(m?js|node)$/,
     parser: { amd: false },
     use: {
@@ -29,13 +29,13 @@ module.exports = [
   },
   {
     // CSS Loader
-    exclude: ["/.wallet"],
+    exclude: ['/.wallet'],
     test: /\.css$/,
     use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
   },
   {
     // SCSS (SASS) Loader
-    exclude: ["/.wallet"],
+    exclude: ['/.wallet'],
     test: /\.s[ac]ss$/i,
     use: [
       { loader: 'style-loader' },
@@ -45,7 +45,7 @@ module.exports = [
   },
   {
     // Less loader
-    exclude: ["/.wallet"],
+    exclude: ['/.wallet'],
     test: /\.less$/,
     use: [
       { loader: 'style-loader' },
@@ -56,7 +56,7 @@ module.exports = [
   {
     // Assets loader
     // More information here https://webpack.js.org/guides/asset-modules/
-    exclude: ["/.wallet"],
+    exclude: ['/.wallet'],
     test: /\.(gif|jpe?g|tiff|png|webp|bmp|svg|eot|ttf|woff|woff2)$/i,
     type: 'asset',
     generator: {

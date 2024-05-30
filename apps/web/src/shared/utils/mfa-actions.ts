@@ -284,7 +284,7 @@ export const createSMSPhone = async (phoneNumber: string) => {
     await snsClient.send(command);
     return true;
   } catch (error) {
-    console.error(`Error adding phone number ${phoneNumber} to SNS sandbox:`, error);
+    console.error('Error adding phone number to SNS sandbox:', error);
     throw error;
   }
 };
@@ -326,7 +326,7 @@ export const verifySMSSandbox = async (phoneNumber: string, code: string) => {
     await snsClient.send(command);
     return true;
   } catch (error) {
-    console.error(`Error adding phone number ${phoneNumber} to SNS sandbox:`, error);
+    console.error('Error verifying phone number in SNS sandbox:', error);
     throw error;
   }
 };
