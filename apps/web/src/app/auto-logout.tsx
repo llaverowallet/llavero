@@ -1,6 +1,6 @@
+'use client';
 import React from 'react';
 
-//use client
 //source: https://github.com/nextauthjs/next-auth/discussions/6401
 import { signOut, useSession } from 'next-auth/react';
 import { PropsWithChildren, useCallback, useEffect, useState } from 'react';
