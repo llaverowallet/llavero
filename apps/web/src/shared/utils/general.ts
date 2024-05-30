@@ -3,7 +3,7 @@ import { Session } from 'next-auth';
 
 export function check<T>(value?: unknown, varName = 'not Defined'): T {
   const retValue = value as T;
-  if (retValue === undefined || retValue === null || retValue === '') {
+  if (retValue === undefined || retValue === null || (typeof value === 'string' && value === '')) {
     throw new Error(`Required Value is missing. VarName:${varName}`);
   }
   return retValue;

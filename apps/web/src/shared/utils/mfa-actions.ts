@@ -418,7 +418,7 @@ export const isPhoneNumberVerified = async (
   accessToken: string,
 ): Promise<{ phoneNumber: string; verificationPhase: number }> => {
   const attributes = await getUserAttributes(accessToken);
-  const phone = attributes.findLast((attr) => attr.Name === 'phone_number');
+  const phone = attributes.reverse().find((attr) => attr.Name === 'phone_number');
   if (!phone || !phone.Value) throw new Error('Phone number not found');
 
   const listSmsSandbox = await listSandboxSMSPhoneNumbers();
@@ -430,9 +430,9 @@ export const isPhoneNumberVerified = async (
 
   if (!isVerified) return { phoneNumber: phone.Value, verificationPhase: 0 };
 
-  const isVerifiedCognito = attributes.findLast(
-    (attr: { Name: string | undefined }) => attr.Name === 'phone_number_verified',
-  );
+  const isVerifiedCognito = attributes
+    .reverse()
+    .find((attr: { Name: string | undefined }) => attr.Name === 'phone_number_verified');
   console.log('isVerifiedCognito', isVerifiedCognito);
   console.log('attributes', attributes);
   return isVerifiedCognito?.Value === 'true'
