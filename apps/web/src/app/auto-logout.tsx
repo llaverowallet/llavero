@@ -1,4 +1,6 @@
-'use client';
+import React from 'react';
+
+('use client');
 //source: https://github.com/nextauthjs/next-auth/discussions/6401
 import { signOut, useSession } from 'next-auth/react';
 import { PropsWithChildren, useCallback, useEffect, useState } from 'react';
@@ -91,7 +93,7 @@ export function AutoLogoutProvider({
 
     // maybe verify that they are authenticated?
     if (status === 'authenticated') {
-      const expiry = new Date(session?.expires).getTime();
+      const expiry = session?.expires ? new Date(session.expires).getTime() : 0;
 
       if (now > expiry) {
         if (debug) {

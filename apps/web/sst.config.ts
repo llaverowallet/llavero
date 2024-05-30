@@ -39,17 +39,17 @@ const name = `llavero${installationConfig.suffix}`;
 
 export default {
   // eslint-disable-next-line no-unused-vars
-  config(_input) {
+  config(_input: any) {
     return {
       name: name,
       region: installationConfig.region,
     };
   },
-  stacks(app) {
+  stacks(app: any) {
     app.stack(llaveroStack);
     app.stack(initLlavero);
   },
-} satisfies SSTConfig;
+};
 
 let userTable: Table;
 let logGroup: LogGroupSST;

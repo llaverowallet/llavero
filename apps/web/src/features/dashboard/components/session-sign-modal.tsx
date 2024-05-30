@@ -161,12 +161,13 @@ export default function SessionSignModal() {
 
   // Handle approve action (logic varies based on request method)
   async function onApprove(mfaCode?: string) {
+    const session = ModalStore.state.data?.requestSession;
     if (requestEvent) {
       setIsLoading(true);
       const response = await approveEIP155Request(requestEvent, mfaCode);
       try {
-        if (session?.expires) {
-          const expiry = new Date(session.expires).getTime();
+        if (session?.expiry) {
+          const expiry = new Date(session.expiry * 1000).getTime();
           // Additional logic if needed
         }
         await web3wallet.respondSessionRequest({
