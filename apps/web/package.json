@@ -60,7 +60,6 @@
     "react-qr-code": "^2.0.12",
     "react-qr-reader-es6": "^2.2.1-2",
     "sharp": "^0.33.4",
-    "styled-components": "5.3.7",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "4.5.5",
