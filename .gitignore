@@ -107,6 +107,3 @@ dist
 
 # TernJS port file
 .tern-port
-
-# SST config files
-.sst.config.*.mjs
