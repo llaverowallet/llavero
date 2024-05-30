@@ -1,11 +1,11 @@
 name: Build on PR
 
 on:
- pull_request:
+  pull_request:
     types: [opened, synchronize]
 
 jobs:
- build:
+  build:
     #if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
@@ -15,7 +15,7 @@ jobs:
         with:
           node-version: 20
       - name: Run install
-        uses: borales/actions-yarn@v4   
+        uses: borales/actions-yarn@v4
         with:
           cmd: install
       - name: Build
