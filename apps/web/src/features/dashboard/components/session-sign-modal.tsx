@@ -1,3 +1,4 @@
+import React from 'react';
 import { Button } from '@/shared/components/ui/button';
 import {
   Dialog,
@@ -164,6 +165,10 @@ export default function SessionSignModal() {
       setIsLoading(true);
       const response = await approveEIP155Request(requestEvent, mfaCode);
       try {
+        if (session?.expires) {
+          const expiry = new Date(session.expires).getTime();
+          // Additional logic if needed
+        }
         await web3wallet.respondSessionRequest({
           topic,
           response,

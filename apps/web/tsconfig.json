@@ -19,7 +19,10 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@/shared/*": ["./src/shared/*"],
+      "@/store/*": ["./src/store/*"],
+      "@/data/*": ["./src/data/*"]
     },
     "forceConsistentCasingInFileNames": true
   },
