@@ -46,12 +46,14 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
           );
           await page.waitForTimeout(cognitoRetryDelay); // Wait for 2 seconds before retrying
           isCognitoLoginFormVisible =
-            (await page.isVisible('[devin-id="0"]')) &&
-            (await page.isVisible('[devin-id="1"]')) &&
-            (await page.isVisible('[devin-id="3"]'));
-          console.log(`Email input visible: ${await page.isVisible('[devin-id="0"]')}`);
-          console.log(`Password input visible: ${await page.isVisible('[devin-id="1"]')}`);
-          console.log(`Sign in button visible: ${await page.isVisible('[devin-id="3"]')}`);
+            (await page.isVisible('input[name="username"]')) &&
+            (await page.isVisible('input[name="password"]')) &&
+            (await page.isVisible('button[name="signInSubmitButton"]'));
+          console.log(`Email input visible: ${await page.isVisible('input[name="username"]')}`);
+          console.log(`Password input visible: ${await page.isVisible('input[name="password"]')}`);
+          console.log(
+            `Sign in button visible: ${await page.isVisible('button[name="signInSubmitButton"]')}`,
+          );
           cognitoRetryCount++;
         }
 
@@ -61,10 +63,10 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
 
         console.log('Cognito login form elements are visible');
         // Fill in the Cognito login form using environment variables for credentials
-        await page.fill('[devin-id="0"]', process.env.LLAVERO_EMAIL as string);
-        await page.fill('[devin-id="1"]', process.env.LLAVERO_PASSWORD as string);
+        await page.fill('input[name="username"]', process.env.LLAVERO_EMAIL as string);
+        await page.fill('input[name="password"]', process.env.LLAVERO_PASSWORD as string);
         // Click the "Sign in" button on the Cognito login page
-        await page.click('[devin-id="3"]');
+        await page.click('button[name="signInSubmitButton"]');
         console.log('Clicked the "Sign in" button on the Cognito login page');
         // Wait for navigation back to the main page
         await page.waitForNavigation({ waitUntil: 'networkidle' });
@@ -108,20 +110,20 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
 
   console.log('Login form is visible, filling in the login form');
   // Ensure the email and password input fields are visible before filling them out
-  await page.waitForSelector('[devin-id="0"]', { state: 'visible' });
-  await page.waitForSelector('[devin-id="1"]', { state: 'visible' });
+  await page.waitForSelector('input[name="username"]', { state: 'visible' });
+  await page.waitForSelector('input[name="password"]', { state: 'visible' });
 
   if (!process.env.LLAVERO_EMAIL || !process.env.LLAVERO_PASSWORD) {
     throw new Error('Environment variables for login credentials are not defined');
   }
 
   // Fill in the login form using environment variables for credentials
-  await page.fill('[devin-id="0"]', process.env.LLAVERO_EMAIL as string);
-  await page.fill('[devin-id="1"]', process.env.LLAVERO_PASSWORD as string);
+  await page.fill('input[name="username"]', process.env.LLAVERO_EMAIL as string);
+  await page.fill('input[name="password"]', process.env.LLAVERO_PASSWORD as string);
 
   console.log('Clicking the "Sign in" button');
   // Click the "Sign in" button
-  await page.click('[devin-id="3"]');
+  await page.click('button[name="signInSubmitButton"]');
 
   console.log('Waiting for navigation to the main page');
   // Wait for navigation to the main page
