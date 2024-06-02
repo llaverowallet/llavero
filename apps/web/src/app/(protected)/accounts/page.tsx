@@ -1,12 +1,15 @@
 'use client';
 
-import { Accounts } from '@/features/accounts';
+import Accounts from '@/features/accounts';
+import React from 'react';
 
 const AccountsPage = () => {
   return (
-    <main>
-      <Accounts />
-    </main>
+    <>
+      <main>
+        <Accounts />
+      </main>
+    </>
   );
 };
 
