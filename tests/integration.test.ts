@@ -93,7 +93,9 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
     if (isLogInButtonVisibleAfterReload) {
       await page.click('#login-btn'); // Click the "Log in" button again
     }
+    // Log the state of the login form after reloading the page
     isLoginFormVisible = await page.isVisible('[devin-id="0"]');
+    console.log(`Is login form visible after reloading: ${isLoginFormVisible}`);
     retryCount++;
   }
 
