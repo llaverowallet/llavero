@@ -64,6 +64,7 @@ const Header = () => {
                     width={35}
                     height={35}
                     style={{ width: 'auto', height: 'auto' }}
+                    priority
                   />
                   <span className="hidden sm:block">
                     <span className="font-semibold">Llavero</span> CloudWallet
