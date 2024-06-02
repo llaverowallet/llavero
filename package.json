@@ -27,7 +27,11 @@
   },
   "author": "Mariano Julio Vicario",
   "license": "Apache-2.0",
-  "dependencies": {},
+  "dependencies": {
+    "aws-cdk-lib": "2.101.1",
+    "constructs": "10.2.69",
+    "sst": "2.31.0"
+  },
   "devDependencies": {
     "@types/node": "^20.4.4",
     "@typescript-eslint/eslint-plugin": "^6.18.1",
