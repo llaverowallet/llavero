@@ -46,14 +46,12 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
           );
           await page.waitForTimeout(cognitoRetryDelay); // Wait for 2 seconds before retrying
           isCognitoLoginFormVisible =
-            (await page.isVisible('input[name="username"]')) &&
-            (await page.isVisible('input[name="password"]')) &&
-            (await page.isVisible('button[name="signInSubmitButton"]'));
-          console.log(`Email input visible: ${await page.isVisible('input[name="username"]')}`);
-          console.log(`Password input visible: ${await page.isVisible('input[name="password"]')}`);
-          console.log(
-            `Sign in button visible: ${await page.isVisible('button[name="signInSubmitButton"]')}`,
-          );
+            (await page.isVisible('[devin-id="0"]')) &&
+            (await page.isVisible('[devin-id="1"]')) &&
+            (await page.isVisible('[devin-id="3"]'));
+          console.log(`Email input visible: ${await page.isVisible('[devin-id="0"]')}`);
+          console.log(`Password input visible: ${await page.isVisible('[devin-id="1"]')}`);
+          console.log(`Sign in button visible: ${await page.isVisible('[devin-id="3"]')}`);
           cognitoRetryCount++;
         }
 
@@ -63,10 +61,10 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
 
         console.log('Cognito login form elements are visible');
         // Fill in the Cognito login form using environment variables for credentials
-        await page.fill('input[name="username"]', process.env.LLAVERO_EMAIL as string);
-        await page.fill('input[name="password"]', process.env.LLAVERO_PASSWORD as string);
+        await page.fill('[devin-id="0"]', process.env.LLAVERO_EMAIL as string);
+        await page.fill('[devin-id="1"]', process.env.LLAVERO_PASSWORD as string);
         // Click the "Sign in" button on the Cognito login page
-        await page.click('button[name="signInSubmitButton"]');
+        await page.click('[devin-id="3"]');
         console.log('Clicked the "Sign in" button on the Cognito login page');
         // Wait for navigation back to the main page
         await page.waitForNavigation({ waitUntil: 'networkidle' });
