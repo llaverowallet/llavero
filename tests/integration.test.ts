@@ -10,6 +10,11 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
   // Wait for the login page to load completely
   await page.waitForLoadState('load');
 
+  console.log('Ensuring the "Log in" button is visible and interactable');
+  // Ensure the "Log in" button is visible and interactable
+  await page.waitForSelector('#login-btn', { state: 'visible' });
+  await page.waitForSelector('#login-btn:not([disabled])');
+
   console.log('Clicking the "Log in" button');
   // Log the current URL before clicking the "Log in" button
   console.log(`Current URL before clicking "Log in": ${page.url()}`);
@@ -24,11 +29,26 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
     const isLogInButtonVisibleAfterReload = await page.isVisible('#login-btn');
     console.log(`Is "Log in" button visible after reloading: ${isLogInButtonVisibleAfterReload}`);
     if (!isLogInButtonVisibleAfterReload) {
-      throw new Error('The "Log in" button is not visible after reloading');
+      // Check if the page is redirected to the Amazon Cognito login page
+      if (page.url().includes('amazoncognito.com/login')) {
+        console.log('Redirected to Amazon Cognito login page');
+        // Wait for the Cognito login form to be visible
+        await page.waitForSelector('input[name="username"]', { state: 'visible' });
+        await page.waitForSelector('input[name="password"]', { state: 'visible' });
+        // Fill in the Cognito login form using environment variables for credentials
+        await page.fill('input[name="username"]', process.env.LLAVERO_EMAIL as string);
+        await page.fill('input[name="password"]', process.env.LLAVERO_PASSWORD as string);
+        // Click the "Sign in" button on the Cognito login page
+        await page.click('button[name="signInSubmitButton"]');
+        // Wait for navigation back to the main page
+        await page.waitForNavigation({ waitUntil: 'networkidle' });
+      } else {
+        throw new Error('The "Log in" button is not visible after reloading');
+      }
+    } else {
+      await page.click('#login-btn'); // Click the "Log in" button
     }
   }
-  await page.waitForSelector('#login-btn', { state: 'visible' }); // Wait for the "Log in" button to be visible
-  await page.waitForSelector('#login-btn:not([disabled])'); // Wait for the "Log in" button to be enabled
   await page.click('#login-btn'); // Click the "Log in" button
 
   console.log('Waiting for the login form to be visible');
