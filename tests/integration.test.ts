@@ -22,6 +22,7 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
     );
     await page.waitForTimeout(retryDelayLogInButton); // Wait for 2 seconds before retrying
     await page.waitForLoadState('load'); // Ensure the page has fully loaded
+    await page.waitForFunction(() => document.readyState === 'complete'); // Wait for the document to be fully loaded
     const logInButtonHandle = await page.waitForSelector('#login-btn', {
       state: 'visible',
       timeout: retryDelayLogInButton,
