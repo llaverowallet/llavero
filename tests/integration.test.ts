@@ -89,6 +89,8 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
           await page.waitForTimeout(cognitoRetryDelay); // Wait for 5 seconds before retrying
           await page.waitForLoadState('networkidle'); // Wait for the network to be idle
           await page.waitForFunction(() => document.readyState === 'complete'); // Wait for the document to be fully loaded
+
+          // Check if the login form elements are visible and enabled
           isCognitoLoginFormInteractable =
             (await page.isVisible('input[name="username"]')) &&
             (await page.isVisible('input[name="password"]')) &&
@@ -96,18 +98,19 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
             (await page.isEnabled('input[name="username"]')) &&
             (await page.isEnabled('input[name="password"]')) &&
             (await page.isEnabled('button[name="signInSubmitButton"]'));
+
+          // Log the state of the login form elements
           console.log(`Email input visible: ${await page.isVisible('input[name="username"]')}`);
           console.log(`Password input visible: ${await page.isVisible('input[name="password"]')}`);
           console.log(
             `Sign in button visible: ${await page.isVisible('button[name="signInSubmitButton"]')}`,
           );
-          console.log(`Email input enabled: ${await page.isEnabled('input[name="username"]')}`);
-          console.log(`Password input enabled: ${await page.isEnabled('input[name="password"]')}`);
           console.log(
             `Sign in button enabled: ${await page.isEnabled('button[name="signInSubmitButton"]')}`,
           );
           console.log(`Current URL during retry: ${page.url()}`);
           console.log(`Page content during retry: ${await page.content()}`);
+
           if (!isCognitoLoginFormInteractable) {
             // Check if any user interaction is required to make the login form visible
             const isLogInButtonVisible = await page.isVisible('#login-btn');
