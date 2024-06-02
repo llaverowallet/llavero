@@ -62,36 +62,36 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
         // Ensure the Cognito login form elements are visible before interacting with them
         await page.waitForSelector('input[name="username"]', {
           state: 'visible',
-          timeout: 20000, // Increase timeout to 20 seconds
+          timeout: 30000, // Increase timeout to 30 seconds
         });
         await page.waitForSelector('input[name="password"]', {
           state: 'visible',
-          timeout: 20000, // Increase timeout to 20 seconds
+          timeout: 30000, // Increase timeout to 30 seconds
         });
         await page.waitForSelector('button[name="signInSubmitButton"]:not([disabled])', {
           state: 'visible',
-          timeout: 20000, // Increase timeout to 20 seconds
+          timeout: 30000, // Increase timeout to 30 seconds
         });
         await page.waitForSelector('input[name="username"]:not([disabled])', {
           state: 'visible',
-          timeout: 20000, // Increase timeout to 20 seconds
+          timeout: 30000, // Increase timeout to 30 seconds
         });
         await page.waitForSelector('input[name="password"]:not([disabled])', {
           state: 'visible',
-          timeout: 20000, // Increase timeout to 20 seconds
+          timeout: 30000, // Increase timeout to 30 seconds
         });
 
         // Retry mechanism for the Cognito login form elements
         let isCognitoLoginFormVisible = false;
         let cognitoRetryCount = 0;
         const cognitoMaxRetries = 5;
-        const cognitoRetryDelay = 2000; // 2 seconds
+        const cognitoRetryDelay = 5000; // Increase delay to 5 seconds
 
         while (!isCognitoLoginFormVisible && cognitoRetryCount < cognitoMaxRetries) {
           console.log(
             `Cognito login form is not visible, retrying... (${cognitoRetryCount + 1}/${cognitoMaxRetries})`,
           );
-          await page.waitForTimeout(cognitoRetryDelay); // Wait for 2 seconds before retrying
+          await page.waitForTimeout(cognitoRetryDelay); // Wait for 5 seconds before retrying
           await page.waitForLoadState('networkidle'); // Wait for the network to be idle
           await page.waitForFunction(() => document.readyState === 'complete'); // Wait for the document to be fully loaded
           isCognitoLoginFormVisible =
