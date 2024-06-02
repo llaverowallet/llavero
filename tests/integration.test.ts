@@ -36,17 +36,17 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
         await page.waitForLoadState('load');
         await page.waitForLoadState('networkidle');
         // Ensure the Cognito login form elements are visible before interacting with them
-        await page.waitForSelector('input[name="username"]', {
+        await page.waitForSelector('input#signInFormUsername', {
           state: 'visible',
           timeout: 10000,
         });
-        await page.waitForSelector('input[name="password"]', {
+        await page.waitForSelector('input#signInFormPassword', {
           state: 'visible',
           timeout: 10000,
         });
-        await page.waitForSelector('button[name="signInSubmitButton"]:not([disabled])');
-        await page.waitForSelector('input[name="username"]:not([disabled])');
-        await page.waitForSelector('input[name="password"]:not([disabled])');
+        await page.waitForSelector('input[name="signInSubmitButton"]:not([disabled])');
+        await page.waitForSelector('input#signInFormUsername:not([disabled])');
+        await page.waitForSelector('input#signInFormPassword:not([disabled])');
 
         // Retry mechanism for the Cognito login form elements
         let isCognitoLoginFormVisible = false;
@@ -61,13 +61,15 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
           await page.waitForTimeout(cognitoRetryDelay); // Wait for 2 seconds before retrying
           await page.waitForLoadState('networkidle'); // Wait for the network to be idle
           isCognitoLoginFormVisible =
-            (await page.isVisible('input[name="username"]')) &&
-            (await page.isVisible('input[name="password"]')) &&
-            (await page.isVisible('button[name="signInSubmitButton"]'));
-          console.log(`Email input visible: ${await page.isVisible('input[name="username"]')}`);
-          console.log(`Password input visible: ${await page.isVisible('input[name="password"]')}`);
+            (await page.isVisible('input#signInFormUsername')) &&
+            (await page.isVisible('input#signInFormPassword')) &&
+            (await page.isVisible('input[name="signInSubmitButton"]'));
+          console.log(`Email input visible: ${await page.isVisible('input#signInFormUsername')}`);
           console.log(
-            `Sign in button visible: ${await page.isVisible('button[name="signInSubmitButton"]')}`,
+            `Password input visible: ${await page.isVisible('input#signInFormPassword')}`,
+          );
+          console.log(
+            `Sign in button visible: ${await page.isVisible('input[name="signInSubmitButton"]')}`,
           );
           console.log(`Current URL during retry: ${page.url()}`);
           console.log(`Page content during retry: ${await page.content()}`);
@@ -86,12 +88,12 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
 
         console.log('Cognito login form elements are visible');
         // Fill in the Cognito login form using environment variables for credentials
-        await page.fill('input[name="username"]', process.env.LLAVERO_EMAIL as string);
-        await page.fill('input[name="password"]', process.env.LLAVERO_PASSWORD as string);
+        await page.fill('input#signInFormUsername', process.env.LLAVERO_EMAIL as string);
+        await page.fill('input#signInFormPassword', process.env.LLAVERO_PASSWORD as string);
         // Wait for the "Sign in" button to be enabled before clicking it
-        await page.waitForSelector('button[name="signInSubmitButton"]:not([disabled])');
+        await page.waitForSelector('input[name="signInSubmitButton"]:not([disabled])');
         // Click the "Sign in" button on the Cognito login page
-        await page.click('button[name="signInSubmitButton"]');
+        await page.click('input[name="signInSubmitButton"]');
         console.log('Clicked the "Sign in" button on the Cognito login page');
         // Wait for navigation back to the main page
         await page.waitForNavigation({ waitUntil: 'networkidle' });
