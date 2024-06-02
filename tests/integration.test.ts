@@ -44,7 +44,7 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
           state: 'visible',
           timeout: 10000,
         });
-        await page.waitForSelector('button[name="signInSubmitButton"]', {
+        await page.waitForSelector('button[aria-label="submit"]', {
           state: 'visible',
           timeout: 10000,
         });
