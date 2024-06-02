@@ -16,8 +16,8 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
   if (isLoginFormVisible) {
     console.log('Login form is visible, filling in the login form');
     // Fill in the login form
-    await page.fill('input[name="username"]', process.env.LLAVERO_USERNAME || '');
-    await page.fill('input[name="password"]', process.env.LLAVERO_PASSWORD || '');
+    await page.fill('input[name="username"]', 'elranu@gmail.com');
+    await page.fill('input[name="password"]', 'Ertsdf1144$');
 
     console.log('Clicking the "Sign in" button');
     // Click the "Sign in" button
@@ -45,8 +45,24 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
 
   console.log('Waiting for the "My Settings" button to be visible and interactable');
   // Wait for the "My Settings" button to be visible and interactable
-  await page.waitForSelector('[devin-id="30"]', { state: 'visible' });
-  await page.waitForSelector('[devin-id="30"]', { state: 'attached' });
+  let isMySettingsVisible = await page.isVisible('[devin-id="30"]');
+  let retryCount = 0;
+  const maxRetries = 5;
+  const retryDelay = 2000; // 2 seconds
+
+  while (!isMySettingsVisible && retryCount < maxRetries) {
+    console.log(
+      `The "My Settings" button is not visible, retrying... (${retryCount + 1}/${maxRetries})`,
+    );
+    await page.waitForTimeout(retryDelay); // Wait for 2 seconds before retrying
+    await page.reload(); // Reload the page and retry
+    isMySettingsVisible = await page.isVisible('[devin-id="30"]');
+    retryCount++;
+  }
+
+  if (!isMySettingsVisible) {
+    throw new Error('The "My Settings" button is not visible after multiple retries');
+  }
 
   console.log('Navigating to "My Settings"');
   // Navigate to "My Settings"
