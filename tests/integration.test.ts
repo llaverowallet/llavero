@@ -63,11 +63,13 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
           await page.waitForLoadState('networkidle'); // Wait for the network to be idle
           isCognitoLoginFormVisible =
             (await page.isVisible('input[name="username"]')) &&
-            (await page.isVisible('input[type="password"]')) &&
-            (await page.isVisible('button[type="submit"]'));
+            (await page.isVisible('input[name="password"]')) &&
+            (await page.isVisible('button[name="signInSubmitButton"]'));
           console.log(`Email input visible: ${await page.isVisible('input[name="username"]')}`);
-          console.log(`Password input visible: ${await page.isVisible('input[type="password"]')}`);
-          console.log(`Sign in button visible: ${await page.isVisible('button[type="submit"]')}`);
+          console.log(`Password input visible: ${await page.isVisible('input[name="password"]')}`);
+          console.log(
+            `Sign in button visible: ${await page.isVisible('button[name="signInSubmitButton"]')}`,
+          );
           console.log(`Current URL during retry: ${page.url()}`);
           console.log(`Page content during retry: ${await page.content()}`);
           if (!isCognitoLoginFormVisible) {
