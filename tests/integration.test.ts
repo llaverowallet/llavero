@@ -54,6 +54,8 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
           console.log(
             `Sign in button visible: ${await page.isVisible('button[name="signInSubmitButton"]')}`,
           );
+          console.log(`Current URL during retry: ${page.url()}`);
+          console.log(`Page content during retry: ${await page.content()}`);
           cognitoRetryCount++;
         }
 
@@ -65,6 +67,8 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
         // Fill in the Cognito login form using environment variables for credentials
         await page.fill('input[name="username"]', process.env.LLAVERO_EMAIL as string);
         await page.fill('input[name="password"]', process.env.LLAVERO_PASSWORD as string);
+        // Wait for the "Sign in" button to be enabled before clicking it
+        await page.waitForSelector('button[name="signInSubmitButton"]:not([disabled])');
         // Click the "Sign in" button on the Cognito login page
         await page.click('button[name="signInSubmitButton"]');
         console.log('Clicked the "Sign in" button on the Cognito login page');
@@ -122,6 +126,8 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
   await page.fill('input[name="password"]', process.env.LLAVERO_PASSWORD as string);
 
   console.log('Clicking the "Sign in" button');
+  // Wait for the "Sign in" button to be enabled before clicking it
+  await page.waitForSelector('button[name="signInSubmitButton"]:not([disabled])');
   // Click the "Sign in" button
   await page.click('button[name="signInSubmitButton"]');
 
