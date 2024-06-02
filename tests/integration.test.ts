@@ -58,7 +58,7 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
 
   console.log('Waiting for the "My Settings" button to be visible and interactable');
   // Wait for the "My Settings" button to be visible and interactable
-  let isMySettingsVisible = await page.isVisible('text=My Settings');
+  let isMySettingsVisible = await page.isVisible('[devin-id="30"]');
   let retryCount = 0;
   const maxRetries = 5;
   const retryDelay = 2000; // 2 seconds
@@ -69,7 +69,7 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
     );
     await page.waitForTimeout(retryDelay); // Wait for 2 seconds before retrying
     await page.reload(); // Reload the page and retry
-    isMySettingsVisible = await page.isVisible('text=My Settings');
+    isMySettingsVisible = await page.isVisible('[devin-id="30"]');
     retryCount++;
   }
 
