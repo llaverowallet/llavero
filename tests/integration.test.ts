@@ -11,15 +11,31 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
   await page.waitForLoadState('load');
 
   console.log('Ensuring the "Log in" button is visible and interactable');
-  // Ensure the "Log in" button is visible and interactable
-  await page.waitForSelector('#login-btn', { state: 'visible' });
+  let isLogInButtonVisible = false;
+  let retryCountLogInButton = 0;
+  const maxRetriesLogInButton = 5;
+  const retryDelayLogInButton = 2000; // 2 seconds
+
+  while (!isLogInButtonVisible && retryCountLogInButton < maxRetriesLogInButton) {
+    console.log(
+      `The "Log in" button is not visible, retrying... (${retryCountLogInButton + 1}/${maxRetriesLogInButton})`,
+    );
+    await page.waitForTimeout(retryDelayLogInButton); // Wait for 2 seconds before retrying
+    isLogInButtonVisible = await page.isVisible('#login-btn');
+    retryCountLogInButton++;
+  }
+
+  if (!isLogInButtonVisible) {
+    throw new Error('The "Log in" button is not visible after multiple retries');
+  }
+
   await page.waitForSelector('#login-btn:not([disabled])', { state: 'visible' });
 
   console.log('Clicking the "Log in" button');
   // Log the current URL before clicking the "Log in" button
   console.log(`Current URL before clicking "Log in": ${page.url()}`);
   // Log the state of the "Log in" button before clicking it
-  const isLogInButtonVisible = await page.isVisible('#login-btn');
+  isLogInButtonVisible = await page.isVisible('#login-btn');
   console.log(`Is "Log in" button visible: ${isLogInButtonVisible}`);
   if (!isLogInButtonVisible) {
     console.log('The "Log in" button is not visible, retrying...');
