@@ -35,11 +35,14 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
         // Wait for the Cognito login form to be visible
         await page.waitForSelector('input[name="username"]', { state: 'visible' });
         await page.waitForSelector('input[name="password"]', { state: 'visible' });
+        await page.waitForSelector('input[name="signInSubmitButton"]', { state: 'visible' });
+        console.log('Cognito login form elements are visible');
         // Fill in the Cognito login form using environment variables for credentials
         await page.fill('input[name="username"]', process.env.LLAVERO_EMAIL as string);
         await page.fill('input[name="password"]', process.env.LLAVERO_PASSWORD as string);
         // Click the "Sign in" button on the Cognito login page
-        await page.click('button[name="signInSubmitButton"]');
+        await page.click('input[name="signInSubmitButton"]');
+        console.log('Clicked the "Sign in" button on the Cognito login page');
         // Wait for navigation back to the main page
         await page.waitForNavigation({ waitUntil: 'networkidle' });
       } else {
@@ -48,8 +51,9 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
     } else {
       await page.click('#login-btn'); // Click the "Log in" button
     }
+  } else {
+    await page.click('#login-btn'); // Click the "Log in" button
   }
-  await page.click('#login-btn'); // Click the "Log in" button
 
   console.log('Waiting for the login form to be visible');
   let isLoginFormVisible = await page.isVisible('[devin-id="0"]');
@@ -66,7 +70,9 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
     // Log the state of the "Log in" button after reloading the page
     const isLogInButtonVisibleAfterReload = await page.isVisible('#login-btn');
     console.log(`Is "Log in" button visible after reloading: ${isLogInButtonVisibleAfterReload}`);
-    await page.click('#login-btn'); // Click the "Log in" button again
+    if (isLogInButtonVisibleAfterReload) {
+      await page.click('#login-btn'); // Click the "Log in" button again
+    }
     isLoginFormVisible = await page.isVisible('[devin-id="0"]');
     retryCount++;
   }
