@@ -82,6 +82,9 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
         }
 
         if (!isCognitoLoginFormVisible) {
+          console.log('Cognito login form is not visible after multiple retries');
+          console.log(`Final URL: ${page.url()}`);
+          console.log(`Final page content: ${await page.content()}`);
           throw new Error('Cognito login form is not visible after multiple retries');
         }
 
