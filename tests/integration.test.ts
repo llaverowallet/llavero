@@ -13,10 +13,10 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
   // Log the current URL before clicking the "Log in" button
   console.log(`Current URL before clicking "Log in": ${page.url()}`);
   // Log the state of the "Log in" button before clicking it
-  const isLogInButtonVisible = await page.isVisible('text=Log in');
+  const isLogInButtonVisible = await page.isVisible('[devin-id="3"]');
   console.log(`Is "Log in" button visible: ${isLogInButtonVisible}`);
-  await page.waitForSelector('text=Log in', { state: 'visible' }); // Wait for the "Log in" button to be visible
-  await page.click('text=Log in'); // Click the "Log in" button
+  await page.waitForSelector('[devin-id="3"]', { state: 'visible' }); // Wait for the "Log in" button to be visible
+  await page.click('[devin-id="3"]'); // Click the "Log in" button
 
   console.log('Waiting for the login form to be visible');
   let isLoginFormVisible = await page.isVisible('[devin-id="0"]');
@@ -31,9 +31,9 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
     // Log the current URL after reloading the page
     console.log(`Current URL after reloading: ${page.url()}`);
     // Log the state of the "Log in" button after reloading the page
-    const isLogInButtonVisibleAfterReload = await page.isVisible('text=Log in');
+    const isLogInButtonVisibleAfterReload = await page.isVisible('[devin-id="3"]');
     console.log(`Is "Log in" button visible after reloading: ${isLogInButtonVisibleAfterReload}`);
-    await page.click('text=Log in'); // Click the "Log in" button again
+    await page.click('[devin-id="3"]'); // Click the "Log in" button again
     isLoginFormVisible = await page.isVisible('[devin-id="0"]');
     retryCount++;
   }
