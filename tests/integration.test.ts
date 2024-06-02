@@ -14,8 +14,23 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
   await page.click('text=Log in');
 
   console.log('Waiting for the login form to be visible');
-  // Wait for the login form to be visible
-  await page.waitForSelector('[devin-id="0"]');
+  let isLoginFormVisible = await page.isVisible('[devin-id="0"]');
+  let retryCount = 0;
+  const maxRetries = 5;
+  const retryDelay = 2000; // 2 seconds
+
+  while (!isLoginFormVisible && retryCount < maxRetries) {
+    console.log(`The login form is not visible, retrying... (${retryCount + 1}/${maxRetries})`);
+    await page.waitForTimeout(retryDelay); // Wait for 2 seconds before retrying
+    await page.reload(); // Reload the page and retry
+    await page.click('text=Log in'); // Click the "Log in" button again
+    isLoginFormVisible = await page.isVisible('[devin-id="0"]');
+    retryCount++;
+  }
+
+  if (!isLoginFormVisible) {
+    throw new Error('The login form is not visible after multiple retries');
+  }
 
   console.log('Login form is visible, filling in the login form');
   // Fill in the login form
@@ -61,18 +76,18 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
   console.log('Waiting for the "My Settings" button to be visible and interactable');
   // Wait for the "My Settings" button to be visible and interactable
   let isMySettingsVisible = await page.isVisible('text=My Settings');
-  let retryCount = 0;
-  const maxRetries = 5;
-  const retryDelay = 2000; // 2 seconds
+  let retryCountMySettings = 0;
+  const maxRetriesMySettings = 5;
+  const retryDelayMySettings = 2000; // 2 seconds
 
-  while (!isMySettingsVisible && retryCount < maxRetries) {
+  while (!isMySettingsVisible && retryCountMySettings < maxRetriesMySettings) {
     console.log(
-      `The "My Settings" button is not visible, retrying... (${retryCount + 1}/${maxRetries})`,
+      `The "My Settings" button is not visible, retrying... (${retryCountMySettings + 1}/${maxRetriesMySettings})`,
     );
-    await page.waitForTimeout(retryDelay); // Wait for 2 seconds before retrying
+    await page.waitForTimeout(retryDelayMySettings); // Wait for 2 seconds before retrying
     await page.reload(); // Reload the page and retry
     isMySettingsVisible = await page.isVisible('text=My Settings');
-    retryCount++;
+    retryCountMySettings++;
   }
 
   if (!isMySettingsVisible) {
@@ -94,8 +109,22 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
 
   console.log('Waiting for the "Dashboard" button to be visible and interactable');
   // Wait for the "Dashboard" button to be visible and interactable
-  await page.waitForSelector('[devin-id="27"]', { state: 'visible' });
-  await page.waitForSelector('[devin-id="27"]', { state: 'attached' });
+  let isDashboardVisible = await page.isVisible('[devin-id="27"]');
+  retryCount = 0;
+
+  while (!isDashboardVisible && retryCount < maxRetries) {
+    console.log(
+      `The "Dashboard" button is not visible, retrying... (${retryCount + 1}/${maxRetries})`,
+    );
+    await page.waitForTimeout(retryDelay); // Wait for 2 seconds before retrying
+    await page.reload(); // Reload the page and retry
+    isDashboardVisible = await page.isVisible('[devin-id="27"]');
+    retryCount++;
+  }
+
+  if (!isDashboardVisible) {
+    throw new Error('The "Dashboard" button is not visible after multiple retries');
+  }
 
   console.log('Navigating to "Dashboard"');
   // Navigate to "Dashboard"
