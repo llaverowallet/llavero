@@ -9,37 +9,39 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
   // Wait for the login page to load completely
   await page.waitForLoadState('load');
 
-  console.log('Checking if the login form is visible');
-  // Check if the login form is visible
-  const isLoginFormVisible = await page.isVisible('input[name="username"]');
+  console.log('Clicking the "Log in" button');
+  // Click the "Log in" button to reveal the login form
+  await page.click('text=Log in');
 
-  if (isLoginFormVisible) {
-    console.log('Login form is visible, filling in the login form');
-    // Fill in the login form
-    await page.fill('input[name="username"]', 'elranu@gmail.com');
-    await page.fill('input[name="password"]', 'Ertsdf1144$');
+  console.log('Waiting for the login form to be visible');
+  // Wait for the login form to be visible
+  await page.waitForSelector('input[name="username"]');
 
-    console.log('Clicking the "Sign in" button');
-    // Click the "Sign in" button
-    await page.click('[devin-id="3"]');
+  console.log('Login form is visible, filling in the login form');
+  // Fill in the login form
+  await page.fill('input[name="username"]', 'elranu@gmail.com');
+  await page.fill('input[name="password"]', 'Ertsdf1144$');
 
-    console.log('Waiting for navigation to the main page');
-    // Wait for navigation to the main page
-    await page.waitForNavigation();
+  console.log('Clicking the "Sign in" button');
+  // Click the "Sign in" button
+  await page.click('[devin-id="3"]');
 
-    console.log(
-      'Checking if the user is logged in by looking for a user profile icon or logout button',
-    );
-    // Check if the user is logged in by looking for a user profile icon or logout button
-    const isLoggedIn =
-      (await page.isVisible('[devin-id="user-profile-icon"]')) ||
-      (await page.isVisible('text=Logout'));
-    if (!isLoggedIn) {
-      console.log('Login failed: User profile icon or logout button not found');
-      throw new Error('Login failed: User profile icon or logout button not found');
-    } else {
-      console.log('Login successful: User profile icon or logout button found');
-    }
+  console.log('Waiting for navigation to the main page');
+  // Wait for navigation to the main page
+  await page.waitForNavigation();
+
+  console.log(
+    'Checking if the user is logged in by looking for a user profile icon or logout button',
+  );
+  // Check if the user is logged in by looking for a user profile icon or logout button
+  const isLoggedIn =
+    (await page.isVisible('[devin-id="user-profile-icon"]')) ||
+    (await page.isVisible('text=Logout'));
+  if (!isLoggedIn) {
+    console.log('Login failed: User profile icon or logout button not found');
+    throw new Error('Login failed: User profile icon or logout button not found');
+  } else {
+    console.log('Login successful: User profile icon or logout button found');
   }
   console.log('Verifying that the user is on the main page after login');
   // Verify that the user is on the main page after login
