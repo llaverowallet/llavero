@@ -36,9 +36,18 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
         await page.waitForLoadState('load');
         await page.waitForLoadState('networkidle');
         // Ensure the Cognito login form elements are visible before interacting with them
-        await page.waitForSelector('input[name="username"]', { state: 'visible' });
-        await page.waitForSelector('input[type="password"]', { state: 'visible' });
-        await page.waitForSelector('button[type="submit"]', { state: 'visible' });
+        await page.waitForSelector('input[name="username"]', {
+          state: 'visible',
+          timeout: 10000,
+        });
+        await page.waitForSelector('input[name="password"]', {
+          state: 'visible',
+          timeout: 10000,
+        });
+        await page.waitForSelector('button[name="signInSubmitButton"]', {
+          state: 'visible',
+          timeout: 10000,
+        });
 
         // Retry mechanism for the Cognito login form elements
         let isCognitoLoginFormVisible = false;
@@ -113,6 +122,8 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
     // Log the state of the login form after reloading the page
     isLoginFormVisible = await page.isVisible('[devin-id="0"]');
     console.log(`Is login form visible after reloading: ${isLoginFormVisible}`);
+    // Log the page content after reloading the page
+    console.log(`Page content after reloading: ${await page.content()}`);
     retryCount++;
   }
 
