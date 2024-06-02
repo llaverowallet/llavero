@@ -21,7 +21,12 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
       `The "Log in" button is not visible, retrying... (${retryCountLogInButton + 1}/${maxRetriesLogInButton})`,
     );
     await page.waitForTimeout(retryDelayLogInButton); // Wait for 2 seconds before retrying
-    isLogInButtonVisible = await page.isVisible('#login-btn');
+    await page.waitForLoadState('load'); // Ensure the page has fully loaded
+    const logInButtonHandle = await page.waitForSelector('#login-btn', {
+      state: 'visible',
+      timeout: retryDelayLogInButton,
+    });
+    isLogInButtonVisible = !!logInButtonHandle;
     retryCountLogInButton++;
   }
 
