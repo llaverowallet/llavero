@@ -15,12 +15,12 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
 
   console.log('Waiting for the login form to be visible');
   // Wait for the login form to be visible
-  await page.waitForSelector('input[name="username"]');
+  await page.waitForSelector('[devin-id="0"]');
 
   console.log('Login form is visible, filling in the login form');
   // Fill in the login form
-  await page.fill('input[name="username"]', 'elranu@gmail.com');
-  await page.fill('input[name="password"]', 'Ertsdf1144$');
+  await page.fill('[devin-id="0"]', 'elranu@gmail.com');
+  await page.fill('[devin-id="1"]', 'Ertsdf1144$');
 
   console.log('Clicking the "Sign in" button');
   // Click the "Sign in" button
