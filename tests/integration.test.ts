@@ -15,8 +15,8 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
   // Log the state of the "Log in" button before clicking it
   const isLogInButtonVisible = await page.isVisible('text=Log in');
   console.log(`Is "Log in" button visible: ${isLogInButtonVisible}`);
-  // Click the "Log in" button to reveal the login form
-  await page.click('text=Log in');
+  await page.waitForSelector('text=Log in', { state: 'visible' }); // Wait for the "Log in" button to be visible
+  await page.click('text=Log in'); // Click the "Log in" button
 
   console.log('Waiting for the login form to be visible');
   let isLoginFormVisible = await page.isVisible('[devin-id="0"]');
