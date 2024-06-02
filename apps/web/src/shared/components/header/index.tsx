@@ -58,7 +58,13 @@ const Header = () => {
             <div>
               <Link href="/">
                 <div className="flex gap-2 items-center">
-                  <Image src={Logo} alt="Llavero CloudWallet" width={35} height={35} />
+                  <Image
+                    src={Logo}
+                    alt="Llavero CloudWallet"
+                    width={35}
+                    height={35}
+                    style={{ width: 'auto', height: 'auto' }}
+                  />
                   <span className="hidden sm:block">
                     <span className="font-semibold">Llavero</span> CloudWallet
                   </span>
