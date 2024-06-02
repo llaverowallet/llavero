@@ -32,6 +32,9 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
   }
 
   if (!isLogInButtonVisible) {
+    console.log('The "Log in" button is not visible after multiple retries');
+    console.log(`Final URL: ${page.url()}`);
+    console.log(`Final page content: ${await page.content()}`);
     throw new Error('The "Log in" button is not visible after multiple retries');
   }
 
@@ -74,19 +77,19 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
         });
 
         // Retry mechanism for the Cognito login form elements
-        let isCognitoLoginFormVisible = false;
+        let isCognitoLoginFormInteractable = false;
         let cognitoRetryCount = 0;
         const cognitoMaxRetries = 5;
         const cognitoRetryDelay = 5000; // Increase delay to 5 seconds
 
-        while (!isCognitoLoginFormVisible && cognitoRetryCount < cognitoMaxRetries) {
+        while (!isCognitoLoginFormInteractable && cognitoRetryCount < cognitoMaxRetries) {
           console.log(
-            `Cognito login form is not visible, retrying... (${cognitoRetryCount + 1}/${cognitoMaxRetries})`,
+            `Cognito login form is not interactable, retrying... (${cognitoRetryCount + 1}/${cognitoMaxRetries})`,
           );
           await page.waitForTimeout(cognitoRetryDelay); // Wait for 5 seconds before retrying
           await page.waitForLoadState('networkidle'); // Wait for the network to be idle
           await page.waitForFunction(() => document.readyState === 'complete'); // Wait for the document to be fully loaded
-          isCognitoLoginFormVisible =
+          isCognitoLoginFormInteractable =
             (await page.isVisible('input[name="username"]')) &&
             (await page.isVisible('input[name="password"]')) &&
             (await page.isVisible('button[name="signInSubmitButton"]')) &&
@@ -105,17 +108,23 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
           );
           console.log(`Current URL during retry: ${page.url()}`);
           console.log(`Page content during retry: ${await page.content()}`);
-          if (!isCognitoLoginFormVisible) {
-            await page.reload(); // Reload the page and retry
+          if (!isCognitoLoginFormInteractable) {
+            // Check if any user interaction is required to make the login form visible
+            const isLogInButtonVisible = await page.isVisible('#login-btn');
+            if (isLogInButtonVisible) {
+              await page.click('#login-btn'); // Click the "Log in" button to reveal the login form
+            } else {
+              await page.reload(); // Reload the page and retry
+            }
           }
           cognitoRetryCount++;
         }
 
-        if (!isCognitoLoginFormVisible) {
-          console.log('Cognito login form is not visible after multiple retries');
+        if (!isCognitoLoginFormInteractable) {
+          console.log('Cognito login form is not interactable after multiple retries');
           console.log(`Final URL: ${page.url()}`);
           console.log(`Final page content: ${await page.content()}`);
-          throw new Error('Cognito login form is not visible after multiple retries');
+          throw new Error('Cognito login form is not interactable after multiple retries');
         }
 
         console.log('Cognito login form elements are visible');
