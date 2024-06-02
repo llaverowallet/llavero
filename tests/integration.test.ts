@@ -34,6 +34,12 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
         console.log('Redirected to Amazon Cognito login page');
         // Wait for the page to fully load
         await page.waitForLoadState('load');
+        await page.waitForLoadState('networkidle');
+        // Ensure the Cognito login form elements are visible before interacting with them
+        await page.waitForSelector('input[name="username"]', { state: 'visible' });
+        await page.waitForSelector('input[name="password"]', { state: 'visible' });
+        await page.waitForSelector('button[name="signInSubmitButton"]', { state: 'visible' });
+
         // Retry mechanism for the Cognito login form elements
         let isCognitoLoginFormVisible = false;
         let cognitoRetryCount = 0;
