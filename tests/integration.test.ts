@@ -15,6 +15,17 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
   // Log the state of the "Log in" button before clicking it
   const isLogInButtonVisible = await page.isVisible('[devin-id="3"]');
   console.log(`Is "Log in" button visible: ${isLogInButtonVisible}`);
+  if (!isLogInButtonVisible) {
+    console.log('The "Log in" button is not visible, retrying...');
+    await page.waitForTimeout(2000); // Wait for 2 seconds before retrying
+    await page.reload(); // Reload the page and retry
+    console.log(`Current URL after reloading: ${page.url()}`);
+    const isLogInButtonVisibleAfterReload = await page.isVisible('[devin-id="3"]');
+    console.log(`Is "Log in" button visible after reloading: ${isLogInButtonVisibleAfterReload}`);
+    if (!isLogInButtonVisibleAfterReload) {
+      throw new Error('The "Log in" button is not visible after reloading');
+    }
+  }
   await page.waitForSelector('[devin-id="3"]', { state: 'visible' }); // Wait for the "Log in" button to be visible
   await page.click('[devin-id="3"]'); // Click the "Log in" button
 
