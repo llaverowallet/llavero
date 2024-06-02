@@ -43,6 +43,17 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
   // Verify that the user is on the main page after login
   await expect(page).toHaveURL('http://localhost:3000/');
 
+  console.log('Logging the current URL after login attempt');
+  const currentURL = page.url();
+  console.log(`Current URL: ${currentURL}`);
+
+  if (currentURL === 'http://localhost:3000/') {
+    console.log('Login successful, user is on the main page');
+  } else {
+    console.log('Login unsuccessful, user is not on the main page');
+    throw new Error('Login failed: User is not on the main page');
+  }
+
   console.log('Waiting for the "My Settings" button to be visible and interactable');
   // Wait for the "My Settings" button to be visible and interactable
   let isMySettingsVisible = await page.isVisible('[devin-id="30"]');
