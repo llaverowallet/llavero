@@ -12,7 +12,7 @@ import {
 import { Label } from '@/shared/components/ui/label';
 import { isMobilePhone } from 'validator';
 
-const SMS: React.FC = () => {
+const SMS: React.FC<{ id?: string }> = ({ id }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [code, setCode] = useState('');
   const [isSaveLoading, setIsSaveLoading] = useState(false);
@@ -113,7 +113,9 @@ const SMS: React.FC = () => {
       {isVerified ? (
         <div className="flex gap-4 items-center">
           <div>{phoneNumber}</div>
-          <Button onClick={handleModify}>Modify SMS</Button>
+          <Button id={id} onClick={handleModify}>
+            Modify SMS
+          </Button>
         </div>
       ) : (
         <div className="flex gap-4 items-center">
@@ -127,7 +129,7 @@ const SMS: React.FC = () => {
             onChange={(e) => setPhoneNumber(e.target.value)}
             className="max-w-xs"
           />
-          <Button onClick={handleSave} disabled={isSaveLoading}>
+          <Button id={id} onClick={handleSave} disabled={isSaveLoading}>
             {isSaveLoading ? 'Saving' : 'Save'}
           </Button>
         </div>
@@ -144,7 +146,7 @@ const SMS: React.FC = () => {
             onChange={(e) => setCode(e.target.value)}
             className="max-w-xs"
           />
-          <Button onClick={handleVerify} disabled={isVerifyLoading}>
+          <Button id={id} onClick={handleVerify} disabled={isVerifyLoading}>
             {isVerifyLoading ? 'Verifying' : 'Verify'}
           </Button>
           <span className="text-gray-500 text-xs"> {getDescriptionVerification()}</span>

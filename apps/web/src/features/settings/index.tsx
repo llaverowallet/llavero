@@ -40,15 +40,35 @@ const Settings = () => {
                 <Label>Theme:</Label>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="icon" aria-label="Toggle theme">
+                    <Button
+                      id="menu-settings-theme"
+                      variant="outline"
+                      size="icon"
+                      aria-label="Toggle theme"
+                    >
                       <SunIcon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
                       <MoonIcon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => setTheme('light')}>Light</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setTheme('dark')}>Dark</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setTheme('system')}>System</DropdownMenuItem>
+                    <DropdownMenuItem
+                      id="menu-settings-theme-light"
+                      onClick={() => setTheme('light')}
+                    >
+                      Light
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      id="menu-settings-theme-dark"
+                      onClick={() => setTheme('dark')}
+                    >
+                      Dark
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      id="menu-settings-theme-system"
+                      onClick={() => setTheme('system')}
+                    >
+                      System
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
@@ -64,18 +84,22 @@ const Settings = () => {
               </div>
               <div className="flex gap-6 mb-2">
                 <div className="flex gap-4 flex-col">
-                  <Label>TOPT (time based one-time password)</Label>{' '}
-                  <MFADialog onMFAStatusChange={handleMFAStatusChange} />
+                  <Label>TOTP (time based one-time password)</Label>{' '}
+                  <MFADialog
+                    id="menu-settings-mfa-dialog"
+                    onMFAStatusChange={handleMFAStatusChange}
+                  />
                 </div>
 
                 <div className="flex gap-4 flex-col">
-                  <Label>or send one-time password in SMS messages</Label> <SMS />
+                  <Label>or send one-time password in SMS messages</Label>{' '}
+                  <SMS id="menu-settings-sms" />
                 </div>
               </div>
               {isMFAActive && (
                 <>
                   <div className="text-lg text-gray-600 font-semibold">MFA Settings</div>
-                  <MFASetup />
+                  <MFASetup id="menu-settings-mfa-setup" />
                 </>
               )}
             </div>

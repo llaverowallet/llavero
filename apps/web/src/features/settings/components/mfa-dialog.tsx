@@ -14,10 +14,11 @@ import { isTOTPRegistered } from '@/shared/utils/mfa-actions';
 import { getAccessToken } from '@/shared/utils/general';
 
 type Props = {
+  id?: string; // Add id prop to Props interface
   onMFAStatusChange: (status: boolean) => void;
 };
 
-export const MFADialog = ({ onMFAStatusChange }: Props) => {
+export const MFADialog = ({ id, onMFAStatusChange }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const { data } = useSession();
   const [mfaRegistered, setMFARegistered] = useState<boolean>(false);
@@ -36,7 +37,7 @@ export const MFADialog = ({ onMFAStatusChange }: Props) => {
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
           <div>
-            <Button aria-label="Multi-Factor Authentication">
+            <Button id={id} aria-label="Multi-Factor Authentication">
               {mfaRegistered ? 'Replace MFA' : 'Setup MFA'}
             </Button>
           </div>

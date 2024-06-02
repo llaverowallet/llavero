@@ -27,6 +27,7 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
     }
   }
   await page.waitForSelector('[devin-id="3"]', { state: 'visible' }); // Wait for the "Log in" button to be visible
+  await page.waitForSelector('[devin-id="3"]:not([disabled])'); // Wait for the "Log in" button to be enabled
   await page.click('[devin-id="3"]'); // Click the "Log in" button
 
   console.log('Waiting for the login form to be visible');
