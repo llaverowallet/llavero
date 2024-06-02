@@ -56,6 +56,9 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
           );
           console.log(`Current URL during retry: ${page.url()}`);
           console.log(`Page content during retry: ${await page.content()}`);
+          if (!isCognitoLoginFormVisible) {
+            await page.reload(); // Reload the page and retry
+          }
           cognitoRetryCount++;
         }
 
