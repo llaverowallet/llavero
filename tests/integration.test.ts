@@ -14,23 +14,14 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
   const isLoginFormVisible = await page.isVisible('input[name="username"]');
 
   if (isLoginFormVisible) {
-    console.log('Login form is visible, clicking the "Log in" button');
-    // Click the "Log in" button
-    await page.click('[devin-id="3"]');
-
-    console.log('Waiting for the login form to be visible');
-    // Wait for the login form to be visible
-    await page.waitForSelector('input[name="username"]', { state: 'visible' });
-    await page.waitForSelector('input[name="password"]', { state: 'visible' });
-
-    console.log('Filling in the login form');
+    console.log('Login form is visible, filling in the login form');
     // Fill in the login form
     await page.fill('input[name="username"]', process.env.LLAVERO_USERNAME || '');
     await page.fill('input[name="password"]', process.env.LLAVERO_PASSWORD || '');
 
     console.log('Clicking the "Sign in" button');
     // Click the "Sign in" button
-    await page.click('text=Sign in');
+    await page.click('[devin-id="3"]');
 
     console.log('Waiting for navigation to the main page');
     // Wait for navigation to the main page
@@ -47,6 +38,10 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
       throw new Error('Login failed: User profile icon or logout button not found');
     }
   }
+
+  console.log('Verifying that the user is on the main page after login');
+  // Verify that the user is on the main page after login
+  await expect(page).toHaveURL('http://localhost:3000/main');
 
   console.log('Waiting for the "My Settings" button to be visible and interactable');
   // Wait for the "My Settings" button to be visible and interactable
