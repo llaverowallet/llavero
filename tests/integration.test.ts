@@ -27,6 +27,14 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
 
     // Wait for navigation to the main page
     await page.waitForNavigation();
+
+    // Check if the user is logged in by looking for a user profile icon or logout button
+    const isLoggedIn =
+      (await page.isVisible('[devin-id="user-profile-icon"]')) ||
+      (await page.isVisible('text=Logout'));
+    if (!isLoggedIn) {
+      throw new Error('Login failed: User profile icon or logout button not found');
+    }
   }
 
   // Wait for the "My Settings" button to be visible and interactable
