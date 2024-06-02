@@ -3,7 +3,8 @@ import { test, expect } from '@playwright/test';
 test('Llavero Web Application Integration Test', async ({ page }) => {
   console.log('Navigating to the login page');
   // Navigate to the login page
-  await page.goto('http://localhost:3000');
+  await page.goto('http://localhost:3000', { timeout: 60000 }); // Increase timeout to 60 seconds
+  console.log('Navigation to the login page completed');
 
   console.log('Waiting for the login page to load completely');
   // Wait for the login page to load completely
@@ -13,22 +14,22 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
   // Log the current URL before clicking the "Log in" button
   console.log(`Current URL before clicking "Log in": ${page.url()}`);
   // Log the state of the "Log in" button before clicking it
-  const isLogInButtonVisible = await page.isVisible('[devin-id="3"]');
+  const isLogInButtonVisible = await page.isVisible('#login-btn');
   console.log(`Is "Log in" button visible: ${isLogInButtonVisible}`);
   if (!isLogInButtonVisible) {
     console.log('The "Log in" button is not visible, retrying...');
     await page.waitForTimeout(2000); // Wait for 2 seconds before retrying
     await page.reload(); // Reload the page and retry
     console.log(`Current URL after reloading: ${page.url()}`);
-    const isLogInButtonVisibleAfterReload = await page.isVisible('[devin-id="3"]');
+    const isLogInButtonVisibleAfterReload = await page.isVisible('#login-btn');
     console.log(`Is "Log in" button visible after reloading: ${isLogInButtonVisibleAfterReload}`);
     if (!isLogInButtonVisibleAfterReload) {
       throw new Error('The "Log in" button is not visible after reloading');
     }
   }
-  await page.waitForSelector('[devin-id="3"]', { state: 'visible' }); // Wait for the "Log in" button to be visible
-  await page.waitForSelector('[devin-id="3"]:not([disabled])'); // Wait for the "Log in" button to be enabled
-  await page.click('[devin-id="3"]'); // Click the "Log in" button
+  await page.waitForSelector('#login-btn', { state: 'visible' }); // Wait for the "Log in" button to be visible
+  await page.waitForSelector('#login-btn:not([disabled])'); // Wait for the "Log in" button to be enabled
+  await page.click('#login-btn'); // Click the "Log in" button
 
   console.log('Waiting for the login form to be visible');
   let isLoginFormVisible = await page.isVisible('[devin-id="0"]');
@@ -43,9 +44,9 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
     // Log the current URL after reloading the page
     console.log(`Current URL after reloading: ${page.url()}`);
     // Log the state of the "Log in" button after reloading the page
-    const isLogInButtonVisibleAfterReload = await page.isVisible('[devin-id="3"]');
+    const isLogInButtonVisibleAfterReload = await page.isVisible('#login-btn');
     console.log(`Is "Log in" button visible after reloading: ${isLogInButtonVisibleAfterReload}`);
-    await page.click('[devin-id="3"]'); // Click the "Log in" button again
+    await page.click('#login-btn'); // Click the "Log in" button again
     isLoginFormVisible = await page.isVisible('[devin-id="0"]');
     retryCount++;
   }
@@ -55,9 +56,17 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
   }
 
   console.log('Login form is visible, filling in the login form');
-  // Fill in the login form
-  await page.fill('[devin-id="0"]', 'elranu@gmail.com');
-  await page.fill('[devin-id="1"]', 'Ertsdf1144$');
+  // Ensure the email and password input fields are visible before filling them out
+  await page.waitForSelector('[devin-id="0"]', { state: 'visible' });
+  await page.waitForSelector('[devin-id="1"]', { state: 'visible' });
+
+  if (!process.env.LLAVERO_EMAIL || !process.env.LLAVERO_PASSWORD) {
+    throw new Error('Environment variables for login credentials are not defined');
+  }
+
+  // Fill in the login form using environment variables for credentials
+  await page.fill('[devin-id="0"]', process.env.LLAVERO_EMAIL as string);
+  await page.fill('[devin-id="1"]', process.env.LLAVERO_PASSWORD as string);
 
   console.log('Clicking the "Sign in" button');
   // Click the "Sign in" button
@@ -97,7 +106,7 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
 
   console.log('Waiting for the "My Settings" button to be visible and interactable');
   // Wait for the "My Settings" button to be visible and interactable
-  let isMySettingsVisible = await page.isVisible('text=My Settings');
+  let isMySettingsVisible = await page.isVisible('#my-settings-btn');
   let retryCountMySettings = 0;
   const maxRetriesMySettings = 5;
   const retryDelayMySettings = 2000; // 2 seconds
@@ -108,7 +117,7 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
     );
     await page.waitForTimeout(retryDelayMySettings); // Wait for 2 seconds before retrying
     await page.reload(); // Reload the page and retry
-    isMySettingsVisible = await page.isVisible('text=My Settings');
+    isMySettingsVisible = await page.isVisible('#my-settings-btn');
     retryCountMySettings++;
   }
 
@@ -118,20 +127,20 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
 
   console.log('Navigating to "My Settings"');
   // Navigate to "My Settings"
-  await page.click('[devin-id="30"]');
+  await page.click('#my-settings-btn');
 
   console.log('Waiting for the "Accounts" button to be visible and interactable');
   // Wait for the "Accounts" button to be visible and interactable
-  await page.waitForSelector('[devin-id="25"]', { state: 'visible' });
-  await page.waitForSelector('[devin-id="25"]', { state: 'attached' });
+  await page.waitForSelector('#accounts-btn', { state: 'visible' });
+  await page.waitForSelector('#accounts-btn', { state: 'attached' });
 
   console.log('Navigating to "Accounts"');
   // Navigate to "Accounts"
-  await page.click('[devin-id="25"]');
+  await page.click('#accounts-btn');
 
   console.log('Waiting for the "Dashboard" button to be visible and interactable');
   // Wait for the "Dashboard" button to be visible and interactable
-  let isDashboardVisible = await page.isVisible('[devin-id="27"]');
+  let isDashboardVisible = await page.isVisible('#dashboard-btn');
   retryCount = 0;
 
   while (!isDashboardVisible && retryCount < maxRetries) {
@@ -140,7 +149,7 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
     );
     await page.waitForTimeout(retryDelay); // Wait for 2 seconds before retrying
     await page.reload(); // Reload the page and retry
-    isDashboardVisible = await page.isVisible('[devin-id="27"]');
+    isDashboardVisible = await page.isVisible('#dashboard-btn');
     retryCount++;
   }
 
