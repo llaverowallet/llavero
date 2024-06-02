@@ -45,6 +45,7 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
             `Cognito login form is not visible, retrying... (${cognitoRetryCount + 1}/${cognitoMaxRetries})`,
           );
           await page.waitForTimeout(cognitoRetryDelay); // Wait for 2 seconds before retrying
+          await page.waitForLoadState('networkidle'); // Wait for the network to be idle
           isCognitoLoginFormVisible =
             (await page.isVisible('input[name="username"]')) &&
             (await page.isVisible('input[name="password"]')) &&
