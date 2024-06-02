@@ -10,6 +10,11 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
   await page.waitForLoadState('load');
 
   console.log('Clicking the "Log in" button');
+  // Log the current URL before clicking the "Log in" button
+  console.log(`Current URL before clicking "Log in": ${page.url()}`);
+  // Log the state of the "Log in" button before clicking it
+  const isLogInButtonVisible = await page.isVisible('text=Log in');
+  console.log(`Is "Log in" button visible: ${isLogInButtonVisible}`);
   // Click the "Log in" button to reveal the login form
   await page.click('text=Log in');
 
@@ -23,6 +28,11 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
     console.log(`The login form is not visible, retrying... (${retryCount + 1}/${maxRetries})`);
     await page.waitForTimeout(retryDelay); // Wait for 2 seconds before retrying
     await page.reload(); // Reload the page and retry
+    // Log the current URL after reloading the page
+    console.log(`Current URL after reloading: ${page.url()}`);
+    // Log the state of the "Log in" button after reloading the page
+    const isLogInButtonVisibleAfterReload = await page.isVisible('text=Log in');
+    console.log(`Is "Log in" button visible after reloading: ${isLogInButtonVisibleAfterReload}`);
     await page.click('text=Log in'); // Click the "Log in" button again
     isLoginFormVisible = await page.isVisible('[devin-id="0"]');
     retryCount++;
