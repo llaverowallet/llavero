@@ -46,12 +46,14 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
           );
           await page.waitForTimeout(cognitoRetryDelay); // Wait for 2 seconds before retrying
           isCognitoLoginFormVisible =
-            (await page.isVisible('[devin-id="0"]')) &&
-            (await page.isVisible('[devin-id="1"]')) &&
-            (await page.isVisible('[devin-id="3"]'));
-          console.log(`Email input visible: ${await page.isVisible('[devin-id="0"]')}`);
-          console.log(`Password input visible: ${await page.isVisible('[devin-id="1"]')}`);
-          console.log(`Sign in button visible: ${await page.isVisible('[devin-id="3"]')}`);
+            (await page.isVisible('input[name="username"]')) &&
+            (await page.isVisible('input[name="password"]')) &&
+            (await page.isVisible('input[name="signInSubmitButton"]'));
+          console.log(`Email input visible: ${await page.isVisible('input[name="username"]')}`);
+          console.log(`Password input visible: ${await page.isVisible('input[name="password"]')}`);
+          console.log(
+            `Sign in button visible: ${await page.isVisible('input[name="signInSubmitButton"]')}`,
+          );
           cognitoRetryCount++;
         }
 
