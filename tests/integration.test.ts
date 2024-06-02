@@ -136,6 +136,9 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
   }
 
   if (!isLoginFormVisible) {
+    console.log('The login form is not visible after multiple retries');
+    console.log(`Final URL: ${page.url()}`);
+    console.log(`Final page content: ${await page.content()}`);
     throw new Error('The login form is not visible after multiple retries');
   }
 
