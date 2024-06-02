@@ -46,9 +46,9 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
           );
           await page.waitForTimeout(cognitoRetryDelay); // Wait for 2 seconds before retrying
           isCognitoLoginFormVisible =
-            (await page.isVisible('input[name="username"]')) &&
-            (await page.isVisible('input[name="password"]')) &&
-            (await page.isVisible('input[name="signInSubmitButton"]'));
+            (await page.isVisible('input[type="email"]')) &&
+            (await page.isVisible('input[type="password"]')) &&
+            (await page.isVisible('button[type="submit"]'));
           cognitoRetryCount++;
         }
 
