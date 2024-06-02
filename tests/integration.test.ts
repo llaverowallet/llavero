@@ -72,14 +72,6 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
           state: 'visible',
           timeout: 30000, // Increase timeout to 30 seconds
         });
-        await page.waitForSelector('input[name="username"]:not([disabled])', {
-          state: 'visible',
-          timeout: 30000, // Increase timeout to 30 seconds
-        });
-        await page.waitForSelector('input[name="password"]:not([disabled])', {
-          state: 'visible',
-          timeout: 30000, // Increase timeout to 30 seconds
-        });
 
         // Retry mechanism for the Cognito login form elements
         let isCognitoLoginFormVisible = false;
