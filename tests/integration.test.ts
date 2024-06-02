@@ -41,7 +41,7 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
 
   console.log('Verifying that the user is on the main page after login');
   // Verify that the user is on the main page after login
-  await expect(page).toHaveURL('http://localhost:3000/main');
+  await expect(page).toHaveURL('http://localhost:3000/');
 
   console.log('Waiting for the "My Settings" button to be visible and interactable');
   // Wait for the "My Settings" button to be visible and interactable
