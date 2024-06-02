@@ -34,10 +34,28 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
         console.log('Redirected to Amazon Cognito login page');
         // Wait for the page to fully load
         await page.waitForLoadState('load');
-        // Wait for the Cognito login form to be visible
-        await page.waitForSelector('input[name="username"]', { state: 'visible' });
-        await page.waitForSelector('input[name="password"]', { state: 'visible' });
-        await page.waitForSelector('input[name="signInSubmitButton"]', { state: 'visible' });
+        // Retry mechanism for the Cognito login form elements
+        let isCognitoLoginFormVisible = false;
+        let cognitoRetryCount = 0;
+        const cognitoMaxRetries = 5;
+        const cognitoRetryDelay = 2000; // 2 seconds
+
+        while (!isCognitoLoginFormVisible && cognitoRetryCount < cognitoMaxRetries) {
+          console.log(
+            `Cognito login form is not visible, retrying... (${cognitoRetryCount + 1}/${cognitoMaxRetries})`,
+          );
+          await page.waitForTimeout(cognitoRetryDelay); // Wait for 2 seconds before retrying
+          isCognitoLoginFormVisible =
+            (await page.isVisible('input[name="username"]')) &&
+            (await page.isVisible('input[name="password"]')) &&
+            (await page.isVisible('input[name="signInSubmitButton"]'));
+          cognitoRetryCount++;
+        }
+
+        if (!isCognitoLoginFormVisible) {
+          throw new Error('Cognito login form is not visible after multiple retries');
+        }
+
         console.log('Cognito login form elements are visible');
         // Fill in the Cognito login form using environment variables for credentials
         await page.fill('input[name="username"]', process.env.LLAVERO_EMAIL as string);
