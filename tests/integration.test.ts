@@ -69,6 +69,7 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
           );
           await page.waitForTimeout(cognitoRetryDelay); // Wait for 2 seconds before retrying
           await page.waitForLoadState('networkidle'); // Wait for the network to be idle
+          await page.waitForFunction(() => document.readyState === 'complete'); // Wait for the document to be fully loaded
           isCognitoLoginFormVisible =
             (await page.isVisible('input#signInFormUsername')) &&
             (await page.isVisible('input#signInFormPassword')) &&
