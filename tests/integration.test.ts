@@ -13,7 +13,7 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
   console.log('Ensuring the "Log in" button is visible and interactable');
   // Ensure the "Log in" button is visible and interactable
   await page.waitForSelector('#login-btn', { state: 'visible' });
-  await page.waitForSelector('#login-btn:not([disabled])');
+  await page.waitForSelector('#login-btn:not([disabled])', { state: 'visible' });
 
   console.log('Clicking the "Log in" button');
   // Log the current URL before clicking the "Log in" button
@@ -35,6 +35,8 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
         // Wait for the page to fully load
         await page.waitForLoadState('load');
         await page.waitForLoadState('networkidle');
+        await page.waitForFunction(() => document.readyState === 'complete'); // Wait for the document to be fully loaded
+
         // Ensure the Cognito login form elements are visible before interacting with them
         await page.waitForSelector('input#signInFormUsername', {
           state: 'visible',
