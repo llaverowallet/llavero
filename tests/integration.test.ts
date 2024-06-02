@@ -35,10 +35,12 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
       (await page.isVisible('[devin-id="user-profile-icon"]')) ||
       (await page.isVisible('text=Logout'));
     if (!isLoggedIn) {
+      console.log('Login failed: User profile icon or logout button not found');
       throw new Error('Login failed: User profile icon or logout button not found');
+    } else {
+      console.log('Login successful: User profile icon or logout button found');
     }
   }
-
   console.log('Verifying that the user is on the main page after login');
   // Verify that the user is on the main page after login
   await expect(page).toHaveURL('http://localhost:3000/');
@@ -56,7 +58,7 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
 
   console.log('Waiting for the "My Settings" button to be visible and interactable');
   // Wait for the "My Settings" button to be visible and interactable
-  let isMySettingsVisible = await page.isVisible('[devin-id="30"]');
+  let isMySettingsVisible = await page.isVisible('text=My Settings');
   let retryCount = 0;
   const maxRetries = 5;
   const retryDelay = 2000; // 2 seconds
@@ -67,7 +69,7 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
     );
     await page.waitForTimeout(retryDelay); // Wait for 2 seconds before retrying
     await page.reload(); // Reload the page and retry
-    isMySettingsVisible = await page.isVisible('[devin-id="30"]');
+    isMySettingsVisible = await page.isVisible('text=My Settings');
     retryCount++;
   }
 
