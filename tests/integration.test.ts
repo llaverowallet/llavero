@@ -32,6 +32,8 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
       // Check if the page is redirected to the Amazon Cognito login page
       if (page.url().includes('amazoncognito.com/login')) {
         console.log('Redirected to Amazon Cognito login page');
+        // Wait for the page to fully load
+        await page.waitForLoadState('load');
         // Wait for the Cognito login form to be visible
         await page.waitForSelector('input[name="username"]', { state: 'visible' });
         await page.waitForSelector('input[name="password"]', { state: 'visible' });
