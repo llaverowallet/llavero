@@ -23,12 +23,14 @@
     "cdk-build": "npm run build -w libs/cdk-deploy",
     "cdk-bootstrap": "npm run bootstrap -w libs/cdk-deploy",
     "install-sst": "yarn workspace installer install-sst",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test:integration": "playwright test"
   },
   "author": "Mariano Julio Vicario",
   "license": "Apache-2.0",
   "dependencies": {},
   "devDependencies": {
+    "@playwright/test": "^1.44.1",
     "@types/node": "^20.4.4",
     "@typescript-eslint/eslint-plugin": "^6.18.1",
     "@typescript-eslint/parser": "^6.18.1",
