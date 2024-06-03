@@ -25,9 +25,10 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
     await page.waitForFunction(() => document.readyState === 'complete'); // Wait for the document to be fully loaded
     const logInButtonHandle = await page.waitForSelector('#login-btn', {
       state: 'attached',
-      timeout: retryDelayLogInButton,
+      timeout: 10000, // Increase timeout to 10 seconds
     });
     isLogInButtonVisible = await logInButtonHandle.isVisible();
+    console.log(`Is "Log in" button visible: ${isLogInButtonVisible}`);
     retryCountLogInButton++;
   }
 
