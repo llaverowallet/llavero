@@ -63,21 +63,15 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
         await page.waitForFunction(() => document.readyState === 'complete'); // Wait for the document to be fully loaded
 
         // Ensure the Cognito login form elements are visible before interacting with them
-        await page.waitForSelector('form[name="cognitoSignInForm"] input[name="username"]', {
+        await page.waitForSelector('input[name="username"]', {
           state: 'visible',
           timeout: 30000, // Increase timeout to 30 seconds
         });
-        await page.waitForSelector('form[name="cognitoSignInForm"] input[name="password"]', {
+        await page.waitForSelector('input[name="password"]', {
           state: 'visible',
           timeout: 30000, // Increase timeout to 30 seconds
         });
-        await page.waitForSelector(
-          'form[name="cognitoSignInForm"] button[name="signInSubmitButton"]:not([disabled])',
-          {
-            state: 'visible',
-            timeout: 30000, // Increase timeout to 30 seconds
-          },
-        );
+        await page.waitForSelector('button[name="signInSubmitButton"]:not([disabled])');
 
         // Additional checks to ensure the elements are interactable
         await page.waitForFunction(
