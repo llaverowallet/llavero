@@ -164,7 +164,9 @@ Move your crypto before you start the uninstall process:
 # Develop
 
 ## To Dev:
+
 Deploy local enviroment
+
 ```
 Terminal 1
 
@@ -176,7 +178,9 @@ EMAIL="your@email.com" REGION="us-east-1" AWS_ACCESS_KEY_ID="id" AWS_SECRET_ACCE
 ```
 
 ### To emulate next.js prod on local env
+
 Is like to build production enviroment. You can debug lambdas on local enviroment
+
 ```
 Terminal 1
 
@@ -188,10 +192,30 @@ EMAIL="your@email.com" REGION="us-east-1" AWS_ACCESS_KEY_ID="id" AWS_SECRET_ACCE
 EMAIL="your@email.com" REGION="us-east-1" AWS_ACCESS_KEY_ID="id" AWS_SECRET_ACCESS_KEY="secret" yarn workspace web sst bind next start
 ```
 
+### Run Integration Test
+
+To run the integration test using Playwright, follow these steps:
+
+1. Ensure you have the necessary environment variables set:
+
+   ```bash
+   export EMAIL="your@email.com"
+   export REGION="us-east-1"
+   export AWS_ACCESS_KEY_ID="id"
+   export AWS_SECRET_ACCESS_KEY="secret"
+   ```
+
+2. Run the integration test:
+   ```bash
+   yarn test:integration
+   ```
+
+The integration test will log in using the provided credentials, navigate to "My Settings", "Accounts", and "Dashboard", and verify the application's functionality.
+
 # Short term roadmap
 
 - Pen test, research pen test and audit cloud tools
-- unit and integration test 
+- unit and integration test
 - AWS KMS Replica multi-region
 - Passkeys and/or Mobile App
 - Tokens ERC20 and NFT
