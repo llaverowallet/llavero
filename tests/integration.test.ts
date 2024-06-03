@@ -76,6 +76,26 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
           timeout: 30000, // Increase timeout to 30 seconds
         });
 
+        // Additional checks to ensure the elements are interactable
+        await page.waitForFunction(
+          () => {
+            const usernameInput = document.querySelector('input[name="username"]') as HTMLElement;
+            const passwordInput = document.querySelector('input[name="password"]') as HTMLElement;
+            const signInButton = document.querySelector(
+              'button[name="signInSubmitButton"]',
+            ) as HTMLElement;
+            return (
+              usernameInput &&
+              passwordInput &&
+              signInButton &&
+              usernameInput.offsetParent !== null &&
+              passwordInput.offsetParent !== null &&
+              signInButton.offsetParent !== null
+            );
+          },
+          { timeout: 30000 },
+        ); // Increase timeout to 30 seconds
+
         // Retry mechanism for the Cognito login form elements
         let isCognitoLoginFormInteractable = false;
         let cognitoRetryCount = 0;
