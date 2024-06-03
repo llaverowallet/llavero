@@ -63,26 +63,33 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
         await page.waitForFunction(() => document.readyState === 'complete'); // Wait for the document to be fully loaded
 
         // Ensure the Cognito login form elements are visible before interacting with them
-        await page.waitForSelector('input[name="username"]', {
+        await page.waitForSelector('form[name="cognitoSignInForm"] input[name="username"]', {
           state: 'visible',
           timeout: 30000, // Increase timeout to 30 seconds
         });
-        await page.waitForSelector('input[name="password"]', {
+        await page.waitForSelector('form[name="cognitoSignInForm"] input[name="password"]', {
           state: 'visible',
           timeout: 30000, // Increase timeout to 30 seconds
         });
-        await page.waitForSelector('button[name="signInSubmitButton"]:not([disabled])', {
-          state: 'visible',
-          timeout: 30000, // Increase timeout to 30 seconds
-        });
+        await page.waitForSelector(
+          'form[name="cognitoSignInForm"] button[name="signInSubmitButton"]:not([disabled])',
+          {
+            state: 'visible',
+            timeout: 30000, // Increase timeout to 30 seconds
+          },
+        );
 
         // Additional checks to ensure the elements are interactable
         await page.waitForFunction(
           () => {
-            const usernameInput = document.querySelector('input[name="username"]') as HTMLElement;
-            const passwordInput = document.querySelector('input[name="password"]') as HTMLElement;
+            const usernameInput = document.querySelector(
+              'form[name="cognitoSignInForm"] input[name="username"]',
+            ) as HTMLElement;
+            const passwordInput = document.querySelector(
+              'form[name="cognitoSignInForm"] input[name="password"]',
+            ) as HTMLElement;
             const signInButton = document.querySelector(
-              'button[name="signInSubmitButton"]',
+              'form[name="cognitoSignInForm"] button[name="signInSubmitButton"]',
             ) as HTMLElement;
             return (
               usernameInput &&
