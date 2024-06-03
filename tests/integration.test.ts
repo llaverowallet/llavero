@@ -172,14 +172,16 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
   }
 
   console.log('Waiting for the login form to be visible');
-  let isLoginFormVisible = await page.isVisible('[devin-id="0"]');
-  let retryCount = 0;
-  const maxRetries = 5;
-  const retryDelay = 2000; // 2 seconds
+  let isLoginFormVisible = false;
+  let retryCountLoginForm = 0;
+  const maxRetriesLoginForm = 5;
+  const retryDelayLoginForm = 2000; // 2 seconds
 
-  while (!isLoginFormVisible && retryCount < maxRetries) {
-    console.log(`The login form is not visible, retrying... (${retryCount + 1}/${maxRetries})`);
-    await page.waitForTimeout(retryDelay); // Wait for 2 seconds before retrying
+  while (!isLoginFormVisible && retryCountLoginForm < maxRetriesLoginForm) {
+    console.log(
+      `The login form is not visible, retrying... (${retryCountLoginForm + 1}/${maxRetriesLoginForm})`,
+    );
+    await page.waitForTimeout(retryDelayLoginForm); // Wait for 2 seconds before retrying
     await page.reload(); // Reload the page and retry
     // Log the current URL after reloading the page
     console.log(`Current URL after reloading: ${page.url()}`);
@@ -190,11 +192,11 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
       await page.click('#login-btn'); // Click the "Log in" button again
     }
     // Log the state of the login form after reloading the page
-    isLoginFormVisible = await page.isVisible('[devin-id="0"]');
+    isLoginFormVisible = await page.isVisible('input[name="username"]');
     console.log(`Is login form visible after reloading: ${isLoginFormVisible}`);
     // Log the page content after reloading the page
     console.log(`Page content after reloading: ${await page.content()}`);
-    retryCount++;
+    retryCountLoginForm++;
   }
 
   if (!isLoginFormVisible) {
@@ -292,16 +294,18 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
   console.log('Waiting for the "Dashboard" button to be visible and interactable');
   // Wait for the "Dashboard" button to be visible and interactable
   let isDashboardVisible = await page.isVisible('#dashboard-btn');
-  retryCount = 0;
+  let retryCountDashboard = 0;
+  const maxRetriesDashboard = 5;
+  const retryDelayDashboard = 2000; // 2 seconds
 
-  while (!isDashboardVisible && retryCount < maxRetries) {
+  while (!isDashboardVisible && retryCountDashboard < maxRetriesDashboard) {
     console.log(
-      `The "Dashboard" button is not visible, retrying... (${retryCount + 1}/${maxRetries})`,
+      `The "Dashboard" button is not visible, retrying... (${retryCountDashboard + 1}/${maxRetriesDashboard})`,
     );
-    await page.waitForTimeout(retryDelay); // Wait for 2 seconds before retrying
+    await page.waitForTimeout(retryDelayDashboard); // Wait for 2 seconds before retrying
     await page.reload(); // Reload the page and retry
     isDashboardVisible = await page.isVisible('#dashboard-btn');
-    retryCount++;
+    retryCountDashboard++;
   }
 
   if (!isDashboardVisible) {
