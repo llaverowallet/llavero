@@ -72,7 +72,10 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
           state: 'visible',
           timeout: 30000, // Increase timeout to 30 seconds
         });
-        await page.waitForSelector('button[name="signInSubmitButton"]:not([disabled])');
+        await page.waitForSelector('button[name="signInSubmitButton"]:not([disabled])', {
+          state: 'visible',
+          timeout: 30000, // Increase timeout to 30 seconds
+        });
 
         // Additional checks to ensure the elements are interactable
         await page.waitForFunction(
