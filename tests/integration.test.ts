@@ -80,14 +80,10 @@ test('Llavero Web Application Integration Test', async ({ page }) => {
         // Additional checks to ensure the elements are interactable
         await page.waitForFunction(
           () => {
-            const usernameInput = document.querySelector(
-              'form[name="cognitoSignInForm"] input[name="username"]',
-            ) as HTMLElement;
-            const passwordInput = document.querySelector(
-              'form[name="cognitoSignInForm"] input[name="password"]',
-            ) as HTMLElement;
+            const usernameInput = document.querySelector('input[name="username"]') as HTMLElement;
+            const passwordInput = document.querySelector('input[name="password"]') as HTMLElement;
             const signInButton = document.querySelector(
-              'form[name="cognitoSignInForm"] button[name="signInSubmitButton"]',
+              'button[name="signInSubmitButton"]',
             ) as HTMLElement;
             return (
               usernameInput &&
