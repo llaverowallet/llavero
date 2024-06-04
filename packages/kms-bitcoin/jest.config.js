@@ -11,4 +11,7 @@ module.exports = {
   },
   extensionsToTreatAsEsm: ['.ts'],
   preset: 'ts-jest/presets/js-with-ts-esm',
+  testEnvironmentOptions: {
+    experimentalVmModules: true,
+  },
 };

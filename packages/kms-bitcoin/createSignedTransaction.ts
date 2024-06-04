@@ -13,7 +13,7 @@ interface TransactionOutput {
   amount: number;
 }
 
-interface Transaction {
+export interface Transaction {
   inputs: TransactionInput[];
   outputs: TransactionOutput[];
 }
