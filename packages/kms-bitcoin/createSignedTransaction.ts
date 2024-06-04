@@ -27,7 +27,13 @@ async function createSignedTransaction(
 ): Promise<string> {
   try {
     const hash = hashTransaction(transaction);
-    const signature = await signWithKMS(hash);
+    const signatureBuffer = await signWithKMS(hash);
+
+    // Ensure the signature is in the correct DER format
+    const signature = bitcoin.script.signature.encode(
+      signatureBuffer,
+      bitcoin.Transaction.SIGHASH_ALL,
+    );
 
     const psbt = new bitcoin.Psbt();
     // Add inputs and outputs to psbt
@@ -46,7 +52,13 @@ async function createSignedTransaction(
 
     const keyPair = ECPair.fromPublicKey(Buffer.from(publicKey, 'hex'));
     transaction.inputs.forEach((_, index) => {
-      psbt.signInput(index, keyPair, Array.from(signature));
+      const partialSig = [
+        {
+          pubkey: keyPair.publicKey,
+          signature: signature,
+        },
+      ];
+      psbt.updateInput(index, { partialSig });
     });
 
     // Log the state of the psbt object before finalizing
