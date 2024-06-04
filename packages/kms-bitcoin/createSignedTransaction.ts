@@ -45,8 +45,18 @@ async function createSignedTransaction(
     });
 
     const keyPair = ECPair.fromPublicKey(Buffer.from(publicKey, 'hex'));
-    psbt.signInput(0, keyPair, Array.from(signature));
+    transaction.inputs.forEach((_, index) => {
+      psbt.signInput(index, keyPair, Array.from(signature));
+    });
+
+    // Log the state of the psbt object before finalizing
+    console.log('PSBT before finalizing:', psbt);
+
     psbt.finalizeAllInputs();
+
+    // Log the state of the psbt object after finalizing
+    console.log('PSBT after finalizing:', psbt);
+
     const tx = psbt.extractTransaction();
     return tx.toHex();
   } catch (error) {

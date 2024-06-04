@@ -1,5 +1,11 @@
 import AWS from 'aws-sdk';
 
+AWS.config.update({
+  region: 'us-east-1',
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+}); // Set the AWS region and credentials
+
 const kms = new AWS.KMS();
 
 async function signWithKMS(hash: Buffer): Promise<Buffer> {
