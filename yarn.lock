@@ -1942,6 +1942,13 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.8.0"
 
+"@babel/plugin-syntax-jsx@^7.24.6":
+  version "7.24.6"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-jsx/-/plugin-syntax-jsx-7.24.6.tgz#bcca2964150437f88f65e3679e3d68762287b9c8"
+  integrity sha512-lWfvAIFNWMlCsU0DRUun2GpFwZdGTukLaHJqRh1JRb80NdAP5Sb1HDHB5X9P9OtgZHQl089UzQkpYlBq2VTPRw==
+  dependencies:
+    "@babel/helper-plugin-utils" "^7.24.6"
+
 "@babel/plugin-syntax-logical-assignment-operators@^7.10.4", "@babel/plugin-syntax-logical-assignment-operators@^7.8.3":
   version "7.10.4"
   resolved "https://registry.npmjs.org/@babel/plugin-syntax-logical-assignment-operators/-/plugin-syntax-logical-assignment-operators-7.10.4.tgz"
@@ -1998,7 +2005,7 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.14.5"
 
-"@babel/plugin-syntax-typescript@^7.21.4", "@babel/plugin-syntax-typescript@^7.7.2":
+"@babel/plugin-syntax-typescript@^7.21.4", "@babel/plugin-syntax-typescript@^7.24.6", "@babel/plugin-syntax-typescript@^7.7.2":
   version "7.24.6"
   resolved "https://registry.npmjs.org/@babel/plugin-syntax-typescript/-/plugin-syntax-typescript-7.24.6.tgz"
   integrity sha512-TzCtxGgVTEJWWwcYwQhCIQ6WaKlo80/B+Onsk4RRCcYqpYGFcG9etPW94VToGte5AAcxRrhjPUFvUS3Y2qKi4A==
@@ -2369,6 +2376,16 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.24.6"
 
+"@babel/plugin-transform-typescript@^7.24.6":
+  version "7.24.6"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-typescript/-/plugin-transform-typescript-7.24.6.tgz#339c6127a783c32e28a5b591e6c666f899b57db0"
+  integrity sha512-H0i+hDLmaYYSt6KU9cZE0gb3Cbssa/oxWis7PX4ofQzbvsfix9Lbh8SRk7LCPDlLWJHUiFeHU0qRRpF/4Zv7mQ==
+  dependencies:
+    "@babel/helper-annotate-as-pure" "^7.24.6"
+    "@babel/helper-create-class-features-plugin" "^7.24.6"
+    "@babel/helper-plugin-utils" "^7.24.6"
+    "@babel/plugin-syntax-typescript" "^7.24.6"
+
 "@babel/plugin-transform-unicode-escapes@^7.24.6":
   version "7.24.6"
   resolved "https://registry.npmjs.org/@babel/plugin-transform-unicode-escapes/-/plugin-transform-unicode-escapes-7.24.6.tgz"
@@ -2495,6 +2512,17 @@
     "@babel/helper-plugin-utils" "^7.0.0"
     "@babel/types" "^7.4.4"
     esutils "^2.0.2"
+
+"@babel/preset-typescript@^7.24.6":
+  version "7.24.6"
+  resolved "https://registry.yarnpkg.com/@babel/preset-typescript/-/preset-typescript-7.24.6.tgz#27057470fb981c31338bdb897fc3d9aa0cb7dab2"
+  integrity sha512-U10aHPDnokCFRXgyT/MaIRTivUu2K/mu0vJlwRS9LxJmJet+PFQNKpggPyFCUtC6zWSBPjvxjnpNkAn3Uw2m5w==
+  dependencies:
+    "@babel/helper-plugin-utils" "^7.24.6"
+    "@babel/helper-validator-option" "^7.24.6"
+    "@babel/plugin-syntax-jsx" "^7.24.6"
+    "@babel/plugin-transform-modules-commonjs" "^7.24.6"
+    "@babel/plugin-transform-typescript" "^7.24.6"
 
 "@babel/regjsgen@^0.8.0":
   version "0.8.0"
