@@ -8,7 +8,7 @@ module.exports = {
   transformIgnorePatterns: ['<rootDir>/node_modules/'],
   globals: {
     'ts-jest': {
-      tsconfig: '<rootDir>/tsconfig.json',
+      tsconfig: '../../tsconfig.json', // Updated path to tsconfig.json
     },
   },
   moduleNameMapper: {
