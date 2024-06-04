@@ -14,4 +14,6 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
   },
+  extensionsToTreatAsEsm: ['.ts'],
+  preset: 'ts-jest/presets/js-with-ts-esm',
 };
