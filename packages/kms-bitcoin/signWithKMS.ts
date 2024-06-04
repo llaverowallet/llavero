@@ -16,9 +16,14 @@ async function signWithKMS(hash: Buffer): Promise<Buffer> {
     MessageType: 'DIGEST',
     SigningAlgorithm: 'ECDSA_SHA_256',
   };
-  const result = await kms.sign(params).promise();
-  const signature = result.Signature as Buffer;
-  return signature;
+  try {
+    const result = await kms.sign(params).promise();
+    const signature = result.Signature as Buffer;
+    return signature;
+  } catch (error) {
+    console.error('Error signing with AWS KMS:', error);
+    throw new Error('Failed to sign with AWS KMS');
+  }
 }
 
 export default signWithKMS;
