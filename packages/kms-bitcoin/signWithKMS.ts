@@ -9,6 +9,7 @@ AWS.config.update({
 const kms = new AWS.KMS();
 
 async function signWithKMS(hash: Buffer): Promise<Buffer> {
+  console.log('Hash to be signed:', hash.toString('hex')); // Log the hash to be signed
   const params: AWS.KMS.SignRequest = {
     KeyId: process.env.AWS_KEY_ID!, // Use the AWS Key ID from the environment variable
     Message: hash,

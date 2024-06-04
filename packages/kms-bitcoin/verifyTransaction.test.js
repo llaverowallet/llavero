@@ -1,4 +1,4 @@
-import verifyTransaction from './verifyTransaction';
+import verifyTransaction from './verifyTransaction.ts';
 import * as bitcoin from 'bitcoinjs-lib';
 
 describe('verifyTransaction', () => {
