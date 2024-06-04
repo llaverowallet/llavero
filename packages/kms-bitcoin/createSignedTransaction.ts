@@ -1,10 +1,7 @@
 import * as bitcoin from 'bitcoinjs-lib';
 import ECPairFactory from 'ecpair';
-import * as tinysecp from 'tiny-secp256k1';
 import hashTransaction from './hashTransaction';
 import signWithKMS from './signWithKMS';
-
-const ECPair = ECPairFactory(tinysecp);
 
 interface TransactionInput {
   txId: string;
@@ -26,6 +23,9 @@ async function createSignedTransaction(
   publicKey: string,
 ): Promise<string> {
   try {
+    const tinysecp = await import('tiny-secp256k1');
+    const ECPair = ECPairFactory(tinysecp);
+
     const hash = hashTransaction(transaction);
     const signatureBuffer = await signWithKMS(hash);
 
