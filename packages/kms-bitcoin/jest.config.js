@@ -14,4 +14,9 @@ module.exports = {
   testEnvironmentOptions: {
     experimentalVmModules: true,
   },
+  globals: {
+    'ts-jest': {
+      useESM: true,
+    },
+  },
 };
