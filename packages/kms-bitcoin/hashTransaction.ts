@@ -30,6 +30,10 @@ function hashTransaction(transaction: Transaction): Buffer {
       value: output.amount,
     });
   });
+
+  // Finalize all inputs before extracting the transaction
+  psbt.finalizeAllInputs();
+
   const tx = psbt.extractTransaction();
   const txHex = tx.toHex();
   const hash = bitcoin.crypto.hash256(Buffer.from(txHex, 'hex'));
