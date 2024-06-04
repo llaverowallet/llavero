@@ -1,0 +1,10 @@
+{
+  "name": "kms-bitcoin",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.1633.0",
+    "bitcoinjs-lib": "^6.1.5"
+  }
+}
