@@ -1,11 +1,12 @@
 import * as bitcoin from 'bitcoinjs-lib';
-import ECPairFactory from 'ecpair';
+import { ECPairFactory, ECPairAPI, TinySecp256k1Interface } from 'ecpair';
 import hashTransaction from './hashTransaction';
 import signWithKMS from './signWithKMS';
 
 interface TransactionInput {
   txId: string;
   vout: number;
+  value: number; // Add value property to TransactionInput
 }
 
 interface TransactionOutput {
@@ -23,8 +24,10 @@ async function createSignedTransaction(
   publicKey: string,
 ): Promise<string> {
   try {
-    const tinysecp = await import('tiny-secp256k1');
-    const ECPair = ECPairFactory(tinysecp);
+    console.log('Starting createSignedTransaction function'); // Log function start
+
+    const tinysecp: TinySecp256k1Interface = await import('tiny-secp256k1');
+    const ECPair: ECPairAPI = ECPairFactory(tinysecp);
 
     const hash = hashTransaction(transaction);
     const signatureBuffer = await signWithKMS(hash);
@@ -46,9 +49,20 @@ async function createSignedTransaction(
     const psbt = new bitcoin.Psbt();
     // Add inputs and outputs to psbt
     transaction.inputs.forEach((input) => {
+      const p2pkhScript = bitcoin.payments.p2pkh({ pubkey: Buffer.from(publicKey, 'hex') }).output;
+      if (!p2pkhScript) {
+        throw new Error('Failed to create P2PKH script');
+      }
+      // Log the p2pkhScript and value
+      console.log('P2PKH script:', p2pkhScript);
+      console.log('Value of UTXO:', input.value); // Log the actual value of the UTXO
       psbt.addInput({
         hash: input.txId,
         index: input.vout,
+        witnessUtxo: {
+          script: p2pkhScript, // P2PKH script
+          value: input.value, // Use the actual value of the UTXO
+        },
       });
     });
     transaction.outputs.forEach((output) => {
