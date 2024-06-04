@@ -8,6 +8,7 @@ describe('createSignedTransaction', () => {
         {
           txId: 'e3c0b8f8a2b8a2b8a2b8a2b8a2b8a2b8a2b8a2b8a2b8a2b8a2b8a2b8a2b8a2b8',
           vout: 0,
+          value: 100000, // Add value property to TransactionInput
         },
       ],
       outputs: [
