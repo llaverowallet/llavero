@@ -3,6 +3,8 @@ import * as bitcoin from 'bitcoinjs-lib';
 interface TransactionInput {
   txId: string;
   vout: number;
+  value: number; // Add value property to TransactionInput
+  address: string; // Add address property to TransactionInput
 }
 
 interface TransactionOutput {
@@ -22,6 +24,10 @@ function hashTransaction(transaction: Transaction): Buffer {
     psbt.addInput({
       hash: input.txId,
       index: input.vout,
+      witnessUtxo: {
+        script: bitcoin.address.toOutputScript(input.address),
+        value: input.value,
+      },
     });
   });
   transaction.outputs.forEach((output) => {

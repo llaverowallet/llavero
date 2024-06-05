@@ -5,6 +5,7 @@ interface TransactionInput {
   txId: string;
   vout: number;
   value: number; // Add value property to TransactionInput
+  address: string; // Add address property to TransactionInput
 }
 
 interface TransactionOutput {
