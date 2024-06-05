@@ -53,7 +53,8 @@ async function createSignedTransaction(
       if (!p2pkhScript) {
         throw new Error('Failed to create P2PKH script');
       }
-      // Log the p2pkhScript and value
+      // Log the raw publicKey and p2pkhScript
+      console.log(`Raw publicKey for input ${index}:`, publicKey);
       console.log(`P2PKH script for input ${index}:`, p2pkhScript);
       console.log(`P2PKH script length for input ${index}:`, p2pkhScript.length);
       console.log(`Value of UTXO for input ${index}:`, input.value); // Log the actual value of the UTXO
@@ -88,7 +89,8 @@ async function createSignedTransaction(
           signature: signature,
         },
       ];
-      console.log(`partialSig for input ${index}:`, partialSig); // Log the partialSig array
+      // Log the partialSig array
+      console.log(`partialSig for input ${index}:`, partialSig);
       psbt.updateInput(index, { partialSig });
       // Log the state of the psbt object after updating each input
       console.log(`PSBT object after updating input ${index}:`, psbt);
