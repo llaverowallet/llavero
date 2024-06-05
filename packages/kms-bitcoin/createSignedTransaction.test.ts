@@ -25,11 +25,13 @@ describe('signTransaction', () => {
     // Create a Psbt object and add inputs and outputs
     const psbt = new bitcoin.Psbt();
     transaction.inputs.forEach((input) => {
+      const script = bitcoin.address.toOutputScript(input.address);
+      console.log('Generated script:', script.toString('hex')); // Log the generated script
       psbt.addInput({
         hash: input.txId,
         index: input.vout,
         witnessUtxo: {
-          script: bitcoin.address.toOutputScript(input.address),
+          script,
           value: input.value,
         },
       });
