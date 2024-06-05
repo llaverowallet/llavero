@@ -1,7 +1,7 @@
-import createSignedTransaction, { Transaction } from './createSignedTransaction';
+import signTransaction, { Transaction } from './signTransaction';
 import * as bitcoin from 'bitcoinjs-lib';
 
-describe('createSignedTransaction', () => {
+describe('signTransaction', () => {
   it('should create a signed transaction', async () => {
     const transaction: Transaction = {
       inputs: [
@@ -21,9 +21,15 @@ describe('createSignedTransaction', () => {
 
     const publicKey = '02c72b8f8a2b8a2b8a2b8a2b8a2b8a2b8a2b8a2b8a2b8a2b8a2b8a2b8a2b8a2b8';
 
-    const signedTransactionHex = await createSignedTransaction(transaction, publicKey);
+    const { signature, publicKey: returnedPublicKey } = await signTransaction(
+      transaction,
+      publicKey,
+    );
 
-    const tx = bitcoin.Transaction.fromHex(signedTransactionHex);
+    expect(signature).toBeDefined();
+    expect(returnedPublicKey).toBe(publicKey);
+
+    const tx = bitcoin.Transaction.fromHex(transaction);
     expect(tx).toBeDefined();
     expect(tx.ins.length).toBe(transaction.inputs.length);
     expect(tx.outs.length).toBe(transaction.outputs.length);
