@@ -66,6 +66,8 @@ async function createSignedTransaction(
         index: input.vout,
         witnessUtxo: witnessUtxo,
       });
+      // Log the state of the psbt object after adding each input
+      console.log(`PSBT object after adding input ${index}:`, psbt);
     });
     transaction.outputs.forEach((output) => {
       psbt.addOutput({
@@ -97,12 +99,18 @@ async function createSignedTransaction(
     // Log the psbt object before finalizing
     console.log('PSBT object before finalizing:', psbt);
 
+    // Log the contents of the psbt.data.inputs array
+    console.log('PSBT data inputs before finalizing:', psbt.data.inputs);
+
     psbt.finalizeAllInputs();
 
     // Log the state of each input in the psbt object after finalizing
     psbt.data.inputs.forEach((input, index) => {
       console.log(`PSBT input ${index} after finalizing:`, input);
     });
+
+    // Log the final PSBT object
+    console.log('Final PSBT object:', psbt);
 
     const tx = psbt.extractTransaction();
     return tx.toHex();
