@@ -48,19 +48,19 @@ async function createSignedTransaction(
 
     const psbt = new bitcoin.Psbt();
     // Add inputs and outputs to psbt
-    transaction.inputs.forEach((input) => {
+    transaction.inputs.forEach((input, index) => {
       const p2pkhScript = bitcoin.payments.p2pkh({ pubkey: Buffer.from(publicKey, 'hex') }).output;
       if (!p2pkhScript) {
         throw new Error('Failed to create P2PKH script');
       }
       // Log the p2pkhScript and value
-      console.log('P2PKH script:', p2pkhScript);
-      console.log('Value of UTXO:', input.value); // Log the actual value of the UTXO
+      console.log(`P2PKH script for input ${index}:`, p2pkhScript);
+      console.log(`Value of UTXO for input ${index}:`, input.value); // Log the actual value of the UTXO
       const witnessUtxo = {
         script: p2pkhScript, // P2PKH script
         value: input.value, // Use the actual value of the UTXO
       };
-      console.log('witnessUtxo:', witnessUtxo); // Log the witnessUtxo object
+      console.log(`witnessUtxo for input ${index}:`, witnessUtxo); // Log the witnessUtxo object
       psbt.addInput({
         hash: input.txId,
         index: input.vout,
@@ -85,6 +85,7 @@ async function createSignedTransaction(
           signature: signature,
         },
       ];
+      console.log(`partialSig for input ${index}:`, partialSig); // Log the partialSig array
       psbt.updateInput(index, { partialSig });
     });
 
