@@ -71,7 +71,7 @@ describe('signTransaction', () => {
       signatureBuffer,
       bitcoin.Transaction.SIGHASH_ALL,
     );
-    const trimmedSignature = derSignature.slice(0, -1); // Remove the sighash byte
+    const trimmedSignature = derSignature.slice(0, 64); // Trim the signature to 64 bytes
     console.log('Trimmed signature:', trimmedSignature);
 
     psbt.updateInput(0, {
