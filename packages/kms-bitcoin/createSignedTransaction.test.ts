@@ -66,11 +66,19 @@ describe('signTransaction', () => {
     console.log('pubkey Buffer:', pubkeyBuffer);
     console.log('signature Buffer:', signatureBuffer);
 
+    // Ensure the signature is in the correct DER format and of the expected length
+    const derSignature = bitcoin.script.signature.encode(
+      signatureBuffer,
+      bitcoin.Transaction.SIGHASH_ALL,
+    );
+    const trimmedSignature = derSignature.slice(0, -1); // Remove the sighash byte
+    console.log('Trimmed signature:', trimmedSignature);
+
     psbt.updateInput(0, {
       partialSig: [
         {
           pubkey: pubkeyBuffer,
-          signature: signatureBuffer,
+          signature: trimmedSignature,
         },
       ],
     });
