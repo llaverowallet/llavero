@@ -10,7 +10,7 @@
     "tiny-secp256k1": "^2.2.3"
   },
   "scripts": {
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
+    "test": "jest"
   },
   "devDependencies": {
     "@babel/core": "^7.24.6",
