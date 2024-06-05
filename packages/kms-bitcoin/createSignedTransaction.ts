@@ -55,6 +55,7 @@ async function createSignedTransaction(
       }
       // Log the p2pkhScript and value
       console.log(`P2PKH script for input ${index}:`, p2pkhScript);
+      console.log(`P2PKH script length for input ${index}:`, p2pkhScript.length);
       console.log(`Value of UTXO for input ${index}:`, input.value); // Log the actual value of the UTXO
       const witnessUtxo = {
         script: p2pkhScript, // P2PKH script
