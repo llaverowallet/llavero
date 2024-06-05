@@ -50,14 +50,37 @@ describe('signTransaction', () => {
     console.log('witnessUtxo for input #0:', psbt.data.inputs[0].witnessUtxo);
     console.log('partialSig for input #0:', psbt.data.inputs[0].partialSig);
 
+    // Sign the transaction and add the signature to the Psbt object
+    const { signature, publicKey: returnedPublicKey } = await signTransaction(
+      psbt.toHex(), // Pass the transaction hex
+      publicKey,
+    );
+
+    // Log the signature and publicKey before updating the Psbt object
+    console.log('Signature:', signature);
+    console.log('PublicKey:', publicKey);
+
+    // Log the Buffer objects for pubkey and signature
+    const pubkeyBuffer = Buffer.from(publicKey, 'hex');
+    const signatureBuffer = Buffer.from(signature, 'hex');
+    console.log('pubkey Buffer:', pubkeyBuffer);
+    console.log('signature Buffer:', signatureBuffer);
+
+    psbt.updateInput(0, {
+      partialSig: [
+        {
+          pubkey: pubkeyBuffer,
+          signature: signatureBuffer,
+        },
+      ],
+    });
+
+    // Log the state of the Psbt object after adding partialSig and before finalizing
+    console.log('Psbt object after adding partialSig:', psbt.data.inputs);
+
     // Finalize all inputs and extract the transaction hex
     psbt.finalizeAllInputs();
     const txHex = psbt.extractTransaction().toHex();
-
-    const { signature, publicKey: returnedPublicKey } = await signTransaction(
-      txHex, // Pass the transaction hex
-      publicKey,
-    );
 
     expect(signature).toBeDefined();
     expect(returnedPublicKey).toBe(publicKey);
