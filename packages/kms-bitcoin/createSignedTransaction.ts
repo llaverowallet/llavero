@@ -56,13 +56,15 @@ async function createSignedTransaction(
       // Log the p2pkhScript and value
       console.log('P2PKH script:', p2pkhScript);
       console.log('Value of UTXO:', input.value); // Log the actual value of the UTXO
+      const witnessUtxo = {
+        script: p2pkhScript, // P2PKH script
+        value: input.value, // Use the actual value of the UTXO
+      };
+      console.log('witnessUtxo:', witnessUtxo); // Log the witnessUtxo object
       psbt.addInput({
         hash: input.txId,
         index: input.vout,
-        witnessUtxo: {
-          script: p2pkhScript, // P2PKH script
-          value: input.value, // Use the actual value of the UTXO
-        },
+        witnessUtxo: witnessUtxo,
       });
     });
     transaction.outputs.forEach((output) => {
@@ -90,6 +92,9 @@ async function createSignedTransaction(
     psbt.data.inputs.forEach((input, index) => {
       console.log(`PSBT input ${index} before finalizing:`, input);
     });
+
+    // Log the psbt object before finalizing
+    console.log('PSBT object before finalizing:', psbt);
 
     psbt.finalizeAllInputs();
 
