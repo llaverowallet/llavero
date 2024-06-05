@@ -90,6 +90,8 @@ async function createSignedTransaction(
       ];
       console.log(`partialSig for input ${index}:`, partialSig); // Log the partialSig array
       psbt.updateInput(index, { partialSig });
+      // Log the state of the psbt object after updating each input
+      console.log(`PSBT object after updating input ${index}:`, psbt);
     });
 
     // Log the state of each input in the psbt object before finalizing
