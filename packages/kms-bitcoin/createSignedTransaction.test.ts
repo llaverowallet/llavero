@@ -43,6 +43,13 @@ describe('signTransaction', () => {
       });
     });
 
+    // Log the state of the Psbt object before finalizing
+    console.log('Psbt object before finalizing:', psbt.data.inputs);
+
+    // Log the witnessUtxo and partialSig data for input #0
+    console.log('witnessUtxo for input #0:', psbt.data.inputs[0].witnessUtxo);
+    console.log('partialSig for input #0:', psbt.data.inputs[0].partialSig);
+
     // Finalize all inputs and extract the transaction hex
     psbt.finalizeAllInputs();
     const txHex = psbt.extractTransaction().toHex();
