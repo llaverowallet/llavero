@@ -116,6 +116,13 @@ async function createSignedTransaction(
       console.log(`partialSig for input ${index} before finalizing:`, input.partialSig);
     });
 
+    // Additional logging for witnessUtxo and partialSig right before finalizing
+    console.log('Final witnessUtxo and partialSig details before finalizing:');
+    psbt.data.inputs.forEach((input, index) => {
+      console.log(`witnessUtxo for input ${index}:`, input.witnessUtxo);
+      console.log(`partialSig for input ${index}:`, input.partialSig);
+    });
+
     psbt.finalizeAllInputs();
 
     // Log the state of each input in the psbt object after finalizing
