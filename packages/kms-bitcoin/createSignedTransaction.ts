@@ -105,6 +105,11 @@ async function createSignedTransaction(
     // Log the contents of the psbt.data.inputs array
     console.log('PSBT data inputs before finalizing:', psbt.data.inputs);
 
+    // Additional logging before finalizing inputs
+    psbt.data.inputs.forEach((input, index) => {
+      console.log(`PSBT input ${index} script before finalizing:`, input.witnessUtxo?.script);
+    });
+
     psbt.finalizeAllInputs();
 
     // Log the state of each input in the psbt object after finalizing
