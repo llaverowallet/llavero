@@ -102,10 +102,9 @@ async function signTransaction(
     if (signatureBuffer.length > 64) {
       signatureBuffer = signatureBuffer.slice(0, 64);
     }
-    const derSignature = bitcoin.script.signature.encode(
-      signatureBuffer,
-      bitcoin.Transaction.SIGHASH_ALL,
-    );
+    const derSignature = bitcoin.script.signature
+      .encode(signatureBuffer, bitcoin.Transaction.SIGHASH_ALL)
+      .slice(0, -1); // Remove the SIGHASH type byte
 
     console.log('DER-encoded signature:', derSignature);
 

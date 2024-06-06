@@ -21,6 +21,8 @@ async function signWithKMS(hash: Buffer): Promise<Buffer> {
   try {
     const result = await kms.sign(params).promise();
     const signature = result.Signature as Buffer;
+    console.log('Raw signature from AWS KMS:', signature.toString('hex')); // Log the raw signature
+    console.log('Signature length:', signature.length); // Log the length of the signature
     return signature;
   } catch (error) {
     console.error('Error signing with AWS KMS:', error);
