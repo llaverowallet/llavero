@@ -78,7 +78,7 @@ describe('signTransaction', () => {
       partialSig: [
         {
           pubkey: pubkeyBuffer,
-          signature: trimmedSignature,
+          signature: signatureBuffer,
         },
       ],
     });

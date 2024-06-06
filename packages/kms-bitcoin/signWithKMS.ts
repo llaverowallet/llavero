@@ -1,16 +1,14 @@
 import AWS from 'aws-sdk';
 
-AWS.config.update({
+const kms = new AWS.KMS({
   region: 'us-east-1',
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  accessKeyId: 'AKIA5W56OWY7KGDW6F7X', // Set the AWS Access Key ID directly
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-}); // Set the AWS region and credentials
-
-const kms = new AWS.KMS();
+});
 
 async function signWithKMS(hash: Buffer): Promise<Buffer> {
   console.log('Hash to be signed:', hash.toString('hex')); // Log the hash to be signed
-  console.log('AWS_ACCESS_KEY_ID:', process.env.AWS_ACCESS_KEY_ID); // Log the AWS Access Key ID
+  console.log('AWS_ACCESS_KEY_ID:', 'AKIA5W56OWY7KGDW6F7X'); // Log the AWS Access Key ID directly
   console.log('AWS_SECRET_ACCESS_KEY:', process.env.AWS_SECRET_ACCESS_KEY); // Log the AWS Secret Access Key
   console.log('AWS_KEY_ID:', process.env.AWS_KEY_ID); // Log the AWS Key ID
 
