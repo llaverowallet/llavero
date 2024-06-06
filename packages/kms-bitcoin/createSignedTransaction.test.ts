@@ -79,8 +79,8 @@ describe('signTransaction', () => {
     psbt.updateInput(0, {
       partialSig: [
         {
-          pubkey: Buffer.from(pubkeyBuffer),
-          signature: Buffer.from(derSignature),
+          pubkey: pubkeyBuffer,
+          signature: derSignature,
         },
       ],
     });
