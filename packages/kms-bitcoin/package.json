@@ -10,7 +10,7 @@
     "tiny-secp256k1": "^2.2.3"
   },
   "scripts": {
-    "test": "AWS_KEY_ID='arn:aws:kms:us-east-1:942607873598:key/98803f0a-bdab-42a2-8f62-71a14389f383' jest"
+    "test": "AWS_KEY_ID='98803f0a-bdab-42a2-8f62-71a14389f383' jest"
   },
   "devDependencies": {
     "@babel/core": "^7.24.6",
