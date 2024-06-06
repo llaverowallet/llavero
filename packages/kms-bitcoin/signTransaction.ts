@@ -102,18 +102,12 @@ async function signTransaction(
     if (signatureBuffer.length > 64) {
       signatureBuffer = signatureBuffer.slice(0, 64);
     }
-    const derSignature = bitcoin.script.signature.encode(
-      signatureBuffer,
-      bitcoin.Transaction.SIGHASH_ALL,
-    );
-
-    console.log('DER-encoded signature:', derSignature);
 
     psbt.updateInput(0, {
       partialSig: [
         {
-          pubkey: Buffer.from(publicKey, 'hex'),
-          signature: Buffer.from(derSignature),
+          pubkey: pubkeyBuffer,
+          signature: signatureBuffer,
         },
       ],
     });
