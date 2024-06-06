@@ -21,12 +21,12 @@ export interface Transaction {
 async function signTransaction(
   transaction: string,
   publicKey: string,
-): Promise<{ signature: string; publicKey: string }> {
+): Promise<{ signature: string; publicKey: string; txHex: string }> {
   try {
     console.log('Starting signTransaction function'); // Log function start
 
     const hash = bitcoin.crypto.hash256(Buffer.from(transaction, 'hex'));
-    const signatureBuffer = await signWithKMS(hash);
+    let signatureBuffer = await signWithKMS(hash);
 
     // Log the raw signature returned from AWS KMS
     console.log('Raw signature from AWS KMS:', signatureBuffer);
@@ -63,7 +63,69 @@ async function signTransaction(
       }
     }
 
-    return { signature: finalSignature.toString('hex'), publicKey };
+    // Create a Psbt object and add inputs and outputs
+    const psbt = new bitcoin.Psbt();
+    const transactionObj: Transaction = JSON.parse(transaction);
+    transactionObj.inputs.forEach((input) => {
+      const script = bitcoin.address.toOutputScript(input.address);
+      console.log('Generated script:', script.toString('hex')); // Log the generated script
+      psbt.addInput({
+        hash: input.txId,
+        index: input.vout,
+        witnessUtxo: {
+          script,
+          value: input.value,
+        },
+      });
+    });
+    transactionObj.outputs.forEach((output) => {
+      psbt.addOutput({
+        address: output.address,
+        value: output.amount,
+      });
+    });
+
+    // Log the state of the Psbt object before finalizing
+    console.log('Psbt object before finalizing:', psbt.data.inputs);
+
+    // Log the witnessUtxo and partialSig data for input #0
+    console.log('witnessUtxo for input #0:', psbt.data.inputs[0].witnessUtxo);
+    console.log('partialSig for input #0:', psbt.data.inputs[0].partialSig);
+
+    // Log the Buffer objects for pubkey and signature
+    const pubkeyBuffer = Buffer.from(publicKey, 'hex');
+    signatureBuffer = finalSignature;
+    console.log('pubkey Buffer:', pubkeyBuffer);
+    console.log('signature Buffer:', signatureBuffer);
+
+    // Ensure the signature is in the correct DER format and of the expected length
+    if (signatureBuffer.length > 64) {
+      signatureBuffer = signatureBuffer.slice(0, 64);
+    }
+    const derSignature = bitcoin.script.signature.encode(
+      signatureBuffer,
+      bitcoin.Transaction.SIGHASH_ALL,
+    );
+
+    console.log('DER-encoded signature:', derSignature);
+
+    psbt.updateInput(0, {
+      partialSig: [
+        {
+          pubkey: pubkeyBuffer,
+          signature: derSignature,
+        },
+      ],
+    });
+
+    // Log the state of the Psbt object after adding partialSig and before finalizing
+    console.log('Psbt object after adding partialSig:', psbt.data.inputs);
+
+    // Finalize all inputs and extract the transaction hex
+    psbt.finalizeAllInputs();
+    const txHex = psbt.extractTransaction().toHex();
+
+    return { signature: finalSignature.toString('hex'), publicKey, txHex };
   } catch (error) {
     console.error('Error signing transaction:', error);
     throw new Error('Failed to sign transaction');
