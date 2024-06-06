@@ -103,6 +103,11 @@ async function signTransaction(
       signatureBuffer = signatureBuffer.slice(0, 64);
     }
 
+    // Ensure pubkey and signature are Buffers
+    if (!Buffer.isBuffer(pubkeyBuffer) || !Buffer.isBuffer(signatureBuffer)) {
+      throw new Error('pubkey and signature must be Buffers');
+    }
+
     psbt.updateInput(0, {
       partialSig: [
         {
