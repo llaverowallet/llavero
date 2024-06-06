@@ -50,9 +50,9 @@ async function signTransaction(
 
     // Ensure the final signature is 64 bytes long
     if (finalSignature.length !== 64) {
-      // If the final signature is 65 bytes, trim the last byte
-      if (finalSignature.length === 65) {
-        finalSignature = finalSignature.slice(0, 64);
+      // If the final signature is 66 bytes, trim the first and last byte
+      if (finalSignature.length === 66) {
+        finalSignature = finalSignature.slice(1, 65);
       } else {
         throw new Error(
           `Expected signature length of 64 bytes, got ${finalSignature.length} bytes`,
