@@ -26,7 +26,11 @@ async function signTransaction(
     console.log('Starting signTransaction function'); // Log function start
 
     const hash = bitcoin.crypto.hash256(Buffer.from(transaction, 'hex'));
+    console.log('Hash generated:', hash.toString('hex')); // Log the generated hash
+
+    console.log('Calling signWithKMS function'); // Log before calling signWithKMS
     let signatureBuffer = await signWithKMS(hash);
+    console.log('Received signature from signWithKMS'); // Log after receiving signature
 
     // Log the raw signature returned from AWS KMS
     console.log('Raw signature from AWS KMS:', signatureBuffer);
@@ -108,6 +112,10 @@ async function signTransaction(
       throw new Error('pubkey and signature must be Buffers');
     }
 
+    // Log the structure of pubkey and signature before adding to partialSig
+    console.log('pubkeyBuffer structure:', pubkeyBuffer);
+    console.log('signatureBuffer structure:', signatureBuffer);
+
     psbt.updateInput(0, {
       partialSig: [
         {
@@ -121,8 +129,12 @@ async function signTransaction(
     console.log('Psbt object after adding partialSig:', psbt.data.inputs);
 
     // Finalize all inputs and extract the transaction hex
+    console.log('Finalizing all inputs'); // Log before finalizing inputs
     psbt.finalizeAllInputs();
+    console.log('Inputs finalized'); // Log after finalizing inputs
+
     const txHex = psbt.extractTransaction().toHex();
+    console.log('Transaction hex extracted:', txHex); // Log the extracted transaction hex
 
     return { signature: finalSignature.toString('hex'), publicKey, txHex };
   } catch (error) {
