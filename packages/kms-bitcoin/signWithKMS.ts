@@ -10,16 +10,14 @@ async function signWithKMS(hash: Buffer): Promise<Buffer> {
   console.log('Hash to be signed:', hash.toString('hex')); // Log the hash to be signed
   console.log('AWS_ACCESS_KEY_ID:', process.env.AWS_ACCESS_KEY_ID); // Log the AWS Access Key ID
   console.log('AWS_SECRET_ACCESS_KEY:', process.env.AWS_SECRET_ACCESS_KEY); // Log the AWS Secret Access Key
-  console.log(
-    'AWS_KEY_ID:',
-    process.env.AWS_KEY_ID ||
-      'arn:aws:kms:us-east-1:942607873598:key/98803f0a-bdab-42a2-8f62-71a14389f383',
-  ); // Log the AWS Key ID, default to correct value
+  console.log('AWS_KEY_ID:', process.env.AWS_KEY_ID); // Log the AWS Key ID
+
+  if (!process.env.AWS_KEY_ID) {
+    throw new Error('AWS_KEY_ID environment variable is not set');
+  }
 
   const params: AWS.KMS.SignRequest = {
-    KeyId:
-      process.env.AWS_KEY_ID ||
-      'arn:aws:kms:us-east-1:942607873598:key/98803f0a-bdab-42a2-8f62-71a14389f383', // Use the AWS Key ID from the environment variable or default to correct value
+    KeyId: process.env.AWS_KEY_ID, // Use the AWS Key ID from the environment variable
     Message: hash,
     MessageType: 'DIGEST',
     SigningAlgorithm: 'ECDSA_SHA_256',
