@@ -112,8 +112,8 @@ async function signTransaction(
     psbt.updateInput(0, {
       partialSig: [
         {
-          pubkey: pubkeyBuffer,
-          signature: derSignature,
+          pubkey: Buffer.from(publicKey, 'hex'),
+          signature: Buffer.from(derSignature),
         },
       ],
     });
