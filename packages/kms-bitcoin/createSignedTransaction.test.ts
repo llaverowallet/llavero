@@ -62,11 +62,14 @@ describe('signTransaction', () => {
 
     // Log the Buffer objects for pubkey and signature
     const pubkeyBuffer = Buffer.from(publicKey, 'hex');
-    const signatureBuffer = Buffer.from(signature, 'hex');
+    let signatureBuffer = Buffer.from(signature, 'hex');
     console.log('pubkey Buffer:', pubkeyBuffer);
     console.log('signature Buffer:', signatureBuffer);
 
     // Ensure the signature is in the correct DER format and of the expected length
+    if (signatureBuffer.length > 64) {
+      signatureBuffer = signatureBuffer.slice(0, 64);
+    }
     const derSignature = bitcoin.script.signature.encode(
       signatureBuffer,
       bitcoin.Transaction.SIGHASH_ALL,
@@ -76,7 +79,7 @@ describe('signTransaction', () => {
     psbt.updateInput(0, {
       partialSig: [
         {
-          pubkey: pubkeyBuffer,
+          pubkey: Buffer.from(pubkeyBuffer),
           signature: Buffer.from(derSignature),
         },
       ],
