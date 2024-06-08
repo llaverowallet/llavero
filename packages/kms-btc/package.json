@@ -1,0 +1,9 @@
+{
+  "name": "kms-btc",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@scure/btc-signer": "https://github.com/paulmillr/scure-btc-signer"
+  }
+}
