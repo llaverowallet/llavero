@@ -131,3 +131,97 @@ The `kms-btc` package includes error handling for key management, signing, and t
 ## Security Review
 
 A security review has been conducted to identify and mitigate potential vulnerabilities in the implementation. The package ensures that private keys are not exposed and that cryptographic functions are securely managed using AWS KMS.
+
+## Full Example: Sending a Bitcoin Transaction on Testnet
+
+This example demonstrates how to create, sign, and broadcast a Bitcoin transaction on the testnet using the `kms-btc` package.
+
+### Prerequisites
+
+- AWS KMS set up with a key for signing transactions
+- Bitcoin testnet wallet with some testnet BTC
+- Node.js and Yarn installed
+- Dependencies installed using `yarn install`
+
+### Step 1: Create a Bitcoin Transaction
+
+Create a transaction object with inputs and outputs.
+
+```typescript
+import {
+  BitcoinTransaction,
+  BitcoinTransactionInput,
+  BitcoinTransactionOutput,
+} from './hashTransaction';
+
+const transaction: BitcoinTransaction = {
+  version: 1,
+  locktime: 0,
+  inputs: [
+    {
+      prevTxHash: 'your-previous-transaction-hash',
+      outputIndex: 0,
+      scriptSig: '',
+      sequence: 0xffffffff,
+    },
+  ],
+  outputs: [
+    {
+      value: 10000, // Amount in satoshis
+      scriptPubKey: 'your-recipient-address-scriptPubKey',
+    },
+  ],
+};
+```
+
+### Step 2: Hash the Transaction
+
+Hash the transaction using the `hashTransaction` function.
+
+```typescript
+import { hashTransaction } from './hashTransaction';
+
+const hash = hashTransaction(transaction);
+```
+
+### Step 3: Sign the Transaction with AWS KMS
+
+Sign the hashed transaction using the `signWithKMS` function.
+
+```typescript
+import { signWithKMS } from './signWithKMS';
+
+const signature = await signWithKMS(hash);
+```
+
+### Step 4: Construct the Final Signed Transaction
+
+Construct the final signed transaction using the `createSignedTransaction` function.
+
+```typescript
+import { createSignedTransaction } from './createSignedTransaction';
+
+const publicKey = 'your-public-key';
+const signedTransactionHex = await createSignedTransaction(transaction, publicKey);
+```
+
+### Step 5: Broadcast the Transaction to the Testnet
+
+Broadcast the signed transaction to the Bitcoin testnet using a testnet API (e.g., BlockCypher, Bitcoin Testnet Faucet).
+
+```typescript
+import axios from 'axios';
+
+const broadcastTransaction = async (txHex: string) => {
+  const response = await axios.post('https://api.blockcypher.com/v1/btc/test3/txs/push', {
+    tx: txHex,
+  });
+  console.log('Broadcast response:', response.data);
+};
+
+await broadcastTransaction(signedTransactionHex);
+```
+
+### Conclusion
+
+This example demonstrates how to create, sign, and broadcast a Bitcoin transaction on the testnet using the `kms-btc` package. Ensure you have the necessary prerequisites and follow the steps to successfully send a transaction.
