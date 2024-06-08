@@ -1,16 +1,16 @@
-import * as AWS from 'aws-sdk';
+import { KMSClient, SignCommand, SignCommandInput, SignCommandOutput } from '@aws-sdk/client-kms';
 
 // Configure AWS with the necessary credentials and region
-AWS.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.REGION,
+const client = new KMSClient({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+  },
 });
 
-const kms = new AWS.KMS();
-
 export async function signWithKMS(hash: Buffer): Promise<Buffer> {
-  const params: AWS.KMS.SignRequest = {
+  const params: SignCommandInput = {
     KeyId: process.env.AWS_KEY_ID!, // The AWS KMS Key ID
     Message: hash,
     MessageType: 'DIGEST',
@@ -18,7 +18,8 @@ export async function signWithKMS(hash: Buffer): Promise<Buffer> {
   };
 
   try {
-    const result = await kms.sign(params).promise();
+    const command = new SignCommand(params);
+    const result: SignCommandOutput = await client.send(command);
     const signature = Buffer.from(result.Signature as Uint8Array);
     return signature;
   } catch (error) {
