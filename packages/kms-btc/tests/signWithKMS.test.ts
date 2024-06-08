@@ -18,7 +18,13 @@ describe('signWithKMS', () => {
     AWS.KMS.prototype.sign = mockSign;
 
     const hash = Buffer.from('test-hash');
-    const signature = await signWithKMS(hash);
+    let signature;
+    try {
+      signature = await signWithKMS(hash);
+    } catch (error) {
+      console.error('Error in test case "should sign the hash successfully":', error);
+      throw error;
+    }
 
     expect(signature).toBeInstanceOf(Buffer);
     expect(signature).toEqual(Buffer.from([1, 2, 3, 4]));
@@ -38,6 +44,12 @@ describe('signWithKMS', () => {
     AWS.KMS.prototype.sign = mockSign;
 
     const hash = Buffer.from('test-hash');
+
+    try {
+      await signWithKMS(hash);
+    } catch (error) {
+      console.error('Error in test case "should handle AWS KMS errors":', error);
+    }
 
     await expect(signWithKMS(hash)).rejects.toThrow('KMS error');
     expect(mockSign).toHaveBeenCalledWith({
