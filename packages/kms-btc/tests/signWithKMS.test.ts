@@ -17,7 +17,11 @@ describe('signWithKMS', () => {
 
     AWS.KMS.prototype.sign = mockSign;
 
-    const hash = Buffer.from('test-hash');
+    // Use a valid 32-byte SHA-256 hash
+    const hash = Buffer.from(
+      'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+      'hex',
+    );
     let signature;
     try {
       signature = await signWithKMS(hash);
@@ -43,7 +47,11 @@ describe('signWithKMS', () => {
 
     AWS.KMS.prototype.sign = mockSign;
 
-    const hash = Buffer.from('test-hash');
+    // Use a valid 32-byte SHA-256 hash
+    const hash = Buffer.from(
+      'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+      'hex',
+    );
 
     try {
       await signWithKMS(hash);
