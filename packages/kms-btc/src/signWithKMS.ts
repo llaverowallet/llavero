@@ -10,10 +10,10 @@ AWS.config.update({
 const kms = new AWS.KMS();
 
 export async function signWithKMS(hash: Buffer): Promise<Buffer> {
-  const params = {
-    KeyId: process.env.AWS_KEY_ID, // The AWS KMS Key ID
+  const params: AWS.KMS.SignRequest = {
+    KeyId: process.env.AWS_KEY_ID!, // The AWS KMS Key ID
     Message: hash,
-    MessageType: 'RAW',
+    MessageType: 'DIGEST',
     SigningAlgorithm: 'ECDSA_SHA_256',
   };
 
