@@ -1,4 +1,4 @@
-import * as btc from '@scure/btc-signer';
+import { Transaction } from '@scure/btc-signer';
 
 interface BitcoinTransactionInput {
   prevTxHash: string;
@@ -20,6 +20,7 @@ interface BitcoinTransaction {
 }
 
 export function hashTransaction(transaction: BitcoinTransaction): Buffer {
-  const hash = btc.hashTransaction(transaction);
-  return hash;
+  const tx = new Transaction(transaction);
+  const hash = tx.hash;
+  return Buffer.from(hash, 'hex');
 }
