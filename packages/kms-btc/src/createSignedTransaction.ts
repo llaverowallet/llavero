@@ -28,8 +28,12 @@ export async function createSignedTransaction(
   const hash = hashTransaction(transaction);
   const signature = await signWithKMS(hash);
 
+  if (!Array.isArray(signature) || !signature.every((byte) => typeof byte === 'number')) {
+    throw new Error('Invalid signature format. Expected a Bytes array.');
+  }
+
   const tx = new Transaction(transaction);
-  tx.sign(Buffer.from(publicKey, 'hex'), Array.from(signature) as number[]);
+  tx.sign(Buffer.from(publicKey, 'hex'), signature as number[]);
 
   return tx.hex;
 }
