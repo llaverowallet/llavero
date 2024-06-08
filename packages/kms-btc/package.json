@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "@scure/btc-signer": "https://github.com/paulmillr/scure-btc-signer"
+    "@scure/btc-signer": "^1.3.2"
   },
   "devDependencies": {
     "@types/node": "^20.14.2"
