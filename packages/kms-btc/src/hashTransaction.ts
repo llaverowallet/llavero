@@ -20,6 +20,9 @@ export interface BitcoinTransaction {
 }
 
 export function hashTransaction(transaction: BitcoinTransaction): Buffer {
+  if (transaction.inputs.length === 0 || transaction.outputs.length === 0) {
+    throw new Error('Invalid transaction: inputs and outputs cannot be empty');
+  }
   const tx = new Transaction(transaction);
   const hash = tx.hash;
   return Buffer.from(hash, 'hex');
