@@ -62,7 +62,11 @@ describe('KMS Integration Test', () => {
 
   it('should send a transaction to the same address on a Bitcoin testnet and verify it', async () => {
     // Acquire testnet Bitcoin using a faucet
-    const testnetAddress = 'your-testnet-address';
+    const testnetAddress = process.env.TESTNET_ADDRESS;
+    if (!testnetAddress) {
+      throw new Error('Environment variable TESTNET_ADDRESS must be set');
+    }
+
     await axios.post('https://testnet-faucet.mempool.co/api/v1/faucet', {
       address: testnetAddress,
     });
@@ -74,7 +78,7 @@ describe('KMS Integration Test', () => {
     const transaction: BitcoinTransaction = {
       inputs: [
         {
-          prevTxHash: 'prev-tx-hash', // Replace with the actual previous transaction hash
+          prevTxHash: process.env.PREV_TX_HASH || '', // Ensure the environment variable is defined
           outputIndex: 0,
           scriptSig: '',
           sequence: 0xffffffff,
@@ -83,7 +87,7 @@ describe('KMS Integration Test', () => {
       outputs: [
         {
           value: 100000, // Replace with the actual amount to send
-          scriptPubKey: '76a91489abcdefabbaabbaabbaabbaabbaabbaabbaabba88ac', // Replace with the actual scriptPubKey
+          scriptPubKey: process.env.SCRIPT_PUB_KEY || '', // Ensure the environment variable is defined
         },
       ],
       version: 1,
@@ -100,7 +104,7 @@ describe('KMS Integration Test', () => {
     const tx = new Transaction(transaction);
     tx.addInput({
       txid: new Uint8Array(
-        Buffer.from('prev-tx-hash', 'hex'), // Replace with the actual previous transaction hash
+        Buffer.from(process.env.PREV_TX_HASH || '', 'hex'), // Ensure the environment variable is defined
       ),
       index: 0,
       finalScriptSig: new Uint8Array(signature),
@@ -109,12 +113,20 @@ describe('KMS Integration Test', () => {
     const txHex = tx.hex;
 
     // Broadcast the transaction to the testnet
-    await axios.post('https://api.blockcypher.com/v1/btc/test3/txs/push', {
-      tx: txHex,
-    });
+    await axios
+      .post('https://api.blockcypher.com/v1/btc/test3/txs/push', {
+        tx: txHex,
+      })
+      .catch((error) => {
+        console.error('Error broadcasting transaction:', error);
+      });
 
     // Verify that the transaction has been successfully broadcasted and recorded on the testnet
-    const response = await axios.get(`https://api.blockcypher.com/v1/btc/test3/txs/${txHex}`);
-    expect(response.data.confirmations).toBeGreaterThan(0);
+    const verificationResponse = await axios
+      .get(`https://api.blockcypher.com/v1/btc/test3/txs/${txHex}`)
+      .catch((error) => {
+        console.error('Error verifying transaction:', error);
+      });
+    expect(verificationResponse?.data?.confirmations).toBeGreaterThan(0);
   });
 });
