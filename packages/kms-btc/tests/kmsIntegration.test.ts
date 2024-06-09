@@ -37,10 +37,6 @@ describe('KMS Integration Test', () => {
     // Hash the transaction
     const hash = hashTransaction(transaction);
 
-    // Set the KeyId environment variable for the test
-    process.env.AWS_KEY_ID =
-      'arn:aws:kms:us-east-1:942607873598:key/98803f0a-bdab-42a2-8f62-71a14389f383';
-
     // Sign the hash using AWS KMS
     const signature = await signWithKMS(hash);
 
