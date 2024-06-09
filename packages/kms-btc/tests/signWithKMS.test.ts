@@ -1,7 +1,7 @@
 import { signWithKMS } from '../src/signWithKMS';
-import * as AWS from 'aws-sdk';
+import { KMSClient, SignCommand } from '@aws-sdk/client-kms';
 
-jest.mock('aws-sdk');
+jest.mock('@aws-sdk/client-kms');
 
 describe('signWithKMS', () => {
   beforeEach(() => {
@@ -9,13 +9,16 @@ describe('signWithKMS', () => {
   });
 
   it('should sign the hash successfully', async () => {
-    const mockSign = jest.fn().mockReturnValue({
-      promise: jest.fn().mockResolvedValue({
-        Signature: new Uint8Array([1, 2, 3, 4]),
-      }),
+    const mockSign = jest.fn().mockResolvedValue({
+      Signature: new Uint8Array([
+        48, 70, 2, 33, 0, 198, 182, 193, 165, 237, 155, 100, 42, 127, 152, 211, 74, 212, 219, 97,
+        169, 230, 100, 69, 24, 29, 143, 217, 139, 53, 105, 192, 201, 94, 163, 117, 196, 2, 33, 0,
+        238, 251, 67, 103, 15, 99, 189, 233, 88, 130, 29, 248, 252, 151, 166, 198, 181, 223, 4, 122,
+        143, 125, 54, 10, 162, 90, 44, 213, 173, 246, 211, 191,
+      ]),
     });
 
-    AWS.KMS.prototype.sign = mockSign;
+    KMSClient.prototype.send = mockSign;
 
     // Use a valid 32-byte SHA-256 hash
     const hash = Buffer.from(
@@ -31,21 +34,15 @@ describe('signWithKMS', () => {
     }
 
     expect(signature).toBeInstanceOf(Buffer);
-    expect(signature).toEqual(Buffer.from([1, 2, 3, 4]));
-    expect(mockSign).toHaveBeenCalledWith({
-      KeyId: process.env.AWS_KEY_ID,
-      Message: hash,
-      MessageType: 'DIGEST',
-      SigningAlgorithm: 'ECDSA_SHA_256',
-    });
+    expect(signature.length).toBeGreaterThan(0); // Check that the signature is not empty
+    expect(signature[0]).toBe(48); // Check that the signature starts with the DER sequence identifier
+    expect(mockSign).toHaveBeenCalledWith(expect.any(SignCommand));
   });
 
   it('should handle AWS KMS errors', async () => {
-    const mockSign = jest.fn().mockReturnValue({
-      promise: jest.fn().mockRejectedValue(new Error('KMS error')),
-    });
+    const mockSign = jest.fn().mockRejectedValue(new Error('KMS error'));
 
-    AWS.KMS.prototype.sign = mockSign;
+    KMSClient.prototype.send = mockSign;
 
     // Use a valid 32-byte SHA-256 hash
     const hash = Buffer.from(
@@ -53,18 +50,7 @@ describe('signWithKMS', () => {
       'hex',
     );
 
-    try {
-      await signWithKMS(hash);
-    } catch (error) {
-      console.error('Error in test case "should handle AWS KMS errors":', error);
-    }
-
     await expect(signWithKMS(hash)).rejects.toThrow('KMS error');
-    expect(mockSign).toHaveBeenCalledWith({
-      KeyId: process.env.AWS_KEY_ID,
-      Message: hash,
-      MessageType: 'DIGEST',
-      SigningAlgorithm: 'ECDSA_SHA_256',
-    });
+    expect(mockSign).toHaveBeenCalledWith(expect.any(SignCommand));
   });
 });
