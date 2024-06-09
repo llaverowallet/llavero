@@ -18,6 +18,7 @@ export async function signWithKMS(hash: Buffer): Promise<Buffer> {
   };
 
   try {
+    console.log('Using KeyId:', params.KeyId); // Log the KeyId to verify its value
     const command = new SignCommand(params);
     const result: SignCommandOutput = await client.send(command);
     const signature = Buffer.from(result.Signature as Uint8Array);
