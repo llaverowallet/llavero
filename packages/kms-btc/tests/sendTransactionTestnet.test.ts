@@ -5,10 +5,10 @@ import { signWithKMS } from '../src/signWithKMS';
 import { verifyTransaction } from '../src/verifyTransaction';
 
 // Replace with your actual testnet address
-const testnetAddress = 'your-testnet-address';
+const testnetAddress = process.env.TESTNET_ADDRESS || 'your-testnet-address';
 
 // Replace with your actual Chainstack API key
-const apiKey = 'YOUR_CHAINSTACK_API_KEY';
+const apiKey = process.env.CHAINSTACK_API_KEY || 'YOUR_CHAINSTACK_API_KEY';
 
 // Replace with the desired testnet chain
 const chain = 'sepolia';
@@ -72,7 +72,10 @@ describe('Bitcoin Testnet Transaction', () => {
     await signWithKMS(hash);
 
     // Create the signed transaction
-    const signedTxHex = await createSignedTransaction(transaction, 'your-public-key');
+    const signedTxHex = await createSignedTransaction(
+      transaction,
+      process.env.PUBLIC_KEY || 'your-public-key',
+    );
 
     // Verify the transaction
     const isValid = verifyTransaction(signedTxHex);
