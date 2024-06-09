@@ -2,7 +2,7 @@ import { KMSClient, SignCommand, SignCommandInput, SignCommandOutput } from '@aw
 
 // Configure AWS with the necessary credentials and region
 const client = new KMSClient({
-  region: process.env.AWS_REGION,
+  region: process.env.AWS_REGION || 'us-east-1', // Default to 'us-east-1' if AWS_REGION is not set
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,

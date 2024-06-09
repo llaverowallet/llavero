@@ -1,10 +1,8 @@
 import axios from 'axios';
 
-// Replace with your actual testnet address
-const testnetAddress = 'your-testnet-address';
-
-// Replace with your actual Chainstack API key
-const apiKey = 'YOUR_CHAINSTACK_API_KEY';
+// Use environment variables for the testnet address and Chainstack API key
+const testnetAddress = process.env.TESTNET_ADDRESS;
+const apiKey = process.env.CHAINSTACK_API_KEY;
 
 // Replace with the desired testnet chain
 const chain = 'sepolia';
