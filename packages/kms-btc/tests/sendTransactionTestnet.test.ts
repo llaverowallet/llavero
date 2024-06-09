@@ -4,11 +4,16 @@ import { hashTransaction } from '../src/hashTransaction';
 import { signWithKMS } from '../src/signWithKMS';
 import { verifyTransaction } from '../src/verifyTransaction';
 
-// Replace with your actual testnet address
-const testnetAddress = process.env.TESTNET_ADDRESS || 'your-testnet-address';
+// Ensure environment variables are set
+const testnetAddress = process.env.TESTNET_ADDRESS;
+const apiKey = process.env.CHAINSTACK_API_KEY;
+const publicKey = process.env.PUBLIC_KEY;
 
-// Replace with your actual Chainstack API key
-const apiKey = process.env.CHAINSTACK_API_KEY || 'YOUR_CHAINSTACK_API_KEY';
+if (!testnetAddress || !apiKey || !publicKey) {
+  throw new Error(
+    'Environment variables TESTNET_ADDRESS, CHAINSTACK_API_KEY, and PUBLIC_KEY must be set',
+  );
+}
 
 // Replace with the desired testnet chain
 const chain = 'sepolia';
@@ -72,10 +77,7 @@ describe('Bitcoin Testnet Transaction', () => {
     await signWithKMS(hash);
 
     // Create the signed transaction
-    const signedTxHex = await createSignedTransaction(
-      transaction,
-      process.env.PUBLIC_KEY || 'your-public-key',
-    );
+    const signedTxHex = await createSignedTransaction(transaction, publicKey);
 
     // Verify the transaction
     const isValid = verifyTransaction(signedTxHex);
