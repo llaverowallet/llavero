@@ -17,6 +17,9 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_KEY_ID: ${{ secrets.AWS_KEY_ID }}
       AWS_REGION: us-east-1
+      TESTNET_ADDRESS: ${{ secrets.TESTNET_ADDRESS }}
+      CHAINSTACK_API_KEY: ${{ secrets.CHAINSTACK_API_KEY }}
+      PUBLIC_KEY: ${{ secrets.PUBLIC_KEY }}
 
     steps:
     - name: Checkout repository
