@@ -81,7 +81,7 @@ So if you are a developer, a web security specialist or QA tester that you wanna
 If you are a cloud architect or security specialist and you wanna participate in architecture and/or security layers proposal also you are very welcome :)
 
 ## Demo Video
-[![Demo Llavero Wallet Video](https://img.youtube.com/vi/J8gbE7SFlyU/0.jpg)](https://www.youtube.com/watch?v=J8gbE7SFlyU)
+[![YouTube](http://i.ytimg.com/vi/J8gbE7SFlyU/hqdefault.jpg)](https://www.youtube.com/watch?v=J8gbE7SFlyU)
 
 ### Some more links:
 [Introducing Llavero: The $1 Hardware Wallet!](https://hackernoon.com/introducing-llavero-the-$1-hardware-wallet)
