@@ -16,6 +16,8 @@ Llavero is a self-service, non-custodial wallet that uses [AWS KMS](https://aws.
   - [Llavero's features](#llaveros-features)
     - [Wallet comparisons](#wallet-comparisons)
     - [Status \& contributions](#status--contributions)
+  - [Demo Video](#demo-video)
+      - [Some more links and info](#some-more-links)
   - [Objectives](#objectives)
     - [Why all this?](#why-all-this)
     - [Philosophy](#philosophy)
@@ -77,6 +79,12 @@ Currently, Llavero is an MVP. Is a basic EVM wallet with WalletConnect support. 
 So if you are a developer, a web security specialist or QA tester that you wanna contribute great!
 
 If you are a cloud architect or security specialist and you wanna participate in architecture and/or security layers proposal also you are very welcome :)
+
+## Demo Video
+[![Demo Llavero Wallet Video](https://img.youtube.com/vi/J8gbE7SFlyU/0.jpg)](https://www.youtube.com/watch?v=J8gbE7SFlyU)
+
+### Some more links:
+[Introducing Llavero: The $1 Hardware Wallet!](https://hackernoon.com/introducing-llavero-the-$1-hardware-wallet)
 
 ## Objectives
 
