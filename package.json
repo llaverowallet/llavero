@@ -22,8 +22,7 @@
     "cdk-synth": "npm run synth -w libs/cdk-deploy",
     "cdk-build": "npm run build -w libs/cdk-deploy",
     "cdk-bootstrap": "npm run bootstrap -w libs/cdk-deploy",
-    "install-sst": "yarn workspace installer install-sst",
-    "prepare": "husky install"
+    "install-sst": "yarn workspace installer install-sst"
   },
   "author": "Mariano Julio Vicario",
   "license": "Apache-2.0",
@@ -49,5 +48,6 @@
     "*.{json,md,html,js,jsx,ts,tsx}": [
       "prettier --write"
     ]
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

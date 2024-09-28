@@ -8,43 +8,21 @@ const UserSchema = {
   },
   name: 'Current',
   models: {
-    Networks: {
-      created: {
-        type: Date,
-      },
-      sk: {
-        type: String,
-        value: 'Networks#${networkId}',
-        required: true,
-      },
-      name: {
-        type: String,
-        required: true,
-        unique: false,
-      },
-      networkId: {
-        type: String,
-        generate: 'uuid',
-        required: true,
-        unique: true,
-      },
-      pk: {
-        type: String,
-        value: 'User#${userId}',
-        required: true,
-      },
-      jsonRpc: {
-        type: String,
-        required: true,
-        unique: false,
-      },
-      updated: {
-        type: Date,
-      },
-      username: {
-        type: String,
-        required: true,
-      },
+    Network: {
+      pk: { type: String, value: 'User#${userId}' },
+      sk: { type: String, value: 'Network#${chainId}' },
+      userId: { type: String, required: true },
+      chainId: { type: Number, required: true },
+      name: { type: String, required: true },
+      logo: { type: String, required: true },
+      rgb: { type: String, required: true },
+      rpc: { type: String, required: true },
+      namespace: { type: String, required: true },
+      symbol: { type: String, required: true },
+      explorer: { type: String, required: true },
+      isTestnet: { type: Boolean, required: true },
+      created: { type: Date },
+      updated: { type: Date },
     },
     User: {
       mail: {
@@ -169,6 +147,18 @@ const UserSchema = {
       updated: {
         type: Date,
       },
+    },
+    ERC20: {
+      pk: { type: String, value: 'User#${userId}' },
+      sk: { type: String, value: 'ERC20#${chainId}#${contractAddress}' },
+      userId: { type: String, required: true },
+      chainId: { type: Number, required: true },
+      namespace: { type: String, required: true },
+      contractAddress: { type: String, required: true },
+      symbol: { type: String, required: true },
+      explorer: { type: String, required: true },
+      name: { type: String, required: true },
+      logo: { type: String, required: false },
     },
   },
   params: {

@@ -3,7 +3,7 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import UserSchema from './user-schema';
 
 export type User = Entity<typeof UserSchema.models.User>;
-export type Network = Entity<typeof UserSchema.models.Networks>;
+export type Network = Entity<typeof UserSchema.models.Network>;
 export type Activity = Entity<typeof UserSchema.models.Activity>;
 export type KmsKey = Entity<typeof UserSchema.models.Keys>;
 export type UserKeys = { user: User; keys: KmsKey[] };
@@ -32,7 +32,7 @@ export class UserRepository {
       this.userTable = new Table({ client, name: tableName, schema: UserSchema, partial: true });
       this.userModel = this.userTable.getModel('User');
       this.keysModel = this.userTable.getModel('Keys');
-      this.networkModel = this.userTable.getModel('Networks');
+      this.networkModel = this.userTable.getModel('Network');
       this.activityModel = this.userTable.getModel('Activity');
     } catch (error) {
       logger.error(error, 'Error in UserRepository constructor');

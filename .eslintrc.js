@@ -8,8 +8,12 @@ module.exports = {
     react: {
       version: 'detect',
     },
+    next: {
+      rootDir: './apps/web',
+    },
   },
   extends: [
+    'next',
     'eslint:recommended',
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
@@ -27,7 +31,9 @@ module.exports = {
   },
   plugins: ['react', 'jsx-a11y', '@typescript-eslint'],
   rules: {
+    'no-debugger': 'off',
     'react-hooks/exhaustive-deps': 'error',
+    '@next/next/no-html-link-for-pages': 'off',
     'no-var': 'error',
     'brace-style': 'error',
     'prefer-template': 'error',
