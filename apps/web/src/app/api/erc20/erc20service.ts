@@ -8,6 +8,7 @@ import { NetworkRepository } from '@/repositories/network-repository';
 import { UserRepository } from '@/repositories/user-repository';
 import { AwsKmsSigner } from '@dennisdang/ethers-aws-kms-signer';
 import * as kmsClient from '@aws-sdk/client-kms';
+import { metadata } from '@/app/layout';
 
 // Get the list of ERC20 contracts for a specific user on a specific network
 export const getERC20ContractsHandler = async (
@@ -33,27 +34,43 @@ export const getERC20ContractsHandler = async (
       return NextResponse.json({ error: 'No ERC20 contracts found.' }, { status: 404 });
     }
 
-    const networkContract = contracts.filter((contract) => contract.chainId === Number(chainId))[0];
-    if (networkContract && networkContract.contractAddress) {
-      const balance = await fetchERC20TokenBalance(
-        networkContract.contractAddress,
-        address as string,
-        await getProvider(Number(chainId), user.userId),
-      );
-      if (getMetadata) {
-        const metadata = await getErc20Metadata(
+    const erc20Data = await Promise.all(
+      contracts.map(async (contract) => {
+        if (!contract.contractAddress) return Promise.resolve(null);
+        return await getEr20Data(
           Number(chainId),
-          networkContract.contractAddress,
+          contract.contractAddress,
           user.userId,
+          address,
+          getMetadata,
         );
-        return NextResponse.json({ balance, metadata });
-      }
-      return NextResponse.json({ balance });
-    } else {
-      return NextResponse.json({ error: 'No matching ERC20 contract found.' }, { status: 404 });
-    }
+      }),
+    );
+
+    return NextResponse.json(erc20Data.filter((data) => data !== null));
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch ERC20 contracts.' }, { status: 500 });
+  }
+};
+
+const getEr20Data = async (
+  chainId: number,
+  contractAddress: string,
+  userId: string,
+  address: string,
+  getMetadata: boolean = true,
+) => {
+  if (contractAddress) {
+    const balance = await fetchERC20TokenBalance(
+      contractAddress,
+      address as string,
+      await getProvider(Number(chainId), userId),
+    );
+    if (getMetadata) {
+      const metadata = await getErc20Metadata(Number(chainId), contractAddress, userId);
+      return { balance, metadata };
+    }
+    return { balance, metadata: null };
   }
 };
 
@@ -193,15 +210,22 @@ async function getProvider(chainId: number, userId: string) {
   const networkRepo = new NetworkRepository();
   const networks = await networkRepo.getNetworks(userId);
   const network = networks.find((n) => n.chainId === chainId);
-  __provider = new JsonRpcProvider(network?.rpc);
-  try {
-    await __provider._detectNetwork();
-  } catch (err) {
-    console.log('-----Get Provider-----');
-    console.log(err);
-    __provider.destroy();
-    __provider = null;
+  if (network?.rpc) {
+    __provider = new JsonRpcProvider(network.rpc);
+    try {
+      await __provider._detectNetwork();
+    } catch (err) {
+      console.log('-----Get Provider-----');
+      console.log(err);
+      __provider.destroy();
+      __provider = null;
+    }
   }
+
+  if (!__provider) {
+    throw new Error('Failed to get provider');
+  }
+
   return __provider;
 }
 
