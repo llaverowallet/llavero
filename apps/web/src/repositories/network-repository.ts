@@ -226,7 +226,6 @@ export class NetworkRepository {
     ];
 
     try {
-      debugger;
       const users = await this.userModel.scan();
       for (const user of users) {
         const networks = await this.getNetworks(user.userId);

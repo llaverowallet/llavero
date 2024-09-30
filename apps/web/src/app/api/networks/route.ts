@@ -16,7 +16,7 @@ export async function GET() {
     const userRepo = new UserRepository();
     const user = await userRepo.getUser(session?.user?.email);
     if (!user) throw new Error('User not found');
-    debugger;
+
     const repo = new NetworkRepository();
     let networks = await repo.getNetworks(user.userId);
 

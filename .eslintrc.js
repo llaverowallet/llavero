@@ -31,7 +31,7 @@ module.exports = {
   },
   plugins: ['react', 'jsx-a11y', '@typescript-eslint'],
   rules: {
-    'no-debugger': 'off',
+    'no-debugger': 'error',
     'react-hooks/exhaustive-deps': 'error',
     '@next/next/no-html-link-for-pages': 'off',
     'no-var': 'warn',

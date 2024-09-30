@@ -25,9 +25,9 @@ export const getERC20ContractsHandler = async (
 
   try {
     const erc20Repository = new ERC20Repository();
-    debugger;
+
     const user = await getUserByEmailAddress(userEmail);
-    debugger;
+
     const contracts = await erc20Repository.getERC20Tokens(user.userId);
     if (!contracts) {
       return NextResponse.json({ error: 'No ERC20 contracts found.' }, { status: 404 });
@@ -97,7 +97,7 @@ export const addERC20ContractHandler = async (
       name: params.name,
       namespace: params.namespace || '',
     };
-    debugger;
+
     console.log('Adding ERC20 contract', erc20Contract);
     const user = await getUserByEmailAddress(userEmail);
     await erc20Repository.addERC20Token(user.userId, erc20Contract);
@@ -120,7 +120,6 @@ export const updateERC20ContractHandler = async (
   },
   userEmail: string,
 ) => {
-  debugger;
   try {
     const erc20Repository = new ERC20Repository();
     const erc20Contract: ERC20Token = {
@@ -132,7 +131,7 @@ export const updateERC20ContractHandler = async (
       name: params.name,
       namespace: params.namespace || '',
     };
-    debugger;
+
     const user = await getUserByEmailAddress(userEmail);
     await erc20Repository.updateERC20Token(user.userId, erc20Contract);
     return NextResponse.json({ message: 'ERC20 contract updated successfully.' });
@@ -181,7 +180,6 @@ export const sendErc20TokenHandler = async (
   userEmail: string,
 ) => {
   try {
-    debugger;
     const user = await getUserByEmailAddress(userEmail);
     const provider = await getProvider(chainId, user.userId);
 

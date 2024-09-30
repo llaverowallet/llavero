@@ -39,9 +39,9 @@ export async function POST(request: NextRequest) {
   const session: any = await getServerSession(AUTH_OPTIONS);
   if (!session?.user?.email)
     return NextResponse.json({ message: 'Not authorized' }, { status: 401 });
-  debugger;
+
   const erc20: Erc20Params = await request.json();
-  debugger;
+
   return addERC20ContractHandler(erc20, session?.user.email);
 }
 
@@ -76,7 +76,7 @@ export type Erc20SendParams = {
 // Patch is the send erc20 token
 export async function PATCH(request: Request) {
   const session: any = await getServerSession(AUTH_OPTIONS);
-  debugger;
+
   if (!session?.user?.email)
     return NextResponse.json({ message: 'Not authorized' }, { status: 401 });
   const erc20: Erc20SendParams = await request.json();
