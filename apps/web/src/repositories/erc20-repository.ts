@@ -47,6 +47,7 @@ export class ERC20Repository {
 
   async getERC20Tokens(userId: string): Promise<ERC20[]> {
     try {
+      debugger;
       const tokens = await this.erc20Model.find({ userId });
       return tokens;
     } catch (error) {
@@ -57,6 +58,8 @@ export class ERC20Repository {
 
   async addERC20Token(userId: string, token: ERC20Token): Promise<ERC20> {
     try {
+      console.log('Adding ERC20 token', token);
+      debugger;
       const newToken = await this.erc20Model.create({
         userId,
         ...token,
@@ -74,11 +77,11 @@ export class ERC20Repository {
         userId,
         chainId: token.chainId,
         contractAddress: token.contractAddress,
-        namespace: token.namespace,
+        namespace: token.namespace || '',
         symbol: token.symbol,
-        explorer: token.explorer,
+        explorer: token.explorer || '',
         name: token.name,
-        logo: token.logo,
+        logo: token.logo || '',
       });
       return updatedToken;
     } catch (error) {
