@@ -8,7 +8,6 @@ import { NetworkRepository } from '@/repositories/network-repository';
 import { UserRepository } from '@/repositories/user-repository';
 import { AwsKmsSigner } from '@dennisdang/ethers-aws-kms-signer';
 import * as kmsClient from '@aws-sdk/client-kms';
-import { metadata } from '@/app/layout';
 
 // Get the list of ERC20 contracts for a specific user on a specific network
 export const getERC20ContractsHandler = async (

@@ -34,12 +34,20 @@ module.exports = {
     'no-debugger': 'off',
     'react-hooks/exhaustive-deps': 'error',
     '@next/next/no-html-link-for-pages': 'off',
-    'no-var': 'error',
+    'no-var': 'warn',
+    'no-unused-vars': 'warn',
     'brace-style': 'error',
     'prefer-template': 'error',
     radix: 'error',
     'space-before-blocks': 'error',
     'import/prefer-default-export': 'off',
+    '@typescript-eslint/no-unused-vars': [
+      'warn', // or "off"
+      {
+        argsIgnorePattern: '^_', // Ignore unused args prefixed with _
+        varsIgnorePattern: '^_', // Ignore unused vars prefixed with _
+      },
+    ],
   },
   overrides: [
     {
