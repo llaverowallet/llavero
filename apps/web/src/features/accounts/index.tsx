@@ -23,6 +23,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { getAccounts } from '@/shared/services/account';
 import Link from 'next/link';
 import { Button } from '@/shared/components/ui/button';
+import { PlusIcon } from '@radix-ui/react-icons';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,6 +33,17 @@ import {
   DropdownMenuTrigger,
 } from '@/shared/components/ui/dropdown-menu';
 import { getErc20Accounts } from '@/shared/services/erc20';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/shared/components/ui/dialog';
+import { Label } from '@/shared/components/ui/label';
+import { Input } from '@/shared/components/ui/input';
 
 const Accounts: React.FC<object> = () => {
   // Change the type of the functional component
@@ -56,6 +68,9 @@ const Accounts: React.FC<object> = () => {
   const [tokens, setTokens] = useState<{ id: number; balance: string }[]>([]);
   //const [selectedToken, setSelectedToken] = useState<string>('');
   const [selectedOption, setSelectedOption] = useState<string>('');
+  const [newTokenAddress, setNewTokenAddress] = useState('');
+  const [newTokenSymbol, setNewTokenSymbol] = useState('');
+  const [newTokenDecimals, setNewTokenDecimals] = useState(8);
 
   const handleSelect = (id: number) => {
     const token = tokens.filter((token) => token.id === id);
@@ -101,6 +116,25 @@ const Accounts: React.FC<object> = () => {
     window?.localStorage.setItem('accountIndex', index?.toString() || '0');
   };
 
+  const handleAddToken = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const target = e.currentTarget;
+    const formData = new FormData(target);
+    const { tokenAddress, tokenSymbol, tokenDecimals } = Object.fromEntries(formData) as {
+      tokenAddress: string;
+      tokenSymbol: string;
+      tokenDecimals: string;
+    };
+
+    console.log({
+      tokenAddress,
+      tokenSymbol,
+      tokenDecimals,
+    });
+
+    // TODO: Add token to the list
+  };
+
   return (
     <>
       <Container>
@@ -131,14 +165,10 @@ const Accounts: React.FC<object> = () => {
                     {/* start */}
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          className="flex items-center space-x-2 h-16 px-6 text-2xl font-medium border-none shadow-none hover:bg-transparent focus:ring-0"
-                        >
+                        <div className="flex items-center gap-4 cursor-pointer text-4xl">
                           <span>{selectedOption}</span>
-                          <span className="w-px h-6 bg-border" aria-hidden="true" />
                           <ChevronDown className="h-8 w-8" />
-                        </Button>
+                        </div>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className="w-64">
                         <DropdownMenuLabel className="text-xl">Select Option</DropdownMenuLabel>
@@ -149,7 +179,69 @@ const Accounts: React.FC<object> = () => {
                             : ''}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuLabel className="text-xl">Tokens</DropdownMenuLabel>
+                        <DropdownMenuLabel className="text-xl">
+                          <div className="flex justify-between items-center">
+                            <div>Tokens</div>
+                            <Dialog>
+                              <DialogTrigger>
+                                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                  <PlusIcon className="h-4 w-4" />
+                                </DropdownMenuItem>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Add Token</DialogTitle>
+                                  <DialogDescription>
+                                    Please add the token contract address, symbol, and decimals of
+                                    precision.
+                                  </DialogDescription>
+                                  <form onSubmit={handleAddToken} id="add-token-form">
+                                    <div className="flex flex-col gap-4 py-4">
+                                      <div>
+                                        <Label htmlFor="tokenAddress">
+                                          Token Contract Address:
+                                        </Label>
+                                        <Input
+                                          name="tokenAddress"
+                                          className="w-full"
+                                          value={newTokenAddress}
+                                          onChange={(e) => setNewTokenAddress(e.target.value)}
+                                        />
+                                      </div>
+                                      <div>
+                                        <Label htmlFor="tokenSymbol">Token Symbol:</Label>
+                                        <Input
+                                          name="tokenSymbol"
+                                          className="w-full mb-1"
+                                          value={newTokenSymbol}
+                                          onChange={(e) => setNewTokenSymbol(e.target.value)}
+                                        />
+                                      </div>
+                                      <div>
+                                        <Label htmlFor="tokenDecimals">
+                                          Decimals of Precision:
+                                        </Label>
+                                        <Input
+                                          name="tokenDecimals"
+                                          className="w-full mb-1"
+                                          value={newTokenDecimals}
+                                          onChange={(e) =>
+                                            setNewTokenDecimals(e.target.value as unknown as number)
+                                          }
+                                        />
+                                      </div>
+                                    </div>
+                                  </form>
+                                </DialogHeader>
+                                <DialogFooter className="mt-4">
+                                  <Button type="submit" form="add-token-form">
+                                    Add
+                                  </Button>
+                                </DialogFooter>
+                              </DialogContent>
+                            </Dialog>
+                          </div>
+                        </DropdownMenuLabel>
                         {tokens.map(
                           (token) =>
                             token.id >= 0 && (
