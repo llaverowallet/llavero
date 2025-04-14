@@ -11,6 +11,7 @@ Llavero is a self-service, non-custodial wallet that uses [AWS KMS](https://aws.
 ## Table of Contents
 
 - [Introduction](#introduction)
+  - [What is Llavero?](#what-is-llavero)
   - [Software as MY Service (SaMS)](#software-as-my-service-sams)
   - [KMS](#kms)
   - [Llavero's features](#llaveros-features)
@@ -34,6 +35,11 @@ Llavero is a self-service, non-custodial wallet that uses [AWS KMS](https://aws.
 - [How it works?](#how-it-works)
 
 # Introduction
+
+## What is Llavero? 
+Llavero is a self-service, non-custodial wallet designed to provide users with full control over their private keys while maintaining a secure and user-friendly experience. It leverages **AWS Key Management Service (KMS)** for secure key management by generating and encrypting keys in a hardware security module (HSM), ensuring that sensitive operations are performed in a secure environment.
+
+Technically, Llavero integrates AWS KMS to handle the cryptographic operations like key generation, signing, and encryption, without exposing the private keys to the application or users. This approach replicates the security of custodial wallets while maintaining non-custodial principles, as the keys remain under the user’s control. The wallet also likely includes robust API integrations, written primarily in **TypeScript**, to interact with blockchain networks, manage transactions, and authenticate users securely, offering seamless usability akin to traditional custodial services while retaining decentralization.
 
 **Llavero: My hardware wallet as MY service. What does this mean?**
 
