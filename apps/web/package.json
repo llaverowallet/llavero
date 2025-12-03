@@ -36,7 +36,7 @@
     "@radix-ui/react-tooltip": "^1.0.7",
     "@tabler/icons-react": "^2.1.1",
     "@tanstack/react-query": "^5.8.4",
-    "@walletconnect/web3wallet": "^1.10.0",
+    "@walletconnect/web3wallet": "^1.16.1",
     "bignumber.js": "^9.1.2",
     "bufferutil": "^4.0.8",
     "class-variance-authority": "^0.7.0",
@@ -59,7 +59,7 @@
     "use-debounce": "^10.0.0",
     "utf-8-validate": "^6.0.4",
     "uuid": "^9.0.1",
-    "validator": "^13.11.0",
+    "validator": "^13.15.22",
     "valtio": "^1.11.2"
   },
   "devDependencies": {
